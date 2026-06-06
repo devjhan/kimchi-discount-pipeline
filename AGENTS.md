@@ -93,6 +93,7 @@ Sample size hard rule:
 
 상세 계층 정의 / forbidden language / hard guard는 `governance/specs/hard-guards.md` 참조.
 파이프라인 전체 흐름은 `governance/pipeline-overview.md` 참조 (인간용 reference).
+사용자 의도(job story) + capability→system trace 는 `governance/capabilities/`, 구조 결정 근거(ADR)는 `governance/decisions/` 참조.
 
 ---
 
@@ -126,10 +127,12 @@ investment_v3/
 │   │   ├── edge-source.md
 │   │   ├── asymmetry.md
 │   │   └── statistical-honesty.md
+│   ├── capabilities/        # 의도 layer (누구에게/무슨 결과) — capability map + job story (README + C1~C6)
+│   ├── decisions/           # ADR register — 구조 결정 영구 ledger (append-only, README + NNNN-*.md)
 │   ├── specs/               # stage 가 만족해야 하는 계약
 │   │   └── hard-guards.md   # G1-G21 hard guard 정의 + forbidden language
 │   ├── procedures/          # runtime / manual invoke 절차
-│   ├── directives/          # 코딩 컨벤션 D-{LANG}-{N} (AGENTS.md 인덱스 + 언어별)
+│   ├── directives/          # 코딩 컨벤션 D-{LANG}-{N} + D-ARCH 아키텍처/배치 판단 기준 (AGENTS.md 인덱스)
 │   ├── profiles/            # 종목별 Enrich-Cutoff 프로파일 SSoT (git-tracked)
 │   ├── thresholds.yaml      # 정량 임계값 SSOT
 │   ├── schedules.yaml       # scheduler SSoT (launchd plist 생성 source) + schedules.lock.yaml

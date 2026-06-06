@@ -12,6 +12,9 @@
 
 본 시스템은 **investment advice 가 아니다**.
 
+> 각 capability 의 사용자 의도(job story)와 end-to-end trace 는 [`capabilities/`](capabilities/README.md),
+> 비자명한 구조 결정의 근거(ADR)는 [`decisions/`](decisions/README.md) 참조.
+
 ---
 
 ## 2. 5 Axioms (요약 + link)
@@ -100,7 +103,7 @@ universe(Stage 1 *enrich*)↔screener(Stage 2 *cutoff*) 경계는 `01-universe.j
 만, screener 는 `cutoff_rules` 만 쓰지만 둘 다 `EnrichCutoffProfile` *전체* 에 의존한다.
 이를 universe-view / screener-view 로 쪼개지 **않는다** — 프로파일은 enrich+cutoff 를
 한 호흡으로 정의하는 **단일 정책 단위**이고, 통째 의존이 그 의도를 정직하게 반영한다.
-(serde 분할 비용 > ISP 이득, 특히 cutover 대기 중. `domains/_shared/profile_registry/schema.py` 참조.)
+(serde 분할 비용 > ISP 이득, 특히 cutover 대기 중. `domains/_shared/profile_registry/schema.py` 참조. 결정 근거·대안: [ADR-0006](decisions/0006-fat-contract-isp.md).)
 
 ---
 
@@ -162,6 +165,8 @@ Forbidden language 표 + G1-G22 hard guard 정의는 [specs/hard-guards.md](spec
 
 - [AGENTS.md](../AGENTS.md) — agent 컨텍스트 (canonical)
 - [governance/AXIOMS/](AXIOMS/) — 5 철학 본문
+- [governance/capabilities/](capabilities/README.md) — capability map + job story (의도 layer)
+- [governance/decisions/](decisions/README.md) — ADR register (구조 결정 영구 ledger)
 - [governance/specs/hard-guards.md](specs/hard-guards.md) — G1-G22 hard guard / forbidden language / output envelope
 - [governance/thresholds.yaml](thresholds.yaml) — 정량 임계값 SSOT
 - 경로 해석 — `infrastructure/_common/utils.py` 의 path helper (중앙 topology alias SSoT 는 제거됨, 위 §6 참조)

@@ -25,14 +25,10 @@ domains/risk_engine/
 | **monitor** | `application/{thesis_sync, falsifier_proximity, event_falsifier_linker, thesis_expiry}` + `domain/{proximity, expiry, event_trigger, thesis_projection}` | 5a~5d |
 | **account** | `positions_sync` (flat, KIS read) + `application/portfolio_state` + `domain/portfolio_state` | sync / derive |
 
-> **구조 결정 (2026-06-05, F-17).** concern 을 *물리 서브패키지*(`sizing/ monitor/ account/`)로
-> 분리하지 **않는다** — 이미 `domain/`+`application/` 레이어 + flat CLI shim 이 BC 골격을
-> 충족하고, concern 축을 더하면 2D 디렉토리(concern×layer) 복잡도 + `positions_sync` byte-diff
-> + `daily_pipeline.sh` 하드코딩 경로 churn 대비 이득이 cosmetic. `audit/` 서브패키지도
-> **미추가** — risk_engine 은 ViolationLog/GuardViolation 기록 need 가 없다 (`cash_band_violation`
-> 은 sizing payload flag 일 뿐). `config/` 지역화도 **보류** — sizing 가드(Kelly fraction/cap)는
-> `governance/thresholds.yaml` 의 *doctrine* 이라 잔류가 정합적("governance yaml → config/ 이전
-> = 기각" 결정기록 존중). (YAGNI / 맹목 지역화 금지 — 재제안 방지 기록.)
+> **구조 결정 — 물리 concern 서브패키지(`sizing/ monitor/ account/`) reorg 는 기각** (audit/·
+> config/ 지역화 포함). 근거·대안·비용분석(YAGNI / churn>이득 / governance yaml 잔류 정합)은
+> [ADR-0007](../../governance/decisions/0007-risk-engine-no-concern-reorg.md) — 재제안 방지
+> 기록. 3 concern 은 *논리 축*(위 표)으로만 유지, 물리 디렉토리는 layer 축만.
 
 ## CLI 진입점 (daily_pipeline.sh 하드코딩 — flat 모듈명 보존 필수)
 

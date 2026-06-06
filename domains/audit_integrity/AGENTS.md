@@ -36,7 +36,8 @@ domains/audit_integrity/
 ## 하드 가드
 
 - **G9**: 실제 broker 호출 0 — paper trade only. `init_shadow_state` / `main` 모두 price read 만.
-- **G6**: NAV / 수익률 모든 정량은 본 BC 결정론 산식 (LLM 위임 금지 — F-6 회수 교훈).
+- **G6**: NAV / 수익률 모든 정량은 본 BC 결정론 산식 (LLM 위임 금지 — F-6 회수 교훈,
+  [ADR-0003](../../governance/decisions/0003-llm-drafts-python-commits.md)).
 - **G20**: shadow-portfolio-state 덮어쓰기 금지 (`init_shadow_state --force` 필수).
 - **통계 정직성**: N<10 alpha 주장 금지 등 sample gate (`stat_tests` + outcome 스킬).
 

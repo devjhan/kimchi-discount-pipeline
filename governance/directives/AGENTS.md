@@ -12,6 +12,7 @@
 | ID 범위 | 파일 | 주제 |
 |---|---|---|
 | D-CORE-* | [00-principles.md](00-principles.md) | 대원칙 (KISS / YAGNI / DRY / 모듈 경계 / 의존성 정책) |
+| D-ARCH-* | [05-architecture.md](05-architecture.md) | 아키텍처/배치 판단 기준 (중앙-분산 / 통폐합 CCP·CRP·ISP / 의존방향 / 포트 수명주기 / 문서표준 / ADR 기록) |
 | D-PY-* | [10-python.md](10-python.md) | Python 작성 컨벤션 (typing, dataclass, docstring, import, error pattern) |
 | D-SH-* | [11-shell.md](11-shell.md) | Shell hook 작성 (shebang, `set -uo pipefail`, stderr 1-3 줄, exit code) |
 | D-CFG-* | [12-config-text.md](12-config-text.md) | YAML / JSON / `.env` / Markdown 작성 표준 (envelope, schema, citation) |
@@ -27,6 +28,13 @@
 | `inject_directive_context.sh` | UserPromptSubmit | 매칭된 언어별 directive 전체 | inject only |
 | `block_anti_patterns.sh` | PreToolUse (Write/Edit) | D-PY-1, D-SH-1, D-CFG-1, D-SEC-1 | fail-closed (exit 2) |
 | `lint_directives.sh` | PostToolUse (Write/Edit) | D-PY-2~5, D-SH-2~4, D-CFG-2~3, D-Q-*, D-SEC-2~3 | dry-run (M1) → enforce (M2) |
+| (none) | — | **D-ARCH-\*** | inject-only / fitness test |
+
+> **D-ARCH 는 write-time hook 이 없다 — 위 "각 D-ID 가 hook 으로 강제된다" 가정의 예외.**
+> 구조 불변식은 per-file syntactic 검사가 아니라 repo-wide AST 검사라야 의미가 있어
+> **fitness test** (`tests/architecture/`, `make test-arch`)로 강제하고(D-ARCH-3/4/5/6),
+> 나머지는 inject-only 다. `_directive_lint.py` 의 D-ID 정규식(`D-[A-Z]+-\d+`)·`*.md` glob 은
+> D-ARCH 를 자동 인식하므로 hook 코드 변경은 불필요.
 
 ---
 

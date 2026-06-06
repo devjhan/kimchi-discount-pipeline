@@ -1,4 +1,4 @@
-.PHONY: test test-unit test-integration test-cov install-dev clean
+.PHONY: test test-unit test-integration test-arch test-cov install-dev clean
 
 PYTHON ?= python3
 
@@ -13,6 +13,10 @@ test-unit:
 
 test-integration:
 	$(PYTHON) -m pytest -m integration
+
+# 아키텍처 fitness functions (D-ARCH 불변식). `make test` 에도 자동 포함 (testpaths=tests/).
+test-arch:
+	$(PYTHON) -m pytest tests/architecture -ra
 
 test-cov:
 	$(PYTHON) -m pytest --cov=domains --cov=infrastructure/_common --cov-report=term-missing

@@ -4,6 +4,11 @@
 `last_updated: 2026-06-05`
 `status: TRANSIENT`
 
+> **2026-06-06 — 결정 추출 완료.** 이 backlog 에 섞여 있던 *evergreen 구조 결정*(기각 기록
+> 포함)은 영구 ADR 레지스터 [`governance/decisions/`](../decisions/README.md) 로 승격됐다
+> (ADR-0002~0008). 그 결정 근거는 본 파일에 중복 보존하지 않으며, 본 파일은 이제 **OPEN todo
+> 추적 전용**이다 (§4 삭제 규율 유지).
+
 > ⚠️ **이 문서는 임시(transient) backlog 다 — 영구 spec 이 아니다.**
 > 2026-06-02 구조 리뷰 세션에서 도출한 리팩토링 finding 중 **cutover gate 이후로 남은
 > 항목**을 우선순위 / 예상 작업량과 함께 기록한 snapshot 이다. **각 finding 이 처리되면
@@ -178,25 +183,13 @@ no-op) 추가, commit/drift 는 결정론 유지.
   F-10(commit 결정론 유지) · F-11(archetype baseline 선언화)이 같은 변주 — 결정론·선언적
   지식을 per-invocation LLM 에서 domain code / config / baseline 로 내린다 (audit_integrity
   엔진 회수가 그 첫 적용 — LLM 이 결정론을 침범 말 것; F-10 은 거울상으로 결정론 commit 을
-  LLM 에 안 넘김). LLM 호출 단일 port 화(F-13, 처리 완료)는 그 인프라 축 — D-CORE-7 로 승격.
-- **[Wave 4 decision record] governance yaml → config/ 이전 = 기각.** "config//secrets/ 가
-  루트에 신설됐으니 `runtime-policy.yaml` 등 governance yaml 을 config/ 로" 제안 검토됨 →
-  **하지 말 것.** 시스템은 **소유/버전관리 축**으로 분리됨(개발자 doctrine = git-tracked
-  `governance/*.yaml` vs 사용자/배포 override = gitignored `*.local.yaml`+`config/`) — *파일
-  포맷* 축이 아니다. governance/ 는 markdown doctrine 과 machine-read yaml 을 의도적으로 동거
-  (둘 다 버전관리되는 헌법). 특히 `runtime-policy.yaml` 은 G9 안전 enforcement
-  (`block_auto_trade`·KIS read-only whitelist, 헤더 "사용자 임의 변경 금지") — 사용자 편집
-  가능한 config/ 로 이전 = 가드를 노브로 강등하는 **보안 후퇴**. 배포별 조정 need 는
-  `runtime-policy.local.yaml` deep-merge(`load_runtime_policy()`, local 우선)로 *이미* 충족 —
-  relocation 불요. (재제안 방지용 기록.)
-- **[Wave 4 decision record] `.env.agents` → `.env` rename = 완료 (2026-06-04).** 원래 검토는
-  `.env.agents` → `secrets/` 이전(선호하나 보류)이었으나, decision record 의 reason ①
-  (**dotenv-at-root 보편 관례** — `.env*` 는 루트에 둔다)을 근거로 *secrets/ 이전이 아니라
-  `.env` 로의 rename* 을 채택했다. seed credential 을 관례적 `.env` 이름으로 정규화 —
-  `.env.agents.example` → `.env.example` 동반. `$ENV_PATH` default(utils `DEFAULT_ENV`) ·
-  pre_env_guard 정규식(`\.env\b(?!\.(?:example|template)\b)`) · `.gitignore`(기존 `.env`/`**/.env`
-  패턴이 그대로 커버, redundant `.env.agents` 라인 제거) · 전 docstring/boundary/doc 갱신 완료.
-  secrets/ 단일 홈 이전은 여전히 미채택(보안 이득 0 + churn — 위 reason ②③ 유효).
+  LLM 에 안 넘김). LLM 호출 단일 port 화(F-13, 처리 완료)는 그 인프라 축 — D-CORE-7 로 승격
+  (구조 결정 기록: [ADR-0005](../decisions/0005-boundary-ports-and-adapters.md) · [ADR-0003](../decisions/0003-llm-drafts-python-commits.md)).
+- **[추출됨 → ADR-0002 / ADR-0008]** Wave 4 의 evergreen 결정 — governance yaml → config/ 이전
+  기각(소유·버전관리 축, [ADR-0002](../decisions/0002-governance-config-ownership-axis.md)),
+  `.env` 명명 정규화(ADR-0002 보조 기록), storage 토폴로지 재배치(재생성가능성 축,
+  [ADR-0008](../decisions/0008-storage-topology.md)) — 은 영구 ADR 레지스터로 승격됐다.
+  findings §4 "승격 후 backlog 삭제" 규율에 따라 여기 중복 보존하지 않는다.
 
 ---
 
@@ -214,7 +207,7 @@ no-op) 추가, commit/drift 는 결정론 유지.
 |---|---|---|---|---|---|
 | — | — | `_shared/ports/` 패턴 확립 (CitationPort/ClockPort, screener 주입 + 거버넌스 템플릿) | 0 | hexagonal(형식화) | ✅ DONE 2026-06-05 |
 | F-16 | 3 | DART scan 3중복제 → `_shared/adapters/disclosure_scan` (port: `DisclosureSourcePort`). universe + catalyst 3 detector 채택; screener `detect_capital_signals_events` 는 의도적 제외(형태 상이) | 1 | hexagonal(flagship) | ✅ DONE 2026-06-05 |
-| F-17 | 1,7 | KisAccountPort(G9c type-level read-only) + shadow_portfolio→init_shadow_state rename + risk_engine/AGENTS.md. **물리 concern-reorg(sizing/monitor/account) + audit/·config/ 지역화는 미채택** — domain/+application/ 레이어가 BC 골격 충족 + ViolationLog need 부재 + churn>이득 (결정기록: risk_engine/AGENTS.md) | 2 | 구조+hexagonal | ✅ DONE 2026-06-05 |
+| F-17 | 1,7 | KisAccountPort(G9c type-level read-only) + shadow_portfolio→init_shadow_state rename + risk_engine/AGENTS.md. **물리 concern-reorg(sizing/monitor/account) + audit/·config/ 지역화는 미채택** — domain/+application/ 레이어가 BC 골격 충족 + ViolationLog need 부재 + churn>이득 (결정기록: [ADR-0007](../decisions/0007-risk-engine-no-concern-reorg.md)) | 2 | 구조+hexagonal | ✅ DONE 2026-06-05 |
 | F-18 | 2 | spx_constituents_refresh 오배치 → macro 이동 (cache 경로 무변경; risk_engine infra_common_dir dead 제거; cloud_routine_run.sh invoke 갱신) | 3 | 구조 이동 | ✅ DONE 2026-06-05 |
 | F-19 | 4,7 | `domains/brief_gate` → `domains/_shared/brief_gate` 강등 (순수 validator, _boundary 없음; test→_shared/tests; hook/skill/pyproject import 갱신) + "audit" 3중 의미 disambiguate (`_shared/__init__.py` doc) | 4 | 구조 강등 | ✅ DONE 2026-06-05 |
 | F-20 | 6 | CLAUDE.md 결손 보강(catalyst/policy/audit_integrity AGENTS.md 신설 → 8/8). **OutputWriter/Config 전 BC 블랭킷 롤아웃은 미채택** — 측정 결과 application/domain 의 `_boundary` import 가 이미 0~1 (catalyst/universe/audit_integrity/screener=0, macro/policy=1: macro resolve_path 의도된 IO·policy commit-provenance wall-clock 으로 AsOfClock형 ClockPort 부적합). 이미 decoupled 된 BC 에 미사용 port 추가 = YAGNI (over-abstraction 경계 — macro VotingStrategy 미도입 선례 존중). 필요 seam 은 Citation/Disclosure/KisAccount/Clock port 로 이미 커버 | 5 | hexagonal | ✅ DONE 2026-06-05 |
