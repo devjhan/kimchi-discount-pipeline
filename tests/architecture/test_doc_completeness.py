@@ -19,8 +19,10 @@ import pytest  # noqa: E402
 
 import _helpers as h  # noqa: E402
 
-# .guidelines/ 미작성 BC (후속 — D-ARCH-5 추적)
-_GUIDELINES_DONE: frozenset[str] = frozenset({"macro", "screener", "universe"})
+# .guidelines/ 완비 BC (D-ARCH-5). 7/7 — 4-BC 후속 채움 완료 (2026-06-06).
+_GUIDELINES_DONE: frozenset[str] = frozenset(
+    {"macro", "screener", "universe", "catalyst", "risk_engine", "policy", "audit_integrity"}
+)
 _GUIDELINES_PREFIXES: tuple[str, ...] = ("00", "01", "02", "03", "04", "05")
 
 
