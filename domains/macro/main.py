@@ -85,7 +85,13 @@ def main(argv: list[str] | None = None) -> int:
     decision = classify_regime(indicators, cfg)
     cash_band = (cfg.get("cash_band") or {}).get(decision.regime, [0.30, 0.70])
     total_exposure_budget = round(1.0 - cash_band[1], 4)
-    shift = detect_regime_shift(date_iso, decision.regime, cfg)
+    # composition root: trail 경로 resolver 주입 (application 은 _boundary 비의존 — ADR-0005)
+    shift = detect_regime_shift(
+        date_iso,
+        decision.regime,
+        cfg,
+        trail_dir_for=lambda d: _boundary.resolve_path("trail_today", date=d),
+    )
 
     # ----- runtime invariants — G7 citation 검증 -----
     for name, ind in indicators.items():

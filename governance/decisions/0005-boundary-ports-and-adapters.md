@@ -28,9 +28,15 @@ HOW (포트 추출 절차·템플릿) 의 SSoT 는 `domains/screener/.guidelines
 
 - fitness test 가 강제: `infrastructure` import 은 `_boundary.py` 만 (불변식 C,
   `tests/architecture/test_boundary_gate.py`).
-- **미전환 잔여**: macro/policy/risk_engine 의 application·domain 이 아직 `_boundary` 를
-  직접 import (screener 전용 Phase-0 목표) → fitness test 에서 BC 별 `xfail` 로 추적,
-  전환되면 자동 green.
+- **불변식 D 전환 완료 (7/7, 2026-06-06)**: macro/policy/risk_engine 의 application·domain
+  이 더 이상 `_boundary` 를 직접 import 하지 않는다 → `_D_UNCONVERTED` 비었고 전 BC
+  hard-assert 통과. 전환 방식은 BC 특성별로 상이 (모두 composition-root 주입 원리):
+  - **policy** — application 의 유일 의존(시계)을 `_shared.time.clock` 커널로 치환 (주입 불요).
+  - **macro** — `detect_regime_shift` 에 `trail_dir_for` 경로 resolver callable 주입 (main).
+  - **risk_engine** — 6 application 모듈이 placeholder + `configure(boundary)` 노출,
+    플랫 shim 이 composition root 로서 `_boundary` 주입. `KisAccountPort` (G9c) 별도 유지.
+  후속(선택): risk_engine 의 facade 주입을 concern 별 narrow port (clock/output/store) 로
+  세분화 (screener `CitationPort` 패턴) — 현재는 불변식 D 충족으로 충분.
 
 ## Alternatives considered
 

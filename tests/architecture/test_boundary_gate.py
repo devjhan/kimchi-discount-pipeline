@@ -2,9 +2,9 @@
 불변식 C·D — _boundary 게이트 (D-ARCH-4 / ADR-0005).
 
 C: BC 당 infrastructure import 은 _boundary.py 만 (+ allowlist). GREEN — hard-assert.
-D: application/·domain/ 은 _boundary 를 직접 import 하지 않는다 (typed adapter 주입).
-   macro/policy/risk_engine 는 Ports&Adapters Phase-0 미전환 → xfail(strict=False).
-   해당 BC 가 port 주입으로 전환되면 자동으로 xpass → green 으로 승격.
+D: application/·domain/ 은 _boundary 를 직접 import 하지 않는다 (composition-root 주입).
+   7/7 BC 전환 완료 (2026-06-06) → 전 BC hard-assert. _D_UNCONVERTED 비었음.
+   composition root = 각 BC 의 main / 플랫 shim 이 _boundary 를 application 에 주입.
 """
 
 from __future__ import annotations
@@ -18,8 +18,9 @@ import pytest  # noqa: E402
 
 import _helpers as h  # noqa: E402
 
-# 불변식 D 미전환 BC (screener 전용 Phase-0 목표 — 나머지는 후속 전환 추적)
-_D_UNCONVERTED: frozenset[str] = frozenset({"macro", "policy", "risk_engine"})
+# 불변식 D 미전환 BC — 0/7 (전 BC 전환 완료 2026-06-06: macro/policy/risk_engine 가
+# composition-root 주입으로 _boundary 직접 import 제거. ADR-0005 / D-ARCH-4 잔여 해소).
+_D_UNCONVERTED: frozenset[str] = frozenset()
 
 
 def _c_offenders(bc: str) -> list[str]:

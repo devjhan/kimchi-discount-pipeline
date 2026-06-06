@@ -21,12 +21,11 @@ import 가능. **단, `infrastructure.*` 직접 import 의 유일 예외는 allo
 
 **D — genuine GREEN:** `grep "_boundary" domains/audit_integrity/application/ domains/audit_integrity/
 domain/` → 0. application/domain 은 `_boundary` 의존 없음 (엔진은 `price_for` callback 으로 가격
-주입, serde 는 pure). audit_integrity 는 `_D_UNCONVERTED` (`{macro, policy, risk_engine}`) 에 **없으므로**
-`test_application_domain_does_not_import_boundary[audit_integrity]` 는 진짜 hard-assert 로 pass —
-D 가 xfail 이 아닌 실제 green. `_boundary` 를 import 하는 파일은 모두 허용 레이어 (`io/` + `main.py`
-+ `audit/log.py`).
+주입, serde 는 pure). `_D_UNCONVERTED` 는 비었고 (전 BC 전환 완료 2026-06-06)
+`test_application_domain_does_not_import_boundary[audit_integrity]` 는 hard-assert 로 pass.
+`_boundary` 를 import 하는 파일은 모두 허용 레이어 (`io/` + `main.py` + `audit/log.py`).
 
-> 이 BC 가 4개 미작성 BC 중 유일하게 D 까지 이미 green 인 것은, 엔진이 처음부터 가격 주입
+> 이 BC 는 처음부터 (다른 BC 의 후속 전환과 달리) D 가 green 이었다 — 엔진이 가격 주입
 > (callback) 패턴으로 작성됐기 때문 — Ports & Adapters 의 reference 사례.
 
 ## 검증

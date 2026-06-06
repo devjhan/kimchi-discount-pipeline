@@ -135,8 +135,9 @@ cross-BC 결정은 중앙 ADR / D-ARCH
 ```
 
 **Hook**: **fitness test** `tests/architecture/test_doc_completeness.py` (`AGENTS.md` 7/7
-+ `.guidelines/` 추적; 미충족 BC 는 `xfail` 로 명시 — silent cap 아님). 현재 `.guidelines/`
-는 3/7 (macro·screener·universe); 나머지 4 BC 는 후속 채움 (xfail 이 추적).
++ `.guidelines/` 7/7 — `_GUIDELINES_DONE` 전 BC; 미충족 BC 가 생기면 `xfail` 로 명시 —
+silent cap 아님). `.guidelines/` 는 7/7 완비 (2026-06-06: catalyst/risk_engine/policy/
+audit_integrity 후속 채움 완료).
 
 ---
 

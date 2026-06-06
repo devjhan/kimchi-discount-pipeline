@@ -15,19 +15,28 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from domains.risk_engine._boundary import (
-    DEFAULT_THRESHOLDS,
-    KST,
-    base_report_envelope,
-    emit_summary_line,
-    format_citation,
-    load_yaml_config,
-    normalize_to_trading_day,
-    positions_store,
-    resolve_positions_dir as _positions_dir,
-    resolve_trail_dir as _trail_dir,
-    write_output_safely,
-)
+# ── Boundary-injected deps (D-ARCH-4 / ADR-0005, invariant-D) ───────────────────
+# application/ 은 _boundary 를 import 하지 않는다. 플랫 shim
+# (risk_engine/thesis_expiry_monitor.py) 이 composition root 로서 configure(_boundary) 주입.
+DEFAULT_THRESHOLDS = KST = base_report_envelope = emit_summary_line = None
+format_citation = load_yaml_config = normalize_to_trading_day = positions_store = None
+write_output_safely = None
+_positions_dir = _trail_dir = None
+
+
+def configure(boundary: Any) -> None:
+    """Composition-root wiring — 플랫 shim 이 _boundary 를 주입 (invariant-D 준수)."""
+    g = globals()
+    for _n in (
+        "DEFAULT_THRESHOLDS", "KST", "base_report_envelope", "emit_summary_line",
+        "format_citation", "load_yaml_config", "normalize_to_trading_day",
+        "positions_store", "write_output_safely",
+    ):
+        g[_n] = getattr(boundary, _n)
+    g["_positions_dir"] = boundary.resolve_positions_dir
+    g["_trail_dir"] = boundary.resolve_trail_dir
+
+
 from domains.risk_engine.domain.expiry import (
     DAYS_PER_MONTH,
     DEFAULT_TIERS,

@@ -31,6 +31,13 @@ from domains.risk_engine.domain.sizing import (
     size_one,
 )
 
+from domains.risk_engine import _boundary
+from domains.risk_engine.application import sizing as _app_module
+
+# composition root: _boundary 를 application layer 에 주입 (invariant-D — ADR-0005)
+_app_module.configure(_boundary)
+
+
 __all__ = [
     "SCHEMA_VERSION",
     "STAGE_NAME",

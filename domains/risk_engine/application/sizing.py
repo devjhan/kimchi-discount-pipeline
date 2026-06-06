@@ -12,20 +12,28 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from domains.risk_engine._boundary import (
-    DEFAULT_ENV,
-    DEFAULT_THRESHOLDS,
-    base_report_envelope,
-    emit_summary_line,
-    load_derived_state,
-    load_env_file,
-    load_user_portfolio,
-    load_yaml_config,
-    normalize_to_trading_day,
-    resolve_trail_dir as _trail_dir,
-    secret_safe_log,
-    write_output_safely,
-)
+# ── Boundary-injected deps (D-ARCH-4 / ADR-0005, invariant-D) ───────────────────
+# application/ 은 _boundary 를 import 하지 않는다. 플랫 shim (risk_engine/sizing.py)
+# 이 composition root 로서 import 시 configure(_boundary) 로 아래 이름을 주입한다.
+DEFAULT_ENV = DEFAULT_THRESHOLDS = None
+base_report_envelope = emit_summary_line = None
+load_derived_state = load_env_file = load_user_portfolio = load_yaml_config = None
+normalize_to_trading_day = secret_safe_log = write_output_safely = None
+_trail_dir = None
+
+
+def configure(boundary: Any) -> None:
+    """Composition-root wiring — 플랫 shim 이 _boundary 를 주입 (invariant-D 준수)."""
+    g = globals()
+    for _n in (
+        "DEFAULT_ENV", "DEFAULT_THRESHOLDS", "base_report_envelope", "emit_summary_line",
+        "load_derived_state", "load_env_file", "load_user_portfolio", "load_yaml_config",
+        "normalize_to_trading_day", "secret_safe_log", "write_output_safely",
+    ):
+        g[_n] = getattr(boundary, _n)
+    g["_trail_dir"] = boundary.resolve_trail_dir
+
+
 from domains.risk_engine.domain.sizing import (
     SizeRecommendation,
     apply_portfolio_kelly_cap,

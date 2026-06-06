@@ -16,16 +16,25 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from domains.risk_engine._boundary import (
-    KST,
-    base_report_envelope,
-    emit_summary_line,
-    format_citation,
-    load_derived_state,
-    normalize_to_trading_day,
-    resolve_positions_dir as _positions_dir,
-    write_output_safely,
-)
+# ── Boundary-injected deps (D-ARCH-4 / ADR-0005, invariant-D) ───────────────────
+# application/ 은 _boundary 를 import 하지 않는다. 플랫 shim
+# (risk_engine/portfolio_state_derive.py) 이 composition root 로서 configure(_boundary) 주입.
+KST = base_report_envelope = emit_summary_line = format_citation = None
+load_derived_state = normalize_to_trading_day = write_output_safely = None
+_positions_dir = None
+
+
+def configure(boundary: Any) -> None:
+    """Composition-root wiring — 플랫 shim 이 _boundary 를 주입 (invariant-D 준수)."""
+    g = globals()
+    for _n in (
+        "KST", "base_report_envelope", "emit_summary_line", "format_citation",
+        "load_derived_state", "normalize_to_trading_day", "write_output_safely",
+    ):
+        g[_n] = getattr(boundary, _n)
+    g["_positions_dir"] = boundary.resolve_positions_dir
+
+
 from domains.risk_engine.domain.portfolio_state import (
     DEFAULT_LOOKBACK_DAYS,
     SCHEMA_VERSION,

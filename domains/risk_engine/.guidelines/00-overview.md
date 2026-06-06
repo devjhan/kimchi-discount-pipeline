@@ -18,7 +18,8 @@ event trigger / expiry tier 일일 monitoring, 그리고 계좌 read-only 동기
 
 3. **`_boundary.py` 단일 infra-import 게이트** — `infrastructure.*` 직접 import 는
    `_boundary.py` 만. 검증: `grep -rn "from infrastructure" domains/risk_engine/ | grep -v _boundary.py`
-   → 0 줄 (GREEN). 단, application/domain 의 `_boundary` *직접* import 는 아직 RED — `03-boundaries.md`.
+   → 0 줄 (GREEN). application/domain 의 `_boundary` 직접 import 도 제거 완료
+   (composition-root `configure()` 주입, 2026-06-06) — invariant-D GREEN, `03-boundaries.md`.
 
 4. **type-level read-only KIS gate (G9c, 4번째 구조적 guard)** —
    `ports/kis_account.py:KisAccountPort` 는 read 6 메서드만 노출 (order/submit/cancel 없음).
@@ -45,7 +46,7 @@ event trigger / expiry tier 일일 monitoring, 그리고 계좌 read-only 동기
 ### ports/ — typed port
 - `kis_account.py` `KisAccountPort` Protocol — G9c read-only 6 메서드
 
-### application/ — orchestration + IO (현재 `_boundary` 직접 import — RED)
+### application/ — orchestration + IO (`_boundary` 는 shim 이 configure() 주입 — invariant-D GREEN)
 - `sizing.py` / `portfolio_state.py` / `thesis_sync.py` / `falsifier_proximity.py` /
   `event_falsifier_linker.py` / `thesis_expiry.py` — 각 stage main
 

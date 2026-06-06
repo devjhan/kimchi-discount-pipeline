@@ -7,20 +7,19 @@ thresholds.yaml.macro.* 를 받았으나 신규는 config/regimes.yaml 의 ``thr
 
 IO 책임 (외부 감사 2026-05-17 명시):
 - ``classify_regime`` — pure function (config + indicators dict in, RegimeResult out).
-- ``detect_regime_shift`` — *단방향 file read* (과거 trail 의 ``00-macro-regime.json``)
-  를 ``_boundary.resolve_path`` 통과해 수행. application layer 의 IO 는 일반적으로
-  anti-pattern 이나, 본 함수는 (a) read-only, (b) boundary 통과, (c) 이전 trail
-  파일이 단순 환경 read 이라 별도 service 추출 가치가 낮음 — 실용적 타협.
-  향후 backtest harness 도입 시 ``previous_regime_loader`` 같은 작은 callable
-  로 추출 검토.
+- ``detect_regime_shift`` — *단방향 file read* (과거 trail 의 ``00-macro-regime.json``).
+  경로 해석은 composition root 가 주입하는 ``trail_dir_for`` callable 로 수행 →
+  application layer 는 ``_boundary`` 를 import 하지 않는다 (D-ARCH-4 / ADR-0005,
+  invariant-D). 파일 read (json.load) 자체는 stdlib — boundary 관심사 아님.
 """
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Any, Mapping
 
-from domains.macro import _boundary
 from domains.macro.domain.regime import IndicatorResult, RegimeResult
 from domains.macro.signals.factory import SIGNALS  # import 가 4 signal 등록 트리거
 
@@ -86,10 +85,17 @@ def detect_regime_shift(
     current_date: str,
     current_regime: str,
     cfg: Mapping[str, Any],
+    *,
+    trail_dir_for: Callable[[str], Path],
 ) -> dict[str, Any]:
     """이전 cron run 의 regime 과 비교해 consecutive_days_in_current 계산.
 
     require_consecutive_days 충족 시 alert=True. legacy 와 동일 동작.
+
+    ``trail_dir_for`` 는 composition root (``main.py``) 가 주입하는 trail 경로 resolver
+    (date str → Path). application layer 가 ``_boundary`` 를 직접 import 하지 않도록
+    경로 해석을 주입 (D-ARCH-4 / ADR-0005). 과거 docstring 이 예고한 ``previous_regime``
+    loader seam 의 실현.
     """
     require = int(
         (cfg.get("regime_shift_alert") or {}).get("require_consecutive_days", 3)
@@ -99,10 +105,7 @@ def detect_regime_shift(
     previous_regime: str | None = None
     for back in range(1, require + 5):
         prev_dt = cur_dt - timedelta(days=back)
-        prev_path = (
-            _boundary.resolve_path("trail_today", date=prev_dt.strftime("%Y-%m-%d"))
-            / "00-macro-regime.json"
-        )
+        prev_path = trail_dir_for(prev_dt.strftime("%Y-%m-%d")) / "00-macro-regime.json"
         if not prev_path.exists():
             continue
         try:

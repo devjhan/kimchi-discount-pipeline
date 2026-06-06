@@ -16,13 +16,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Mapping
 
-from domains.policy import _boundary
 from domains.policy.audit.violation import GuardViolation
 from domains.policy.domain.commit_gate import decide_commit
 from domains.policy.domain.drift import Drift
 from domains.policy.domain.research_result import ResearchOutput
 from domains._shared.profile_registry.errors import ProfileDriftError
 from domains._shared.profile_registry.registry import ProfileRegistry
+from domains._shared.time.clock import now_kst  # 시계는 _shared 커널 (D-ARCH-4 — _boundary 비의존)
 
 
 @dataclass(frozen=True)
@@ -64,7 +64,7 @@ def commit_profile(
         prev,
         out,
         drift_threshold=drift_threshold,
-        committed_at=_boundary.now_iso_kst(),
+        committed_at=now_kst().isoformat(timespec="seconds"),  # == _utils.now_iso_kst()
         trigger=trigger,
     )
     ruling = decision.ruling
@@ -72,7 +72,7 @@ def commit_profile(
     if ruling.exceeds_threshold:
         audit_log.record(
             GuardViolation(
-                detected_at=_boundary.now_kst(),
+                detected_at=now_kst(),
                 severity="blocking" if ruling.blocks_commit else "warning",
                 rule_name="profile_drift",
                 ticker=out.ticker,
