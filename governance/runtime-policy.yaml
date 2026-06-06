@@ -1,0 +1,64 @@
+# ============================================================
+# governance/runtime-policy.yaml — system policy (declarative)
+# ============================================================
+# 본 파일은 git 추적 대상 — 시스템의 hard policy 만 포함.
+# 사용자 환경별 활성화 결정 (USER_ACKNOWLEDGED_*) 은 본 파일이 아닌
+# `runtime-policy.local.yaml` (gitignore) 에 작성한다. 본 파일과
+# .local.yaml 은 load_runtime_policy() 에서 deep-merge (local override 우선).
+#
+# 변경 빈도: 매우 낮음 (G9/G19 의 정적 enforcement 변화 시).
+# 본 파일 자체는 hard policy 이므로 사용자 임의 변경 금지.
+# ============================================================
+
+version: 1
+schema: investment-runtime-policy-v1
+
+# ------------------------------------------------------------
+# Hard config switches — G9 정적 enforcement
+# ------------------------------------------------------------
+agent:
+  # 자동 매매 절대 금지 (G9a). 변경 금지.
+  block_auto_trade: true
+
+# ------------------------------------------------------------
+# KIS read-only account access  (G9b/c — 매매/주문 endpoint 는 절대 부재)
+# ------------------------------------------------------------
+# 본 시스템의 KIS API 사용은 다음 3중 차단으로 매매를 막는다:
+#   1) 코드 부재  — infrastructure/kis/client.py 에 매매/주문 path 문자열 없음
+#   2) Bash deny  — .claude/settings.json 의 *kis_order* / *place_order* /
+#                   write TR_ID literal 거부
+#   3) Policy whitelist — 본 파일 allowed_tr_ids 에 없는 tr_id 호출 시 client 가
+#                         즉시 KisUnavailable raise
+#
+# enabled=false 가 default — 사용자가 runtime-policy.local.yaml 에서 true 로
+# override 해야만 read-only 계좌 호출 활성. local override 미존재 환경 (예:
+# CI / 신규 clone) 에서는 자동 비활성으로 안전.
+kis:
+  read_only_account:
+    enabled: false
+    allowed_tr_ids:
+      - TTTC8434R   # 주식잔고조회
+      - TTTC8494R   # 주식잔고조회_실현손익
+      - TTTC0081R   # 주식일별주문체결조회 (3개월 이내)
+      - CTSC9215R   # 주식일별주문체결조회 (3개월 이전)
+      - TTTC8908R   # 매수가능조회
+      - TTTC8408R   # 매도가능수량조회
+      - CTRP6548R   # 투자계좌자산현황조회
+    forbidden_tr_ids:
+      # KIS 매매/주문 — 본 시스템 사용 절대 금지 (코드 부재 + Bash deny + 본 list)
+      - TTTC0802U   # 주식주문(현금) 매수
+      - TTTC0801U   # 주식주문(현금) 매도
+      - TTTC0803U   # 주식주문(정정취소)
+      - TTTC0851U   # 주식주문(신용)
+      - CTSC0008U   # 주식예약주문
+
+# ------------------------------------------------------------
+# User acknowledgment defaults  (실제 활성화는 .local.yaml override)
+# ------------------------------------------------------------
+# 본 파일에서는 모두 false default — runtime-policy.local.yaml 에서
+# 사용자가 자기 환경 한정으로 true override.  daily_pipeline.sh 의
+# USER_ACK gate 는 final merged 값을 기준으로 판정.
+user_acknowledged:
+  not_financial_advice: false
+  no_auto_trade: false
+  sample_size_limits: false

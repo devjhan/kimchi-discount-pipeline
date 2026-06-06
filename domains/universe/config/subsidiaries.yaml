@@ -1,0 +1,33 @@
+# ============================================================
+# subsidiaries.yaml — Holding Company Subsidiaries Manual SSoT (Run 2)
+# ============================================================
+# HoldingCompanySource (sources.yaml 의 type=holding_company entry) 가 본 파일을
+# subsidiaries_map_ref 로 읽음. Run 5 nav_discount enricher 도 동일 파일 사용.
+#
+# 원본: governance/thresholds.yaml.universe.holding_companies_subsidiaries (LG 예시만)
+# Run 4 deprecate 후 본 파일이 canonical, thresholds.yaml 의 holding_companies_subsidiaries
+# 키는 제거 예정 (parity validation 후).
+#
+# DART 사업보고서 본문 출자현황 표 자동 파싱은 비결정적이므로 1차는 사용자가 manual
+# map 으로 maintain. HoldingCompanySource 가 audit log 산출 → 사용자 검토 후 본 파일 갱신.
+#
+# ownership_pct = 직접 지분율 (0.0 ~ 1.0).
+# indirect_via 는 간접 보유 자회사 stock_code (예: LG → LG에너지솔루션은 LG화학 통한 간접 보유).
+# listed = KRX 상장 여부 (true 면 KIS / Yahoo 시총 fetch 가능).
+# ============================================================
+
+schema: "universe-subsidiaries-v1"
+version: 1
+description: "지주사 자회사 manual SSoT — Stage 1 holding_company source 입력. NAV 할인 계산 (Run 5 enricher) 의 입력 데이터."
+last_updated: "2026-05-17"
+
+subsidiaries_map:
+  "KR:003550":                           # LG (예시 — 사용자가 검증/갱신)
+    - {stock_code: "051910", name: "LG화학",       ownership_pct: 0.305, listed: true}
+    - {stock_code: "066570", name: "LG전자",       ownership_pct: 0.331, listed: true}
+    - {stock_code: "032640", name: "LG유플러스",    ownership_pct: 0.371, listed: true}
+    - {stock_code: "373220", name: "LG에너지솔루션", ownership_pct: 0.0,   listed: true, indirect_via: "051910"}
+  # "KR:028260":  # 삼성물산 — 사용자 입력 대기
+  # "KR:034730":  # SK
+  # "KR:078930":  # GS
+  # "KR:000880":  # 한화

@@ -1,0 +1,33 @@
+# ============================================================
+# enrichers.yaml — Universe Enricher Manifest (Run 5)
+# ============================================================
+# domains.universe.application.build_universe (Run 5+) 가 본 파일을 읽어
+# 각 enricher 인스턴스를 build_enricher() 로 생성. fan-in discovery 후
+# entries 의 source_category 가 enricher.applies_to 에 포함되면 attach.
+#
+# 신규 enricher 추가 시 ``enrichers:`` list 에 entry 한 개 추가만 하면
+# Python 코드 변경 없이 다음 cron run 부터 활성화 (단, type 이 register_enricher
+# 에 등록되어 있어야 함).
+# ============================================================
+
+schema: "universe-enrichers-v1"
+version: 1
+description: "Stage 1 universe attribute enrichment. Run 5 시점: nav_discount + spread_zscore."
+last_updated: "2026-05-17"
+
+enrichers:
+  # 지주사 NAV 할인 — applies_to=holding_company
+  # 원래 alpha_factory/stage1_nav_calc.py 의 evaluate_holding_company + compute_nav.
+  - type: "nav_discount"
+    name: "nav_discount"
+    applies_to: ["holding_company"]
+    subsidiaries_map_ref: "subsidiaries.yaml"
+
+  # 우선주 스프레드 z-score — applies_to=preferred_share_pair
+  # 원래 alpha_factory/stage1_pref_spread.py 의 evaluate_pair + compute_zscore.
+  - type: "spread_zscore"
+    name: "spread_zscore"
+    applies_to: ["preferred_share_pair"]
+    lookback_days: 750         # ~3년 영업일
+    min_observations: 600      # z-score 의미 있는 sample size 하한
+    z_min: 1.5                 # |z| >= 1.5 시 catalyst_flag=true (mean-reversion entry)

@@ -1,0 +1,83 @@
+# ============================================================
+# sources.yaml — Universe Discovery Source Manifest (Run 2)
+# ============================================================
+# domains.universe.application.build_universe (Run 4) 가 본 파일을 읽어
+# 각 source 인스턴스를 build_source() 로 생성, fan-in 으로 entries 합산.
+#
+# 신규 source 추가 시 ``sources:`` list 에 entry 한 개 추가만 하면
+# Python 코드 변경 없이 다음 cron run 부터 활성화 (단, type 이 register_source
+# 에 등록되어 있어야 함).
+# ============================================================
+
+schema: "universe-sources-v1"
+version: 3
+description: "Stage 1 universe discovery source 목록. Run 5 시점: literal_list + holding_company + DartDisclosureFilter 3종 + preferred_share_pair_seed."
+last_updated: "2026-05-17"
+
+sources:
+  # 사용자 명시 추가 종목 (config/manual_additions.yaml 의 items: list)
+  - type: "literal_list"
+    name: "manual_addition"
+    items_ref: "manual_additions.yaml"
+    source_category: "manual_addition"
+
+  # 지주사 자회사 manual SSoT + DART 자동 파싱 audit
+  # entries 는 비어 있음 (의도된 비대칭) — audit log 만 산출
+  - type: "holding_company"
+    name: "holding_company"
+    subsidiaries_map_ref: "subsidiaries.yaml"
+    source_category: "holding_company"
+
+  # ----------------------------------------------------------------
+  # DartDisclosureFilter 3 인스턴스 (Run 3 — Pain 1/2 통합)
+  # 원래 alpha_factory/universe.py 의 discover_treasury_actions /
+  # discover_spin_off_announcements / discover_activist_filings 3 함수가
+  # 35-60줄씩 retry 로직을 복제했음. 본 3 entry 는 단일 클래스 다른 config.
+  # 5/14 incident progressive degrade 패치 single source.
+  # ----------------------------------------------------------------
+
+  # 자사주 취득 / 소각 공시
+  - type: "dart_disclosure_filter"
+    name: "treasury_action"
+    pblntf_ty: "B"
+    lookback_months: 12
+    source_category: "treasury_action"
+    progressive_degrade: true
+    keyword_groups:
+      cancellation: ["주식소각", "자기주식소각", "이익소각"]
+      purchase: ["자기주식취득", "자기주식 취득결정"]
+    priority_groups:
+      cancellation: "cancellation_priority=true (소각이 본질 catalyst)"
+
+  # 분할 / 합병 공시 — 단일 source_category 로 합산, 세부는 metadata.kind
+  - type: "dart_disclosure_filter"
+    name: "spin_off_or_merger"
+    pblntf_ty: "B"
+    lookback_months: 24
+    source_category: "spin_off_or_merger"
+    progressive_degrade: true
+    keyword_groups:
+      spin_off: ["분할결정", "회사분할", "인적분할", "물적분할"]
+      merger: ["합병결정", "합병계약", "분할합병결정"]
+
+  # 행동주의 / 5% 대량보유 공시
+  - type: "dart_disclosure_filter"
+    name: "activist_filing"
+    pblntf_ty: "D"
+    lookback_months: 12
+    source_category: "activist_filing"
+    progressive_degrade: true
+    keyword_groups:
+      activist_5pct: ["주식등의대량보유상황"]
+    annotate_filers:
+      - "강성부 펀드"
+      - "라이프자산운용"
+      - "안다자산운용"
+
+  # 우선주 페어 seed — 각 페어를 common ticker 의 entry 로 emit (Run 5)
+  # SpreadZScoreEnricher 가 metadata.{common, preferred} 를 읽어 z-score 산출
+  - type: "preferred_share_pair_seed"
+    name: "preferred_share_pair"
+    pairs_ref: "preferred_pairs.yaml"
+    auto_discover: false                   # true 시 DART KRX listing scan 시도
+    source_category: "preferred_share_pair"

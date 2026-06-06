@@ -1,0 +1,25 @@
+# ============================================================
+# preferred_pairs.yaml — User Manual Preferred-Common Pairs (Run 5)
+# ============================================================
+# PreferredShareSeedSource (sources.yaml 의 type=preferred_share_pair_seed entry) 가
+# 본 파일을 pairs_ref 로 읽음. SpreadZScoreEnricher 가 각 페어의 z-score 계산.
+#
+# 원본: governance/thresholds.yaml.universe.preferred_share_pairs.manual_pairs (Run 5 까지
+# legacy alpha_factory/stage1_pref_spread.py 가 같은 데이터 사용)
+# Run 5 deprecate 후 본 파일이 canonical, thresholds.yaml 의 preferred_share_pairs
+# 키는 제거 (legacy stage1_pref_spread.py 삭제 PR 와 동일 commit).
+#
+# KRX 자동 listing scan 도 가능 (sources.yaml 의 auto_discover: true) — 1차는 manual.
+# ============================================================
+
+schema: "universe-preferred-pairs-v1"
+version: 1
+description: "우선주/보통주 페어 manual SSoT — z-score 기반 mean-reversion entry signal 의 입력."
+last_updated: "2026-05-17"
+
+manual_pairs:
+  - {common: "005930", preferred: "005935", name_common: "삼성전자",     name_preferred: "삼성전자우",     market: "KOSPI"}
+  - {common: "005380", preferred: "005385", name_common: "현대차",       name_preferred: "현대차우",       market: "KOSPI"}
+  - {common: "000660", preferred: "001045", name_common: "SK하이닉스",   name_preferred: "SK하이닉스우",   market: "KOSPI"}
+  - {common: "051910", preferred: "051915", name_common: "LG화학",       name_preferred: "LG화학우",       market: "KOSPI"}
+  - {common: "066570", preferred: "066575", name_common: "LG전자",       name_preferred: "LG전자우",       market: "KOSPI"}

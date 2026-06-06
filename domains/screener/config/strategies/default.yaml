@@ -1,0 +1,27 @@
+schema: "screener-strategy-v1"
+name: "default"
+version: 1
+description: "Stage 2 quality filter — quality_floor profile 단독 (alpha_factory 직역)"
+
+# 다른 profile 조합 (예: contrarian_value, holding_company) 은 별도 strategy YAML.
+# 본 strategy 의 출력은 $TRAIL_TODAY/02-quality-filter.json (schema v1 유지).
+
+# strategy 단위 상수 — profile 의 rule 평가에 주입.
+# tax_rate 는 RuleFactory.build_strategy(..., tax_rate=...) 로 전달.
+# financial_cache 는 LiveFinancialCache 의 CachePolicy 로 변환.
+constants:
+  tax_rate: 0.22                       # 한국 법인세 통상치. ROIC NOPAT.
+  financial_cache:
+    financials_ttl_days: 30            # DART 사업보고서 cache 유효기간
+    capital_signals_ttl_days: 7        # B-type 공시 cache 유효기간
+    staleness_grace_days: 14           # G8 graceful fallback 허용
+
+rule:
+  type: "profile_ref"
+  profile: "quality_floor"
+
+# Stage 3/4/6 / quality-lens / audit-shadow 가 read 하는 산출 schema.
+# bump 시 5 consumer 동시 PR — 본 strategy 변경으로 hard-coded.
+output:
+  trail_filename: "02-quality-filter.json"
+  schema: "investment-stage2-quality-filter-v1"

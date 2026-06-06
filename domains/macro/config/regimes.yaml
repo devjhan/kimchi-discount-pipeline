@@ -1,0 +1,68 @@
+# ============================================================
+# regimes.yaml — Stage 0 Macro Regime Classifier Config (Run 7)
+# ============================================================
+# domains.macro.main (Run 7+) 가 본 파일을 읽어 4 indicator (yield_curve /
+# credit_spread / vix / breadth) 의 임계값 + cash_band + regime_shift_alert 적용.
+#
+# 원본: governance/thresholds.yaml.macro.* (Run 7 시점 제거).
+# ============================================================
+
+schema: "macro-regimes-v1"
+version: 1
+description: "Stage 0 macro regime classifier — FRED + breadth 기반 결정적 분류 임계값."
+last_updated: "2026-06-04"
+
+# ----------------------------------------------------------------
+# 활성 Signal 플러그인 (등록 순서 = fetch / vote / envelope.indicators 순서).
+# 새 indicator 추가 = signals/{name}.py (@register_signal) + 본 리스트 한 줄
+# + signals/factory.py import 한 줄. main / classify_regime 수술 불요.
+# ----------------------------------------------------------------
+signals:
+  - yield_curve
+  - credit_spread
+  - vix
+  - breadth
+
+# ----------------------------------------------------------------
+# 각 indicator 의 voting 임계값 — 각 Signal.vote 가 자기 하위키를 읽는다
+# (Signal.vote 내부의 default value 와 일치 — drift 시 코드 우선)
+# ----------------------------------------------------------------
+thresholds:
+  yield_curve:
+    indicator: "US10Y - US2Y"
+    late_cycle_signal: 0.0           # inversion (negative spread) onset
+    late_cycle_persistence_months: 6
+    crisis_signal: -1.0
+  credit_spread:
+    indicator: "BAML_HY_OAS"
+    mid_cycle_max: 4.0
+    late_cycle_min: 5.0
+    crisis_min: 8.0
+  breadth:
+    indicator: "% above 200dma (S&P 500)"
+    healthy_min: 0.6
+    late_cycle_max: 0.4
+    crisis_max: 0.2
+  vix:
+    indicator: "VIX percentile (5y rolling)"
+    complacent_max: 0.2
+    panic_min: 0.85
+
+# ----------------------------------------------------------------
+# regime → cash 비중 범위 [min, max]. 전체 exposure = 1 - cash_band[1].
+# ----------------------------------------------------------------
+cash_band:
+  early_cycle:  [0.10, 0.30]
+  mid_cycle:    [0.20, 0.40]
+  late_cycle:   [0.40, 0.70]
+  crisis:       [0.50, 0.90]
+  unknown:      [0.30, 0.70]           # regime 판정 불가 시 default
+
+total_exposure_budget_formula: "1 - cash_band[1]"
+
+# ----------------------------------------------------------------
+# regime shift 가 require_consecutive_days 동안 지속되면 alert
+# ----------------------------------------------------------------
+regime_shift_alert:
+  require_consecutive_days: 3
+  notify_user: true

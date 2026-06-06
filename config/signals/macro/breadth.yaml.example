@@ -1,0 +1,40 @@
+# ============================================================
+# config/signals/macro/breadth.yaml.example  (template)
+# ============================================================
+# Stage 0 macro regime classifier 의 보조 indicator —
+# S&P 500 % above 200dma.
+#
+# !!! 자동 산출 우선 !!!
+# 본 파일은 Stage 0a (`domains.macro.breadth_fetch`) 가
+# 매일 overwrite 한다. Yahoo public chart 로 SPX 구성종목 200d SMA 를
+# 계산해 spx_above_200dma_pct / observed_at / source 3 필드를 갱신.
+# 수기 입력값은 다음 fetch 까지만 유지되며, 다음 fetch 가 덮어쓴다.
+#
+# 수기 입력 보존 방법:
+#   python -m domains.macro.breadth_fetch --no-overwrite
+#   (또는 daily_pipeline.sh 안에서 동일 flag)
+#
+# 미존재 또는 value=null 시 macro_regime 이 breadth indicator skip,
+# 다른 3 indicator (yield_curve / credit_spread / VIX) 만으로 regime 판정.
+#
+# 사용 방법 (production 환경에서는 fetch helper 가 자동 생성 — cp 불필요):
+#   cp config/signals/macro/breadth.yaml.example \
+#      config/signals/macro/breadth.yaml
+#   # → breadth.yaml 은 gitignore.
+# ============================================================
+
+version: 1
+schema: investment-external-signal-breadth-v1
+
+# 0.0 ~ 1.0 범위 (예: 0.55 = 55%).
+# null 시 stage0 가 indicator skip + warning citation.
+spx_above_200dma_pct: null
+
+# ISO timestamp (예: "2026-05-09"). null 시 stage0 가 source citation 에
+# `manual@unknown_observed_at` 로 표기 — 데이터 신선도 audit 가능.
+observed_at: null
+
+# 자유 string (예: "yardeni.com/spx-200dma 2026-05-09 close").
+# null 시 source citation 에 `manual@<observed_at>=spx_above_200dma:<value>`
+# 만 기록. 가능하면 명시 권장 (G7 evidence trail).
+source: null

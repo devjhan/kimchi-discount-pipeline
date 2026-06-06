@@ -1,0 +1,24 @@
+# ============================================================
+# operations/_user_context/behavior.yaml.example  (template)
+# ============================================================
+# 사용자 환경별 runtime behavior switches — secret 아님.
+# 사용 방법:
+#   cp operations/_user_context/behavior.yaml.example \
+#      operations/_user_context/behavior.yaml
+#   # → behavior.yaml 안에 사용자 환경 값 입력. behavior.yaml 은 gitignore.
+#
+# CLI flag (예: --allow-yahoo-fallback) 가 명시되면 본 파일 값보다 우선
+# (helper 의 명시적 override).  본 파일 값은 default.
+# ============================================================
+
+version: 1
+schema: investment-user-behavior-v1
+
+# ------------------------------------------------------------
+# Yahoo public chart endpoint fallback default
+# ------------------------------------------------------------
+# KIS API 미가용 시 Yahoo 로 자동 fallback 할지 여부. 한국 종목 데이터
+# quality / delay 이슈가 있으므로 보수적 false default.
+# 영향 helper: stage3_earnings_panic, stage1_nav_calc, stage1_pref_spread.
+yahoo_fallback:
+  enabled: false

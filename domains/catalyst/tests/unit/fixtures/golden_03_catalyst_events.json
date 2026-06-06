@@ -1,0 +1,125 @@
+{
+  "catalysts": [
+    {
+      "catalyst_id": "DART-20260510-R001",
+      "catalyst_type": "treasury_share_cancellation",
+      "detected_at": "2026-05-15T15:30:00+09:00",
+      "metadata": {
+        "lookback_days": 30,
+        "quality_pass_at_stage2": true,
+        "report_nm": "자기주식소각 결정"
+      },
+      "name": "소각주",
+      "source_citation": "DART@20260510={\"rcept_no\":\"R001\",\"report_nm\":\"자기주식소각 결정\"}",
+      "ticker": "KR:000001",
+      "trigger_class": "a_type"
+    },
+    {
+      "catalyst_id": "DART-20260510-R006",
+      "catalyst_type": "treasury_share_cancellation",
+      "detected_at": "2026-05-15T15:30:00+09:00",
+      "metadata": {
+        "d_type_augments": [
+          {
+            "catalyst_id": "DART-20260512-R066-activist",
+            "catalyst_type": "activist_5pct_filing",
+            "source_citation": "DART@20260512={\"rcept_no\":\"R066\",\"filer\":\"어떤펀드\"}"
+          }
+        ],
+        "lookback_days": 30,
+        "quality_pass_at_stage2": true,
+        "report_nm": "이익소각 결정"
+      },
+      "name": "소각플러스행동",
+      "source_citation": "DART@20260510={\"rcept_no\":\"R006\",\"report_nm\":\"이익소각 결정\"}",
+      "ticker": "KR:000006",
+      "trigger_class": "a_type"
+    },
+    {
+      "catalyst_id": "DART-20260511-R002-spin_off_announcement",
+      "catalyst_type": "spin_off_announcement",
+      "detected_at": "2026-05-15T15:30:00+09:00",
+      "metadata": {
+        "quality_pass_at_stage2": true,
+        "report_nm": "회사분할 결정"
+      },
+      "name": "분할주",
+      "source_citation": "DART@20260511={\"rcept_no\":\"R002\",\"report_nm\":\"회사분할 결정\"}",
+      "ticker": "KR:000002",
+      "trigger_class": "a_type"
+    },
+    {
+      "catalyst_id": "INDEX-20260513-R003",
+      "catalyst_type": "index_deletion",
+      "detected_at": "2026-05-15T15:30:00+09:00",
+      "metadata": {
+        "index_name": "KOSPI200",
+        "quality_pass_at_stage2": false,
+        "rcept_dt": "20260513",
+        "rcept_no": "R003",
+        "report_nm": "KOSPI200 정기변경 편입제외 안내"
+      },
+      "name": "인덱스종목",
+      "source_citation": "DART@20260513={\"rcept_no\":\"R003\",\"type\":\"index_deletion\",\"index\":\"KOSPI200\"}",
+      "ticker": "KR:000003",
+      "trigger_class": "b_type"
+    },
+    {
+      "catalyst_id": "EARNPANIC-20260514-R004",
+      "catalyst_type": "earnings_panic",
+      "detected_at": "2026-05-15T15:30:00+09:00",
+      "metadata": {
+        "additional_citations": [
+          "KIS@2026-05-15T15:30:00+09:00={\"stock_code\":\"000004\",\"d_minus_1\":10000.0,\"d_plus_1\":8500.0,\"drop_pct\":-0.15}"
+        ],
+        "one_day_drop_pct": -0.15,
+        "price_d_minus_1": 10000.0,
+        "price_d_plus_1": 8500.0,
+        "price_source": "KIS",
+        "quality_pass_at_stage2": true,
+        "rcept_dt": "20260514",
+        "rcept_no": "R004",
+        "report_nm": "영업(잠정)실적 (공정공시)",
+        "threshold": -0.1
+      },
+      "name": "실적종목",
+      "source_citation": "DART@20260514={\"rcept_no\":\"R004\",\"type\":\"earnings_announcement\"}",
+      "ticker": "KR:000004",
+      "trigger_class": "b_type"
+    }
+  ],
+  "d_type_orphans": [
+    {
+      "catalyst_id": "DART-20260512-R005-activist",
+      "catalyst_type": "activist_5pct_filing",
+      "detected_at": "2026-05-15T15:30:00+09:00",
+      "metadata": {
+        "augment_only_note": "G15 — d_type 단독 trigger 금지. a_type 또는 b_type과 결합 시에만 valid.",
+        "filer_name": "행동주의펀드",
+        "report_nm": "주식등의대량보유상황보고서"
+      },
+      "name": "행동주의표적",
+      "source_citation": "DART@20260512={\"rcept_no\":\"R005\",\"filer\":\"행동주의펀드\"}",
+      "ticker": "KR:000005",
+      "trigger_class": "d_type"
+    }
+  ],
+  "date": "2026-05-15",
+  "schema": "investment-stage3-catalyst-events-v1",
+  "stats": {
+    "by_catalyst_type": {
+      "earnings_panic": 1,
+      "index_deletion": 1,
+      "spin_off_announcement": 1,
+      "treasury_share_cancellation": 2
+    },
+    "d_type_orphans_excluded": 1,
+    "dry_run": false,
+    "quality_pass_size": 4,
+    "total_candidates": 5,
+    "universe_size": 6
+  },
+  "warnings": [
+    "nav_discount_narrowing: holding_companies_subsidiaries manual map 비어있음 — skip"
+  ]
+}

@@ -1,0 +1,87 @@
+# Java
+build/
+.gradle/
+*.class
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+*.egg-info
+.coverage
+coverage.xml
+
+# IDE
+.idea/
+.vscode/
+.project
+.settings/
+
+# IDE build artifacts
+backend/.classpath
+backend/bin/
+
+# OS
+.DS_Store
+**/.DS_Store
+
+# Secrets — agent API keys (DART / KIS / FRED)
+# actual secret dotenv (`.env` / `.env.local` / 레거시 `.env.agents`) 통째 ignore.
+# template (`.env.example` / `.env.template`) 만 `!` exception 으로 추적.
+# (`.env.*` 가 레거시 `.env.agents` 도 커버 — rename 전까지 남은 파일 보호.)
+.env
+.env.*
+!.env.example
+!.env.template
+**/.env
+
+# 사용자별 runtime config (yaml; .example 만 추적)
+governance/runtime-policy.local.yaml
+config/user/portfolio.yaml
+config/user/behavior.yaml
+config/user/*.local.yaml
+config/signals/macro/breadth.yaml
+
+# Daily pipeline artifacts —
+# operations/{date}/.trails/ 디렉토리는 ignore 하고 daily-brief.md 만 exception 으로 추적.
+
+operations/**/.trails/
+operations/
+
+# Hook audit logs — 로컬 dev artifact, 추적 불필요
+.claude/hooks/_audit.log
+.claude/hooks/*.log
+
+# 2026-06-02 operations/ 재편: 비일별 데이터를 telemetry/ · cache/ · secrets/ · config/ 로 이주.
+
+# telemetry/logs — hook / cron / launchd 실행 로그 (관측용, 누적 방지; 디렉토리는 .gitkeep 으로 유지)
+telemetry/logs/
+# telemetry/policy_drafts — commit 전 ephemeral policy draft (gitignore)
+telemetry/policy_drafts/
+# telemetry/audit (shadow-portfolio / trade-log / scheduler-state / violations / macro-breadth / subsidiaries)
+# · telemetry/positions · telemetry/nav-history (F-14: NAV 시계열 = 재생성-불가 증거)
+# 는 추적 — gitignore 하지 않음 (audit trail / 상태 스냅샷)
+
+# .cache/ — DART corp index / financials 재생성 가능 캐시 (통째 ignore).
+# F-15: top-level cache/ → 숨김 .cache/ (XDG 관례; 파일 단위 dotfile 산포 제거).
+.cache/
+
+# secrets/ — KIS OAuth token 등 API 자격증명, 절대 커밋 금지
+secrets/
+
+# Notify dispatch 결과 — 실행마다 생성되는 ephemeral artifact
+operations/**/_notify-results.json
+
+# v1 archive (legacy .handoff/ should never enter v2)
+.handoff/
+
+# Claude-Code - local symlink to AGENTS.md
+CLAUDE.md
+
+# Claude Code local settings (machine-specific env overrides — not committed)
+.claude/settings.local.json

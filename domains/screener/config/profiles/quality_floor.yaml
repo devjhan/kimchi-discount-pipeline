@@ -1,0 +1,59 @@
+schema: "screener-profile-v1"
+name: "quality_floor"
+version: 1
+description: "ROIC + 부채 + 현금흐름 + 자본배분 기본 퀄리티 통과 게이트"
+
+# profile 자체가 SSoT — 별도 thresholds.yaml 없음.
+# 정량 임계값은 rule.children 의 threshold/scoring params 에 직접 명시.
+# 상수 (tax_rate / cache TTL) 는 strategy YAML 의 constants 에서 주입.
+
+# LLM 정성 검증 메타 — investment-stage2-quality-lens skill 의 4 lens 정의.
+# 본 profile 의 rule 평가 결과 (pass) 종목에만 lens 적용.
+qualitative_lenses:
+  - "moat (산업 점유, 브랜드, 진입장벽)"
+  - "자본배분 합리성 (소각 의지 / 재투자 ROI)"
+  - "회계 적신호 (영업CF vs 순이익 괴리, 충당금 패턴)"
+  - "지주사 자회사 산업 매력도 (지주사 한정)"
+
+rule:
+  type: "and"
+  name: "quality_floor"
+  children:
+    - type: "threshold"
+      name: "roic_3y_avg"
+      metric_path: "annuals_avg.roic"
+      period_years: 3
+      op: "ge"
+      threshold: 0.10                  # 10% (3년 평균)
+
+    - type: "threshold"
+      name: "debt_to_equity"
+      metric_path: "latest_annual.debt_to_equity"
+      op: "le"
+      threshold: 1.0                   # 부채비율 100%
+
+    - type: "threshold"
+      name: "interest_coverage"
+      metric_path: "latest_annual.interest_coverage"
+      op: "ge"
+      threshold: 4.0
+
+    - type: "threshold"
+      name: "fcf_positive_years"
+      metric_path: "fcf_positive_years"
+      period_years: 3
+      op: "ge"
+      threshold: 3                     # 최근 3년 중 3년 모두 FCF 양수
+
+    - type: "threshold"
+      name: "fcf_to_revenue_ttm"
+      metric_path: "ttm.fcf_to_revenue"
+      op: "ge"
+      threshold: 0.05                  # FCF margin 5%
+
+    - type: "signal_presence"
+      name: "capital_allocation"
+      required_any_of:
+        - dividend_payment
+        - treasury_share_purchase
+        - treasury_share_cancellation

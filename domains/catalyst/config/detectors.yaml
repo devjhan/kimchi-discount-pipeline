@@ -1,0 +1,60 @@
+# ============================================================
+# detectors.yaml — Catalyst Detector Manifest
+# ============================================================
+# domains.catalyst.detectors.factory.build_detectors 가 본 파일을 읽어 각 detector
+# 인스턴스를 build_detector() 로 생성, application.scan_catalysts 가 fan-in 한다.
+#
+# 구 governance/thresholds.yaml:catalyst.* 를 흡수 (a/b/d_type weight·lookback·
+# threshold). 신규 detector 추가 시 ``detectors:`` list 에 entry 1개 + factory import
+# 1줄 (type 이 register_detector 에 등록돼 있어야 함). enabled: false 로 비활성화.
+#
+# 분류 (G15): a_type/b_type = primary trigger, d_type = augment-only (단독 금지).
+# ============================================================
+
+schema: "catalyst-detectors-v1"
+version: 1
+description: "Stage 3 catalyst detector 목록 — 자사주소각/분할합병/5%대량보유(d)/지수편출/실적패닉/NAV할인좁힘 6종. 구 thresholds.yaml:catalyst.* 흡수."
+
+# NOTE: detector 실행 순서 = 본 list 순서. 구 catalyst_scan 의 fn tuple 순서
+# (treasury → spin_off → activist → index → earnings → nav) 를 보존 — augment_d_type
+# 의 ticker grouping 이 삽입 순서에 의존하므로 catalysts 출력 순서 byte 호환 위해 고정.
+detectors:
+  # --- a_type (본질, primary trigger) ---
+  - name: treasury_share_cancellation
+    type: treasury_share_cancellation
+    enabled: true
+    lookback_days: 30
+
+  - name: spin_off_or_merger
+    type: spin_off_or_merger
+    enabled: true
+    spin_off_lookback_days: 60
+    merger_lookback_days: 60
+
+  # --- d_type (conviction 가산, augment-only / G15 단독 trigger 금지) ---
+  - name: activist_5pct
+    type: activist_5pct
+    enabled: true
+    lookback_days: 30
+    include_known_funds_only: false
+    known_activist_funds: []
+
+  # --- b_type (forced selling, primary trigger) ---
+  - name: index_deletion
+    type: index_deletion
+    enabled: true
+    lookback_days: 90               # 분기 발표 cycle (구 stage3a CLI 기본값 보존)
+
+  - name: earnings_panic
+    type: earnings_panic
+    enabled: true
+    lookback_days: 30               # DART 발표 lookback (구 stage3b CLI 기본값 보존)
+    one_day_drop_min: 0.10          # 1일 -10% 이상 drop → trigger
+
+  # --- a_type (지주사 NAV 할인 좁힘) ---
+  - name: nav_discount_narrowing
+    type: nav_discount_narrowing
+    enabled: true
+    delta_threshold: -0.05          # 5%p 좁혀짐
+    lookback_days: 60
+    holding_companies: []           # parent ticker 목록 (현재 비어있음 — NAV 캐시 writer 부재, 별도 task)

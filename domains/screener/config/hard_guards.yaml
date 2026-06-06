@@ -1,0 +1,26 @@
+schema: "screener-hard-guards-v1"
+version: 1
+description: |
+  Strategy-agnostic 잠금 영역. RuleFactory.build_strategy 가 outer wrapper 로
+  자동 삽입 — 어떤 strategy / profile 도 우회 불가 (G13 enforcement).
+  catastrophic floor 변경은 governance/specs PR + 사용자 명시 ack 필요.
+
+guards:
+  - type: "threshold"
+    name: "solvency_floor"
+    metric_path: "latest_annual.interest_coverage"
+    op: "ge"
+    threshold: 1.5
+    rationale: "이자 cover < 1.5 는 좀비. 어떤 valuation 도 무의미."
+
+  - type: "threshold"
+    name: "leverage_ceiling"
+    metric_path: "latest_annual.debt_to_equity"
+    op: "le"
+    threshold: 2.0
+    rationale: "D/E 200% 초과는 파산 위험. 어떤 매력도 압도."
+
+# strategy / profile 이 본 path 에 등장하는 rule name 을 override 시도하면
+# HardGuardViolationError. invariant 검사는 RuleFactory._assert_no_hard_guard_override.
+locked_paths:
+  - "guards.*"

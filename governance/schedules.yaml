@@ -1,0 +1,114 @@
+version: "1.0"
+description: "Scheduler SSoT — OS-agnostic schedule declarations. infrastructure/scheduling/*_generator.py emits derived OS artifacts (launchd plist / systemd timer)."
+schema: "investment-schedules-v1"
+last_updated: "2026-05-13"
+
+# ============================================================
+# schedules.yaml — Scheduler SSoT
+# ============================================================
+# 본 파일 (governance layer) 은 손편집 OK. 그 산출물인 ~/Library/LaunchAgents/
+# *.plist 등 derived artifact 는 손편집 금지 — 첫 줄에 AUTO-GENERATED 마커가
+# 박혀 있으며, drift_audit 가 일별 SHA256 대조로 변경을 탐지한다.
+#
+# 본 SSoT 의 권한 / 책임 모델은 thresholds.yaml (정량 SSoT) 와 isomorphic —
+# 단방향 derive. 어떤 stage / hook / domain 코드도 plist 의 raw 값을 직접
+# 작성하지 않는다. (구 topology.yaml path SSoT 는 제거됨 — utils.py path helper.)
+#
+# 의존 spec: $SPECS_DIR/deployment-residency.md
+# ============================================================
+
+# ------------------------------------------------------------
+# Schedules — key 는 OS-agnostic identifier (label 의 source).
+# launchd plist Label 은 "com.investment_v3.{key}" 로 derive
+# (prefix SSoT: infrastructure/scheduling/_labels.py LABEL_PREFIX).
+# systemd timer unit 은 "investment_v3-{key}.timer" 로 derive (systemd generator 미구현).
+# ------------------------------------------------------------
+schedules:
+
+  daily_pipeline:
+    description: |
+      매일 07:30 KST 전체 파이프라인 (Stage 0~6 결정적 + LLM 4/6 +
+      domains.audit_integrity.main 결정론 shadow-portfolio + MCP 알림).
+      Korean residential IP 기반 로컬 실행 — deployment-residency spec §2 primary.
+
+      [2026-05-15] 사용자 결정에 의해 일시 비활성화. screener 패키지 도입
+      마이그레이션 기간 동안 운영 중단 — uninstall.sh 로 LaunchAgent 제거됨.
+      재개 시 enabled: true + install.sh 실행. pmset wake 는 install.sh 가
+      enabled+wake schedule 부재 시 자동 ``pmset repeat cancel`` 하며(S-1 fix),
+      uninstall.sh step 2 도 ``sudo pmset repeat cancel`` 수행한다.
+    enabled: false
+
+    # cron expression — OS-agnostic. macOS launchd 는 StartCalendarInterval
+    # 로 translate, Linux systemd 는 OnCalendar 로 translate.
+    cron: "30 7 * * *"
+    timezone: "Asia/Seoul"
+
+    # 실행 대상 — alias / repo-relative path. generator 가 절대경로로 확장.
+    command: "$REPO_ROOT/applications/run_daily_local.sh"
+    working_dir: "$REPO_ROOT"
+
+    # 환경변수 — secret 미포함. .env 의 secret 은 command 본체가 로드.
+    environment:
+      TZ: "Asia/Seoul"
+      # $HOME/.local/bin: claude CLI 실거주 (.zshrc:115 와 일치).
+      # 부재 시 run_daily_local.sh 가 claude 못 찾고 Stage 4/6/notify/audit-shadow 전부 silent skip.
+      PATH: "$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+    # 로그 alias — generator 가 LAUNCHD_LOG_DIR 환경변수로 확장해 plist 의
+    # StandardOutPath / StandardErrorPath 에 절대경로로 박는다.
+    stdout_path: "$LAUNCHD_LOG_DIR/daily_pipeline.out.log"
+    stderr_path: "$LAUNCHD_LOG_DIR/daily_pipeline.err.log"
+
+    # 중복 실행 정책 — wrapper 가 PID 락으로 enforce. launchd 자체는
+    # serialize 하지 않으므로 wrapper layer 책임.
+    overlap_policy: "skip"
+
+    # 재시도 — missed-interval 은 launchd 의 coalesce 에 위임 (max=0).
+    retry:
+      max_attempts: 0
+
+    # Wake from sleep — macOS pmset 등록 + plist WakeSystem 백업.
+    # mode: wake (sleep only) / poweron (off only) / wakeorpoweron (both)
+    wake:
+      enabled: true
+      pre_offset_minutes: 5      # cron 시간보다 N 분 일찍 wake
+      mode: "wakeorpoweron"
+      days_of_week: "MTWRFSU"    # M T W R(목) F S U(일) — 주말 포함
+
+    # 프로세스 우선순위 — plist ProcessType / LowPriorityIO 로 translate.
+    process_type: "Background"
+    low_priority_io: true
+
+  policy_producer:
+    description: |
+      종목별 Enrich-Cutoff 프로파일 저작 (domains/policy) — daily_pipeline 과
+      분리된 out-of-band 일정 (주간). consumer(universe/screener)는 registry 만
+      소비하며 policy 를 동기 호출하지 않는다.
+
+      [2026-06-02 등록 / 비활성] 정책/메커니즘 분리 마이그레이션으로 BC 스캐폴딩
+      완료. 활성화 전제: (1) PolicyEngine(ports/llm) LLM 구현 wiring, (2) 사용자가
+      install.sh 실행 (OS 경계 단일 통로 — launchd LaunchAgent 생성 + lock 갱신).
+      엔진 미구현 상태에서 실행 시 intake-only (no-op) 이므로 enabled: false 유지.
+    enabled: false
+
+    # 주간 — 매주 일요일 06:00 KST (daily_pipeline 07:30 과 분리).
+    cron: "0 6 * * 0"
+    timezone: "Asia/Seoul"
+
+    # 실행 대상 — 엔진 wiring 후 wrapper 스크립트로 교체 예정 (현재는 모듈 직접 invoke).
+    command: "$VENV_PYTHON -m domains.policy.main"
+    working_dir: "$REPO_ROOT"
+
+    environment:
+      TZ: "Asia/Seoul"
+      PATH: "$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+
+    stdout_path: "$LAUNCHD_LOG_DIR/policy_producer.out.log"
+    stderr_path: "$LAUNCHD_LOG_DIR/policy_producer.err.log"
+
+    overlap_policy: "skip"
+    retry:
+      max_attempts: 0
+
+    process_type: "Background"
+    low_priority_io: true

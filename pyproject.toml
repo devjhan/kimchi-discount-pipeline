@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "investment_v2"
+version = "0.1.0"
+requires-python = ">=3.10"
+description = "Retail investment pipeline (Korean special situations) — agent + helper"
+dependencies = [
+    "PyYAML>=6.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.1",
+]
+
+[tool.setuptools.packages.find]
+include = ["domains*", "infrastructure*"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = [
+    "tests",
+    "domains/_shared/tests",
+    "domains/macro/tests",
+    "domains/policy/tests",
+    "domains/universe/tests",
+    "domains/screener/tests",
+    "domains/catalyst/tests",
+    "domains/audit_integrity/tests",
+]
+addopts = [
+    "-q",
+    "--strict-markers",
+    "--strict-config",
+    "-ra",
+]
+markers = [
+    "integration: end-to-end smoke tests (file I/O, no network)",
+    "unit: pure-function tests (no file I/O)",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+source = ["domains", "infrastructure/_common"]
+omit = [
+    "**/__pycache__/**",
+    "**/_*.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false

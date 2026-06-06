@@ -1,0 +1,39 @@
+# ============================================================
+# governance/runtime-policy.local.yaml.example — user override template
+# ============================================================
+# 본 파일은 placeholder template (git 추적). 실제 override 는:
+#
+#   cp governance/runtime-policy.local.yaml.example \
+#      governance/runtime-policy.local.yaml
+#   # → .local.yaml 안에 사용자 환경별 활성화 값 입력
+#   # → .local.yaml 은 .gitignore 처리됨
+#
+# .local.yaml 의 키는 governance/runtime-policy.yaml 과 deep-merge 되며,
+# .local.yaml 값이 base 값을 override.
+#
+# 첫 cron run 전 아래 3 USER_ACKNOWLEDGED_* flag 모두 true 로 변경 필수.
+# ============================================================
+
+version: 1
+schema: investment-runtime-policy-v1
+
+user_acknowledged:
+  # 본 시스템 산출이 자문이 아님을 사용자가 명시 인지 (G19 cross-cutting).
+  not_financial_advice: false
+
+  # 자동 매매 절대 금지 (G9a) 사용자 명시 인지.
+  no_auto_trade: false
+
+  # sample size N 미충족 시 alpha 주장 금지 (G19) 인지.
+  sample_size_limits: false
+
+# ------------------------------------------------------------
+# KIS read-only account 활성화 (G9b)
+# ------------------------------------------------------------
+# enabled=false 가 base 기본값. 사용자가 아래를 true 로 변경해야 positions_sync
+# helper 가 실제 KIS 계좌 조회를 수행.
+# 필수 선행 조건: .env 에 KIS_ACCOUNT_NUMBER 입력.
+# 매매 / 주문 endpoint 는 어떤 경우에도 호출되지 않는다 (G9a / G9c).
+kis:
+  read_only_account:
+    enabled: false   # → true 로 변경해 활성화

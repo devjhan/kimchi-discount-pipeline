@@ -1,0 +1,49 @@
+# ============================================================
+# operations/_user_context/portfolio.yaml.example  (template)
+# ============================================================
+# 사용자 자본 / 위험 허용 — Stage 5 sizing helper 의 G12 boundary read.
+#
+# 사용 방법:
+#   cp operations/_user_context/portfolio.yaml.example \
+#      operations/_user_context/portfolio.yaml
+#   # → portfolio.yaml 안에 실제 값 입력. portfolio.yaml 은 gitignore.
+#
+# 미존재 또는 total_capital_krw=null 시 stage5_sizing 이 사이즈 권고
+# 보류 (blocked_reason 만 산출). G12 정합.
+#
+# drawdown / cash 자동화: KIS read-only 활성 (runtime-policy.local.yaml)
+# 환경에서는 positions_sync → portfolio_state_derive 가 두 값을 자동 derive.
+# 사용자가 본 파일에 명시 시에만 override (현재는 호환을 위해 필드 보존).
+# ============================================================
+
+version: 1
+schema: investment-user-portfolio-v1
+
+# ------------------------------------------------------------
+# 필수 — 사이즈 절대값 (krw) 산출의 기준
+# ------------------------------------------------------------
+# 총 자본 (원). 예: 100000000 = 1억원.
+# null 또는 미설정 시 stage5_sizing 이 G12 boundary 로 사이즈 권고 보류.
+total_capital_krw: null
+
+# ------------------------------------------------------------
+# [deprecated — derived from positions_sync] override 전용
+# ------------------------------------------------------------
+# 본 두 필드는 positions_sync + portfolio_state_derive 가 자동 derive 한다
+# (산출: $POSITIONS_DIR/_derived-{date}.json). 본 파일에 값을 명시하면
+# derived 값보다 우선 (사용자 manual override).
+#
+# 자동화 우선순위 (sizing.py):
+#   1) portfolio.yaml 명시값 (본 파일 — null 이 아닐 때)
+#   2) $POSITIONS_DIR/_derived-{date}.json (자동 derive)
+#   3) 0 fallback (둘 다 미가용)
+#
+# null 유지가 권장. KIS read-only 활성 + 보유 포지션 존재 시 자동 채워짐.
+current_drawdown_pct: null
+current_cash_pct: null
+
+# ------------------------------------------------------------
+# 미사용 / 예약 (helper 가 read 안 함, 사용자 metadata 용)
+# ------------------------------------------------------------
+# 변동성 허용도. enum: low | medium | high. 1차 helper 미참조.
+volatility_tolerance: null
