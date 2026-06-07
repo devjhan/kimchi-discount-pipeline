@@ -110,7 +110,8 @@ fi
 
 # 0d. 경로 환경변수 — REPO_ROOT 기준 literal.
 DATE_KST="${DATE_OVERRIDE:-$(TZ=Asia/Seoul date +%Y-%m-%d)}"
-export TRAIL_TODAY="$REPO_ROOT/operations/$DATE_KST"
+export TRAIL_TODAY="$REPO_ROOT/operations/$DATE_KST/.trails"
+mkdir -p "$TRAIL_TODAY"
 echo "[run_daily_local] DATE=$DATE_KST TRAIL_TODAY=$TRAIL_TODAY"
 
 phase_log() {

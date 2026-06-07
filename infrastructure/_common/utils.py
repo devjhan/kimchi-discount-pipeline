@@ -97,20 +97,30 @@ def _env_or(repo_rel: str, env_key: str) -> Path:
 
 
 def operations_day_dir(date: str | None = None) -> Path:
-    """operations/{거래일} 절대 디렉토리. date=None 이면 KST 오늘 (거래일 정규화).
+    """operations/{거래일} 날짜 루트 (.trails/ 의 부모). date=None → KST 오늘.
 
-    env ``$TRAIL_TODAY`` 가 set 이면 그 값을 그대로 반환 — conftest monkeypatch /
-    cron 이 의존하는 env-first 의미 보존. (.trails/ sub-directory 는 2026-05-12 폐지)
+    $TRAIL_TODAY 가 set 이면 .trails/ suffix 를 제거한 부모를 반환.
+    예: $TRAIL_TODAY=.../operations/2026-06-07/.trails → .../operations/2026-06-07
     """
     env = os.environ.get("TRAIL_TODAY")
     if env:
-        return Path(env)
+        p = Path(env)
+        if p.name == ".trails":
+            return p.parent
+        return p
     return REPO_ROOT / "operations" / normalize_to_trading_day(date)
 
 
 def trail_dir(date: str | None = None) -> Path:
-    """= operations_day_dir. 산출물은 operations/{YYYY-MM-DD}/ 바로 아래."""
-    return operations_day_dir(date)
+    """operations/{거래일}/.trails/ — 중간 stage 산출물 저장소.
+
+    $TRAIL_TODAY 가 set 이면 그 값 그대로 반환 (conftest / cron env-first).
+    daily-brief.md 는 부모 디렉토리(operations_day_dir()) 에 산출.
+    """
+    env = os.environ.get("TRAIL_TODAY")
+    if env:
+        return Path(env)
+    return REPO_ROOT / "operations" / normalize_to_trading_day(date) / ".trails"
 
 
 def audit_dir() -> Path:

@@ -251,11 +251,10 @@ def is_governance_yaml(file_path: str) -> bool:
 
 
 def is_trail_json(file_path: str) -> bool:
-    """operations/{date}/*.json (flat) 만 D-CFG-2 envelope 대상.
+    """operations/{date}/.trails/*.json — D-CFG-2 envelope 대상.
 
-    구 operations/{date}/.trails/ 서브디렉토리는 2026-05-12 폐지 — stage 산출물은
-    이제 operations/{date}/ 바로 아래 flat 으로 떨어진다 (utils.trail_dir). `.trails/`
-    를 요구하던 옛 조건은 매치 0 (silent dead check) 였다.
+    stage 산출물 (00-* ~ 05-*) 은 operations/{date}/.trails/ 에 저장된다.
+    brief (daily-brief.md) 는 operations/{date}/ 루트에 위치 (matcher 대상 아님).
     """
     has_ops = "/operations/" in file_path or file_path.startswith("operations/")
     return has_ops and file_path.endswith(".json")

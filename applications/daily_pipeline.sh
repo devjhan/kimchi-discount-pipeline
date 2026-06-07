@@ -29,7 +29,7 @@
 #   thesis 검증 반영을 원하면 사용자가 Stage 4 skill 후 --phase post-stage4
 #   를 재호출.
 #
-# Stage helper 산출물 (00-* ~ 05*) 은 `operations/{date}/` (= $TRAIL_TODAY) 에 저장.
+# Stage helper 산출물 (00-* ~ 05*) 은 `operations/{date}/.trails/` (= $TRAIL_TODAY) 에 저장.
 # Stage 6 brief 만 그 부모인 `operations/{date}/daily-brief.md` (= $DAILY_BRIEF_PATH).
 # 덮어쓰기 금지 — 같은 날 재실행 시 `.{N}.json` suffix 로 보존 (G20).
 #
@@ -117,11 +117,13 @@ LOG_DIR="$REPO_ROOT/telemetry/logs/cron"
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/run-${DATE_KST}.log"
 
-# Trail dir 결정 (override 없으면 default)
+# Trail dir 결정 (override 없으면 default).
+# --trail-dir override 는 full path (caller 가 .trails/ 포함 여부 결정).
+# brief 는 operations/{date}/daily-brief.md ($DAILY_BRIEF_PATH — 부모 디렉토리 루트).
 if [[ -n "$TRAIL_DIR_OVERRIDE" ]]; then
   TRAIL_TODAY="$TRAIL_DIR_OVERRIDE"
 else
-  TRAIL_TODAY="$REPO_ROOT/operations/$DATE_KST"
+  TRAIL_TODAY="$REPO_ROOT/operations/$DATE_KST/.trails"
 fi
 mkdir -p "$TRAIL_TODAY"
 export TRAIL_TODAY

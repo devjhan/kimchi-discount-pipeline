@@ -58,7 +58,7 @@ YYYY-MM-DD (KST 기준)
 
 | shorthand | 실제 경로 (repo root 기준) |
 |---|---|
-| `$TRAIL_TODAY` | `operations/{오늘 KST 거래일}` |
+| `$TRAIL_TODAY` | `operations/{오늘 KST 거래일}/.trails` |
 | `$AUDIT_DIR` | `telemetry/audit` |
 | `$POSITIONS_DIR` | `telemetry/positions` |
 | `$EXTERNAL_SIGNALS_DIR` | `config/signals` |

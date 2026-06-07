@@ -74,11 +74,11 @@ def _audit_log(decision: str, reason: str) -> None:
 def _target_brief_path() -> Path | None:
     """
     PostToolUse 의 tool_input 에서 daily-brief.md 경로를 찾는다.
-    Stop mode 에서는 $DAILY_BRIEF_PATH fallback (legacy $TRAIL_TODAY 도 호환).
+    Stop mode 에서는 $DAILY_BRIEF_PATH fallback ($TRAIL_TODAY/../daily-brief.md 도 호환).
 
-    2026-05-12 이후: brief 는 operations/{date}/daily-brief.md (DATE 디렉토리
-    루트) 에 위치.  legacy $TRAIL_TODAY/daily-brief.md (.trails/ 안) 는 더 이상
-    산출되지 않지만 historical artifact 검사를 위해 fallback 유지.
+    brief 는 operations/{date}/daily-brief.md (날짜 디렉토리 루트) 에 위치.
+    intermediate stage JSON 은 $TRAIL_TODAY/ (= operations/{date}/.trails/) 에.
+    legacy fallback ($TRAIL_TODAY/daily-brief.md) 은 historical artifact 검사용.
     """
     fp = tool_input.get("file_path") or ""
     if fp and fp.endswith("daily-brief.md"):

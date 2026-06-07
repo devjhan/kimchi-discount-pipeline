@@ -85,7 +85,7 @@ DATE_TODAY, DATE_YEST = _kst_dates()
 def _resolve(key: str) -> Path:
     """주요 경로 키 → 절대경로 (REPO_ROOT 기준 literal, topology 미경유)."""
     rel = {
-        "trail_today": f"operations/{DATE_TODAY}",
+        "trail_today": f"operations/{DATE_TODAY}/.trails",
         "operations_audit": "telemetry/audit",
         "positions": "telemetry/positions",
         "user_context_dir": "config/user",
