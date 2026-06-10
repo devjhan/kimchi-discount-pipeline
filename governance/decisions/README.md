@@ -23,7 +23,7 @@ backlog 는 "할 일", ADR 은 "내린 판단". 할 일이 끝나며 도출된 *
 
 | ADR | 제목 | status | 관련 |
 |---|---|---|---|
-| [0001](0001-deployment-residency-local-primary.md) | Deployment residency = 로컬 primary | Accepted | `specs/deployment-residency.md` (SSoT), G9 |
+| [0001](0001-deployment-residency-local-primary.md) | Deployment residency = 로컬 primary | Accepted | `deployment-residency.md` (SSoT), G9 |
 | [0002](0002-governance-config-ownership-axis.md) | governance/config 분리 = 소유·버전관리 축 (파일 포맷 아님) | Accepted | [D-ARCH-1](../directives/05-architecture.md) |
 | [0003](0003-llm-drafts-python-commits.md) | 결정론 계산은 LLM 위임 안 함 (LLM 초안 · Python commit) | Accepted | G6 (SSoT), D-CORE-7 |
 | [0004](0004-bounded-context-split-criteria.md) | BC 통폐합 기준 — 수직 병합 기각 | Accepted | [D-ARCH-2](../directives/05-architecture.md), [0006](0006-fat-contract-isp.md) |
@@ -31,8 +31,8 @@ backlog 는 "할 일", ADR 은 "내린 판단". 할 일이 끝나며 도출된 *
 | [0006](0006-fat-contract-isp.md) | Fat-contract ISP — `EnrichCutoffProfile` 단일 정책 단위 | Accepted | [D-ARCH-2](../directives/05-architecture.md) |
 | [0007](0007-risk-engine-no-concern-reorg.md) | risk_engine — 물리 concern 서브패키지 reorg 기각 | Rejected-proposal | [D-ARCH-2](../directives/05-architecture.md) |
 | [0008](0008-storage-topology.md) | Storage topology — 재생성 가능성·수명·소유 축 | Accepted | [D-ARCH-1](../directives/05-architecture.md) |
-| [0009](0009-claude-code-to-zed-migration.md) | Claude Code → Zed Agent 마이그레이션 (F-13 vendor swap) | Accepted | `infrastructure/llm/` (SSoT), `specs/deployment-residency.md`, [D-CORE-7](../directives/00-principles.md) |
-| [0010](0010-hook-disposition.md) | Claude Code → Zed Agent 마이그레이션 과정에 hook 파기 | Accepted | `infrastructure/llm/` (SSoT), `specs/deployment-residency.md`, [D-CORE-5](../directives/00-principles.md) |
+| [0009](0009-claude-code-to-zed-migration.md) | Claude Code → Zed Agent 마이그레이션 (F-13 vendor swap) | Accepted | `infrastructure/llm/` (SSoT), `deployment-residency.md`, [D-CORE-7](../directives/00-principles.md) |
+| [0010](0010-hook-disposition.md) | Hook Disposition — Claude Code → Zed Migration | Accepted | `infrastructure/llm/` (SSoT), `deployment-residency.md`, [D-CORE-5](../directives/00-principles.md) |
 
 ---
 

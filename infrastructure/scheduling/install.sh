@@ -32,7 +32,7 @@ OS="$(uname -s)"
 case "$OS" in
   Darwin) ;;
   Linux)
-    echo "[install] Linux systemd generator 미구현 (governance/specs/deployment-residency.md v2 후보)" >&2
+    echo "[install] Linux systemd generator 미구현 (governance/deployment-residency.md v2 후보)" >&2
     exit 1
     ;;
   *)

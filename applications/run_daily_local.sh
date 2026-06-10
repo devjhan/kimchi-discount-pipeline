@@ -4,7 +4,7 @@ set -uo pipefail
 # applications/run_daily_local.sh — launchd 진입점 (primary deployment)
 # ============================================================
 #
-# governance/specs/deployment-residency.md §2 primary 의 단일 wrapper.
+# governance/deployment-residency.md §2 primary 의 단일 wrapper.
 # launchd LaunchAgent (com.investment_v3.daily_pipeline) 가 매일 07:30 KST 호출.
 # 기존 cloud routine 의 cloud_routine_run.sh 는 deprecated — 본 wrapper 가
 # 한국 residential IP 환경에서 KIS/DART/KRX 통과를 보장한다.
