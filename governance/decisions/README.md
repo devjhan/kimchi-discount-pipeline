@@ -30,8 +30,9 @@ backlog 는 "할 일", ADR 은 "내린 판단". 할 일이 끝나며 도출된 *
 | [0005](0005-boundary-ports-and-adapters.md) | `_boundary` = 유일 infra-import 게이트 → typed adapter factory | Accepted | D-CORE-4/7, [D-ARCH-4](../directives/05-architecture.md) |
 | [0006](0006-fat-contract-isp.md) | Fat-contract ISP — `EnrichCutoffProfile` 단일 정책 단위 | Accepted | [D-ARCH-2](../directives/05-architecture.md) |
 | [0007](0007-risk-engine-no-concern-reorg.md) | risk_engine — 물리 concern 서브패키지 reorg 기각 | Rejected-proposal | [D-ARCH-2](../directives/05-architecture.md) |
-| [0009](0009-storage-topology.md) | Storage topology — 재생성 가능성·수명·소유 축 | Accepted | [D-ARCH-1](../directives/05-architecture.md) |
-| [0010](0010-claude-code-to-zed-migration.md) | Claude Code → Zed Agent 마이그레이션 (F-13 vendor swap) | Accepted | `infrastructure/llm/` (SSoT), `specs/deployment-residency.md`, [D-CORE-7](../directives/00-principles.md) |
+| [0008](0008-storage-topology.md) | Storage topology — 재생성 가능성·수명·소유 축 | Accepted | [D-ARCH-1](../directives/05-architecture.md) |
+| [0009](0009-claude-code-to-zed-migration.md) | Claude Code → Zed Agent 마이그레이션 (F-13 vendor swap) | Accepted | `infrastructure/llm/` (SSoT), `specs/deployment-residency.md`, [D-CORE-7](../directives/00-principles.md) |
+| [0010](0010-hook-disposition.md) | Claude Code → Zed Agent 마이그레이션 과정에 hook 파기 | Accepted | `infrastructure/llm/` (SSoT), `specs/deployment-residency.md`, [D-CORE-5](../directives/00-principles.md) |
 
 ---
 
