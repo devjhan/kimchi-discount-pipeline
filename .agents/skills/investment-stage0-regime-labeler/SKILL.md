@@ -1,7 +1,7 @@
 ---
 name: investment-stage0-regime-labeler
 description: Investment 파이프라인 Stage 0의 옵셔널 LLM narrative labeler. stage0-macro-regime.py helper가 산출한 deterministic regime 분류(early/mid/late/crisis/unknown)에 자연어 narrative와 cycle context를 부여한다. helper의 numeric 분류는 절대 변경하지 않고, 보조 narrative만 추가 산출 ($TRAIL_TODAY/00-macro-regime-narrative.md). 사이즈/매매 권고 일체 금지.
-allowed-tools: Read, Write, Bash, Grep, Glob
+
 ---
 
 # investment-stage0-regime-labeler — Macro Regime Narrative Labeler

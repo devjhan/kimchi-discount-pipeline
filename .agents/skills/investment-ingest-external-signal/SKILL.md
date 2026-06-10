@@ -1,7 +1,7 @@
 ---
 name: investment-ingest-external-signal
 description: Investment 파이프라인의 외부 신호 (뉴스 / 트윗 / 블로그 / 리포트 / 사용자 prompt) ingest entry point. raw payload를 fact-only paraphrase + redaction 후 $EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq}.md 로 산출. thesis 즉시 변경 일체 금지 — 다음 cron run의 Stage 4 thesis-auditor가 fact-only로 인용. G10 (외부 신호 SOP) 의 단일 entry point.
-allowed-tools: Read, Write, Edit, Bash, Grep
+
 ---
 
 # investment-ingest-external-signal — External Signal Ingest

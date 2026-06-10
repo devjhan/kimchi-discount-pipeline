@@ -1,7 +1,7 @@
 ---
 name: investment-stage4-thesis-auditor
 description: Investment 파이프라인의 Stage 4 Thesis Discipline Gate. Stage 3 catalyst trigger 종목별로 5필드 thesis (entry_catalyst / falsifier / time_horizon_months / edge_source / asymmetry_score) 작성 강제 + vague falsifier 사전 reject + edge_source 분류 (A 단독 인용 시 추가 검증) + amendment vs new entry 구분. $TRAIL_TODAY/04-thesis-candidates.json 산출. 5stone-any-specArchitect의 spec / uncertainty register 패턴을 isomorphic하게 차용하되 코드 도메인 룰 직역 금지. 정량 계산 (사이즈 / Kelly / asymmetry_ratio) 일체 금지 (Stage 5 책임). 보유 포지션 thesis 임의 수정 금지.
-allowed-tools: Read, Write, Edit, Bash, Grep, Glob, TodoWrite
+
 ---
 
 # investment-stage4-thesis-auditor — Thesis Discipline Gate

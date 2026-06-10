@@ -1,7 +1,7 @@
 ---
 name: investment-policy-profiler
 description: Investment 파이프라인의 out-of-band Policy Producer 의 LLM research 단계 (Phase 6a / F-10). domains.policy 의 trigger 별 _intake (trigger + 현 profile + evidence) 를 읽어 종목별 Enrich-Cutoff profile 후보 (required_enrichments + cutoff_rules + citations + rationale_ko) 를 _profile-draft-{date}.json 으로 산출한다. **스킬은 commit 하지 않는다** — drift/version/provenance/G20 은 'python -m domains.policy.main --commit-draft <draft>' 결정론이 소유 (스킬은 환각 차단을 위해 draft 만). cutoff_rules 는 screener RuleFactory 소비 가능 문법만 (resolver whitelist 밖 metric_path 금지). 정량 계산 / 사이즈 / drift 산술 일체 금지.
-allowed-tools: Read, Write, Bash, Grep, Glob
+
 ---
 
 # investment-policy-profiler — Enrich-Cutoff Profile Research (out-of-band)

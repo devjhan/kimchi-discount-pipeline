@@ -1,7 +1,7 @@
 ---
 name: investment-audit-outcome
 description: Investment 파이프라인 분기 outcome audit. 4-tier shadow portfolio (Index / Mechanical / LLM-Filtered / Random) 의 분기 누적 수익률을 비교해 LLM filter (tier_2)의 부가가치를 검증한다. tier_2 < tier_1 4분기 연속 시 self-disable trigger 발동. $AUDIT_DIR/outcome-{YYYY-Q}.md 산출. shadow portfolio state 자체는 domains.audit_integrity.main 결정론 엔진이 일별 갱신하며, 본 skill은 read-only 비교만 수행.
-allowed-tools: Read, Write, Bash, Grep, Glob
+
 ---
 
 # investment-audit-outcome — Quarterly Outcome Audit

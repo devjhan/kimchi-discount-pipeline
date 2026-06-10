@@ -1,7 +1,7 @@
 ---
 name: investment-audit-process
 description: Investment 파이프라인 주간 process audit. 지난 7일 일별 cron run의 산출물을 모두 read해 룰 위반 (vague falsifier accepted, A 단독 claim no evidence, 사이즈 cap 위반, secret leak, forbidden language 등)을 집계. $AUDIT_DIR/process-{YYYY-WW}.md 산출. 결과 outcome (수익률)은 평가하지 않는다 (별도 outcome audit). audit-report 산출 외 어떤 stage 산출물도 수정하지 않는다.
-allowed-tools: Read, Write, Bash, Grep, Glob
+
 ---
 
 # investment-audit-process — Weekly Process Audit

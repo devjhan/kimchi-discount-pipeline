@@ -66,7 +66,7 @@ YYYY-MM-DD (KST 기준)
 | `$THRESHOLDS_PATH` | `governance/thresholds.yaml` |
 | `$AXIOMS_DIR` | `governance/AXIOMS` |
 | `$SPECS_DIR` | `governance/specs` |
-| `$SKILLS_SHARED_DIR` | `.claude/skills/_shared/investment` |
+| `$SKILLS_SHARED_DIR` | `.agents/skills/_shared/investment` |
 
 ### 산출물 경로 매핑
 
