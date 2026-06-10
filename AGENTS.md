@@ -176,7 +176,7 @@ investment_v3/
 ├── secrets/                 # API 자격증명 (.kis_token.json — gitignore, chmod 0600)
 ├── .agents/
 │   └── skills/              # Zed project-local skills
-│       ├── _shared/investment/   # cross-cutting bootstrap 규약 (bootstrap.md)
+│       ├── contract/             # cross-cutting bootstrap 규약 (bootstrap.md)
 │       ├── investment-stage0-regime-labeler/  # Stage 0 LLM narrative labeler
 │       ├── investment-stage2-quality-lens/    # Stage 2 정성 lens 평가
 │       ├── investment-stage4-thesis-auditor/  # Stage 4 thesis discipline gate (+ domain/)
@@ -213,7 +213,7 @@ BC 도메인 (macro/screener/universe/policy)은 `_boundary.py` 의 `resolve_pat
 | `$ENV_PATH` | `.env` |
 
 doctrine 본문의 `$ALIAS` 표기는 readable shorthand 이며, 그 의미는
-`.agents/skills/_shared/investment/bootstrap.md` 의 "경로 표기" 레전드에 정의돼 있다.
+.agents/skills/contract/bootstrap.md` 의 "경로 표기" 레전드에 정의돼 있다.
 
 ---
 

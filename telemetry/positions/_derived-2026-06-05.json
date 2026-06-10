@@ -1,0 +1,26 @@
+{
+  "schema": "investment-portfolio-derived-v1",
+  "generated_at": "2026-06-07T10:24:27+09:00",
+  "date": "2026-06-05",
+  "config_path": "/Users/jhan_acc/projects/investment_v3/telemetry/positions",
+  "config_version": 1,
+  "payload": {
+    "schema": "investment-portfolio-derived-v1",
+    "date": "2026-06-05",
+    "peak_total_assets_krw": 4785.0,
+    "peak_observed_at": "2026-06-05",
+    "current_total_assets_krw": 4785.0,
+    "current_cash_krw": 0.0,
+    "current_drawdown_pct": 0.0,
+    "current_cash_pct": 0.0,
+    "source_citations": [
+      "POSITIONS@2026-06-05={\"total_assets_krw\":4785.0}",
+      "POSITIONS@2026-06-05={\"cash_krw\":0.0}",
+      "POSITIONS@2026-06-05={\"peak_total_assets_krw\":4785.0}"
+    ],
+    "skip_reason": null,
+    "lookback_days": 365,
+    "summaries_scanned": 1,
+    "warnings": []
+  }
+}

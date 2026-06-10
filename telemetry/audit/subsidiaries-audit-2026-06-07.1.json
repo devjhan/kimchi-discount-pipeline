@@ -1,0 +1,16 @@
+{
+  "schema": "investment-subsidiaries-audit-v1",
+  "generated_at": "2026-06-07T11:14:41+09:00",
+  "date": "2026-06-07",
+  "bsns_year": "2025",
+  "parents": [
+    {
+      "parent_ticker": "KR:003550",
+      "parent_corp_code": "00120021",
+      "manual_count": 4,
+      "auto_count": 37,
+      "merged_count": 4,
+      "auto_only_additions": []
+    }
+  ]
+}

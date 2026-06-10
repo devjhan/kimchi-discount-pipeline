@@ -1,0 +1,47 @@
+{
+  "schema": "investment-positions-sync-v1",
+  "generated_at": "2026-06-07T10:24:27+09:00",
+  "date": "2026-06-05",
+  "config_path": "/Users/jhan_acc/projects/investment_v3/telemetry/positions/_summary-2026-06-05.json",
+  "config_version": 1,
+  "payload": {
+    "schema": "investment-positions-sync-v1",
+    "date": "2026-06-05",
+    "sync_status": "ok",
+    "skip_reason": null,
+    "total_assets_krw": 4785.0,
+    "cash_krw": 0.0,
+    "holdings_count": 1,
+    "buyable_cash_krw": 0.0,
+    "eval_pnl_total": 1825.0,
+    "realized_pnl_period": null,
+    "citations": [
+      "KIS@2026-06-07T10:24:27+09:00#total_assets_krw@2026-06-07T10:24:27+09:00=4785.0",
+      "KIS@2026-06-07T10:24:27+09:00#cash_krw@2026-06-07T10:24:27+09:00=0.0",
+      "KIS@2026-06-07T10:24:27+09:00#eval_pnl_total@2026-06-07T10:24:27+09:00=1825.0",
+      "KIS@2026-06-07T10:24:27+09:00#buyable_cash_krw@2026-06-07T10:24:27+09:00=0.0"
+    ],
+    "warnings": [],
+    "holdings": [
+      {
+        "ticker": "088350",
+        "name": "한화생명",
+        "quantity": 1,
+        "avg_price": 2960.0,
+        "current_price": 4785.0,
+        "eval_amount": 4785.0,
+        "purchase_amount": 2960.0,
+        "eval_pnl": 1825.0,
+        "eval_pnl_pct": 61.65,
+        "sellable_qty": 1,
+        "realized_pnl_period": null,
+        "citations": [
+          "KIS@2026-06-07T10:24:27+09:00#eval_amount@2026-06-07T10:24:27+09:00=4785.0",
+          "KIS@2026-06-07T10:24:27+09:00#eval_pnl@2026-06-07T10:24:27+09:00=1825.0",
+          "KIS@2026-06-07T10:24:27+09:00#avg_price@2026-06-07T10:24:27+09:00=2960.0",
+          "KIS@2026-06-07T10:24:27+09:00#current_price@2026-06-07T10:24:27+09:00=4785.0"
+        ]
+      }
+    ]
+  }
+}

@@ -144,7 +144,7 @@ set 이면 우선 사용 — 테스트 / cron / cloud override 용. BC 도메인
 `resolve_path()` / `resolve_trail_dir()` 단일 게이트를 통과한다.
 
 본 문서·SKILL 의 `$ALIAS` 표기는 readable shorthand 이며, 그 실제 경로 매핑은
-`.claude/skills/_shared/investment/bootstrap.md` 의 "경로 표기" 레전드에 정의돼 있다.
+.agents/skills/contract/bootstrap.md` 의 "경로 표기" 레전드에 정의돼 있다.
 
 ---
 
