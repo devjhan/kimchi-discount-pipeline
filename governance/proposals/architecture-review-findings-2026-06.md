@@ -226,7 +226,7 @@ no-op) 추가, commit/drift 는 결정론 유지.
 1. **항목 단위 삭제** — 각 finding 이 PR 로 처리/closed 되면 §1 표와 §2 의 해당 항목을
    **즉시 삭제**한다 (체크표시로 남기지 말 것 — 처리된 finding 은 git history 가 기록).
 2. **문서 단위 삭제** — 모든 finding 이 closed 되면 (또는 본 리뷰가 stale 해지면)
-   **`governance/specs/architecture-review-findings-2026-06.md` 파일 전체를 삭제**한다.
+   **`governance/proposals/architecture-review-findings-2026-06.md` 파일 전체를 삭제**한다.
 3. **승격 금지** — 여기서 도출된 *영구 규약*이 생기면, 그 규약만 `hard-guards.md` 등
    evergreen spec 에 반영하고 본 backlog 는 삭제한다. 둘을 동시에 남기지 말 것 (SSoT 중복).
 4. 6개월(≈2026-12) 경과 시까지 미처리 항목이 남으면, 여전히 유효한지 재평가 후 유지/폐기 결정.

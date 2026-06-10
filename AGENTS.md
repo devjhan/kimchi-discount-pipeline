@@ -110,7 +110,7 @@ Sample size hard rule:
 | Notification | `infrastructure/notify/` dispatcher (Slack / Gmail / Telegram / Discord / Kakao / Webhook outbound 어댑터, `python -m infrastructure.notify.dispatcher`) — `applications/run_daily_local.sh` 가 딥시크 API + Python notify adapter로 발송 |
 | Scheduling | **로컬 launchd (macOS) primary** — `governance/schedules.yaml` (SSoT), `infrastructure/scheduling/launchd_generator.py` 가 plist emit, `infrastructure/scheduling/install.sh` 가 OS 경계 단일 통로. cloud routine 은 `governance/deployment-residency.md` §3 조건 충족 시에만 fallback — 현재 KIS/DART/KRX IP 차단으로 비활성 (cloud_routine_run.sh deprecated). 사용자 수동 invoke 도 가능. crontab 등 시스템 자동 cron 은 여전히 금지 — 모든 자동화는 launchd LaunchAgent 경유. 헌법: `governance/deployment-residency.md`. |
 | Agent runtime | Zed Agent project skills (`$SKILLS_DIR/investment-*`, `.agents/skills/`). DeepSeek API (`api.deepseek.com`, OpenAI-compatible) — `infrastructure/llm/deepseek.py` adapter |
-| Hard guards | `governance/decisions/0027-hook-disposition.md` (Claude Code hook 7종 파기 + 대체 수단 기록). Pre-commit lint + pipeline validation |
+| Hard guards | 본 문서 Hard Guards (G1-G22). Pre-commit lint + pipeline validation |
 
 ---
 
@@ -128,8 +128,8 @@ investment_v3/
 │   │   └── statistical-honesty.md
 │   ├── capabilities/        # 의도 layer (누구에게/무슨 결과) — capability map + job story (README + C1~C6)
 │   ├── decisions/           # ADR register — 구조 결정 영구 ledger (append-only, README + NNNN-*.md)
-│   ├── specs/               # stage 가 만족해야 하는 계약
-│   │   └── hard-guards.md   # G1-G21 hard guard 정의 + forbidden language
+│   ├── proposals/            # 설계 제안 staging (decisions/의 전 단계, README + draft)
+│   ├── deployment-residency.md  # 배포 원칙 (로컬 primary, cloud fallback 조건)
 │   ├── procedures/          # runtime / manual invoke 절차
 │   ├── directives/          # 코딩 컨벤션 D-{LANG}-{N} + D-ARCH 아키텍처/배치 판단 기준 (AGENTS.md 인덱스)
 │   ├── profiles/            # 종목별 Enrich-Cutoff 프로파일 SSoT (git-tracked)

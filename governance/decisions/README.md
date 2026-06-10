@@ -13,8 +13,8 @@
 backlog 는 "할 일", ADR 은 "내린 판단". 할 일이 끝나며 도출된 *영구 판단* 은 이리로 승격
 (선례: F-13 LLM port → D-CORE-7; findings §4 "승격 금지" 의 정확한 대상이 본 레지스터).
 
-> ADR 은 SSoT 를 **복사하지 않는다.** G-rule (`specs/hard-guards.md`) · D-CORE / D-ARCH
-> (`directives/`) · spec (`specs/`) 은 ID 로 cross-ref 만 한다. 결정 *본문* 은 ADR 한 곳에만
+> ADR 은 SSoT 를 **복사하지 않는다.** G-rule (`AGENTS.md` Hard Guards G1-G22) · D-CORE / D-ARCH
+> (`directives/`) · proposal (`proposals/`) 은 ID 로 cross-ref 만 한다. 결정 *본문* 은 ADR 한 곳에만
 > 존재하고, 다른 문서(per-BC `AGENTS.md`, `pipeline-overview.md`)는 1줄 포인터만 남긴다.
 
 ---
