@@ -2,7 +2,7 @@
 """
 infrastructure/llm/dispatcher.py — LLM 런타임 호출 dispatcher.
 
-``LLM_VENDOR`` env (기본 "claude-cli") 로 REGISTRY adapter 선택 후 prompt 실행.
+"LLM_VENDOR" env (기본 "deepseek") 로 REGISTRY adapter 선택 후 prompt 실행.
 ``run_daily_local.sh`` 가 stage4 / stage6 / MCP-notify 호출을 본 dispatcher 경유로
 실행 — vendor swap 이 bash 수정 없이 adapter 교체로 끝나게 (F-13 T1).
 
@@ -16,6 +16,7 @@ exit code:
     skipped / dry_run → 0 (graceful — 런타임 부재 시 stage skip)
     error / unknown vendor → 1
 """
+
 from __future__ import annotations
 
 import argparse
@@ -34,7 +35,7 @@ def invoke(
     dry_run: bool = False,
 ) -> LlmResult:
     """선택된 vendor adapter 로 prompt 실행. unknown vendor → status='error'."""
-    vendor = vendor or os.environ.get("LLM_VENDOR") or "claude-cli"
+    vendor = vendor or os.environ.get("LLM_VENDOR") or "deepseek"
     adapter_cls = REGISTRY.get(vendor)
     if adapter_cls is None:
         return LlmResult(
@@ -47,17 +48,19 @@ def invoke(
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="LLM runtime dispatcher (F-13 single port)")
-    parser.add_argument("--prompt", required=True, help="skill slash-command 또는 ad-hoc 지시")
+    parser = argparse.ArgumentParser(
+        description="LLM runtime dispatcher (F-13 single port)"
+    )
+    parser.add_argument(
+        "--prompt", required=True, help="skill slash-command 또는 ad-hoc 지시"
+    )
     parser.add_argument(
         "--allowed-tools",
         default="",
         help="런타임 tool whitelist CSV (MCP tool UUID 포함 가능)",
     )
     parser.add_argument(
-        "--vendor",
-        default=None,
-        help="LLM vendor (기본: $LLM_VENDOR, 없으면 claude-cli)",
+        "--vendor", default=None, help="LLM vendor (기본: $LLM_VENDOR, 없으면 deepseek)"
     )
     parser.add_argument("--dry-run", action="store_true", help="실행 없이 cmd 만 산출")
     args = parser.parse_args(argv)
