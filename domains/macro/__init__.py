@@ -15,11 +15,10 @@ max-severity 만 aggregate. 새 indicator = Signal 1 클래스 + ``config/regime
 - ``$EXTERNAL_SIGNALS_MACRO_BREADTH_PATH`` (Stage 0a breadth_fetch 가 작성)
 
 대체 이력:
-<!-- legacy-ok -->
 - [Run 7 완료 2026-05-17] ``domains.risk_engine.macro_regime`` → 본 패키지의
   ``main`` + ``application.regime_classify`` + ``indicators``.
 - [Run 7 완료 2026-05-17] ``domains.risk_engine.macro_breadth_fetch`` → 본 패키지의
   ``breadth_fetch``. 옛 파일 모두 삭제.
-<!-- /legacy-ok -->
 """
+
 from __future__ import annotations

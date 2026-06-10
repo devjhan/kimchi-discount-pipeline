@@ -6,8 +6,7 @@ set -uo pipefail
 #
 # governance/deployment-residency.md §2 primary 의 단일 wrapper.
 # launchd LaunchAgent (com.investment_v3.daily_pipeline) 가 매일 07:30 KST 호출.
-# 기존 cloud routine 의 cloud_routine_run.sh 는 deprecated — 본 wrapper 가
-# 한국 residential IP 환경에서 KIS/DART/KRX 통과를 보장한다.
+# 본 wrapper 가 한국 residential IP 환경에서 KIS/DART/KRX 통과를 보장한다.
 #
 # 책임:
 #   0a. drift_audit start snapshot — scheduler-state 기록
@@ -17,11 +16,11 @@ set -uo pipefail
 #   0e. alias env 로드 (TZ / TRAIL_TODAY 등)
 #
 #   1. pre-stage4 (Stage 0~3 결정적)
-#   2. Stage 4 LLM (`claude -p /investment-stage4-thesis-auditor $DATE`)
+#   2. Stage 4 LLM (investment-stage4-thesis-auditor)
 #   3. post-stage4 (Stage 5~5d 결정적)
-#   4. Stage 6 LLM (`claude -p /investment-stage6-brief-author $DATE`)
+#   4. Stage 6 LLM (investment-stage6-brief-author)
 #   5. Notify manifest 작성 (python -m infrastructure.notify.dispatcher)
-#   6. MCP 알림 발송 (`claude -p <dispatch_manifest_prompt>` + slack/gmail MCP)
+#   6. 알림 발송 (python -m infrastructure.notify.dispatcher)
 #   7. audit shadow-portfolio (python -m domains.audit_integrity.main — 결정론, F-6)
 #
 #   8. drift_audit end snapshot
@@ -42,13 +41,6 @@ cd "$REPO_ROOT"
 
 export REPO_ROOT
 export TZ="${TZ:-Asia/Seoul}"
-
-# MCP tool full names — server UUID 로 namespaced. 5/14 incident 후 short name
-# (mcp__slack_send_message / mcp__create_draft) 가 --allowed-tools 와 매칭 실패해
-# 헤드리스 dispatch 에서 권한 dialog 로 전환 → 송신 0건 발생. MCP 서버 재등록
-# 시 본 UUID 갱신 필요 (.claude/settings.json permissions.allow 도 동일 값 유지).
-SLACK_MCP_TOOL="mcp__bb9a3bd8-7422-48cc-8787-8ff8cc5441bf__slack_send_message"
-GMAIL_MCP_TOOL="mcp__d49a4519-3341-4883-9786-dc2e0e2aae3e__create_draft"
 
 # CLI flag
 DATE_OVERRIDE=""
@@ -119,12 +111,6 @@ phase_log() {
   echo "$LOG_DIR/${DATE_KST}-${phase}.log"
 }
 
-# claude CLI 부재 시 graceful skip — 실제 gating 은 infrastructure/llm dispatcher
-# (ClaudeCliAdapter) 가 수행 (F-13). 본 검사는 upfront 안내용 informational only.
-if [ -z "$(command -v claude || true)" ]; then
-  echo "[run_daily_local] WARN: claude CLI 없음 — LLM stage (4 / 6 / notify) skip 예정" >&2
-fi
-
 # 1. Pre-Stage 4 (Stage 0~3 결정적)
 echo "[run_daily_local] === 1. pre-stage4 ==="
 bash "$REPO_ROOT/applications/daily_pipeline.sh" --date "$DATE_KST" --phase pre-stage4 \
@@ -167,20 +153,8 @@ else
   echo "[run_daily_local] WARN: daily-brief.md 부재 — notify skip ($BRIEF_PATH)" >&2
 fi
 
-# 6. MCP 알림 발송 — infrastructure/llm dispatcher 가 manifest 읽어 MCP 도구 호출 (F-13)
-echo "[run_daily_local] === 6. MCP notify dispatch ==="
-if [ -f "$NOTIFY_OUT" ]; then
-  PROMPT="다음 파일을 읽고: $NOTIFY_OUT
-status=\"sent\" 인 각 채널에 대해 payload 를 그대로 전달한다.
-_mcp_tool_hint='slack_send_message' 이면 namespaced 도구 $SLACK_MCP_TOOL,
-_mcp_tool_hint='create_draft' 이면 $GMAIL_MCP_TOOL 을 호출.
-payload 본문에 새 내용 추가 / 수정 일체 금지. 발송 후 결과 요약만 1줄로 출력."
-  "$PY" -m infrastructure.llm.dispatcher \
-    --prompt "$PROMPT" \
-    --allowed-tools "Read,$SLACK_MCP_TOOL,$GMAIL_MCP_TOOL" \
-    >> "$(phase_log notify)" 2>&1 || \
-    echo "[run_daily_local] WARN: MCP dispatch non-zero exit" >&2
-fi
+# 6. 알림 발송 — infrastructure/notify dispatcher 가 바로 송신 (Python native).
+echo "[run_daily_local] === 6. notify dispatch ==="
 
 # 7. audit shadow-portfolio — 결정론 엔진 (F-6: 구 LLM 스킬 회수). state 부재 시 exit 2 (init 안내).
 echo "[run_daily_local] === 7. audit shadow-portfolio (deterministic) ==="

@@ -58,7 +58,6 @@ import 한 줄 + `config/regimes.yaml` `signals:` 한 줄. `main` / `classify_re
 
 ## 이전 이력
 
-<!-- legacy-ok -->
 - [Run 7 완료 2026-05-17] `domains.risk_engine.macro_regime` → `domains.macro.main` +
   `application.regime_classify` + `indicators`. 옛 파일 삭제.
 - [Run 7 완료 2026-05-17] `domains.risk_engine.macro_breadth_fetch` →
@@ -68,7 +67,6 @@ import 한 줄 + `config/regimes.yaml` `signals:` 한 줄. `main` / `classify_re
   consumer 와 같은 BC 로). cache 경로(`infrastructure/_common/_spx_constituents.json`)
   무변경. risk_engine `_boundary.infra_common_dir()` 는 dead 가 되어 제거.
 - thresholds.yaml 의 `macro:` 섹션 → `config/regimes.yaml` 로 완전 이전.
-<!-- /legacy-ok -->
 
 ## 검증
 

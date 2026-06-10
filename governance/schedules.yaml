@@ -14,7 +14,7 @@ last_updated: "2026-05-13"
 # 단방향 derive. 어떤 stage / hook / domain 코드도 plist 의 raw 값을 직접
 # 작성하지 않는다. (구 topology.yaml path SSoT 는 제거됨 — utils.py path helper.)
 #
-# 의존 spec: $SPECS_DIR/deployment-residency.md
+의존 spec: governance/deployment-residency.md
 # ============================================================
 
 # ------------------------------------------------------------
@@ -24,7 +24,6 @@ last_updated: "2026-05-13"
 # systemd timer unit 은 "investment_v3-{key}.timer" 로 derive (systemd generator 미구현).
 # ------------------------------------------------------------
 schedules:
-
   daily_pipeline:
     description: |
       매일 07:30 KST 전체 파이프라인 (Stage 0~6 결정적 + LLM 4/6 +
@@ -37,7 +36,6 @@ schedules:
       enabled+wake schedule 부재 시 자동 ``pmset repeat cancel`` 하며(S-1 fix),
       uninstall.sh step 2 도 ``sudo pmset repeat cancel`` 수행한다.
     enabled: false
-
     # cron expression — OS-agnostic. macOS launchd 는 StartCalendarInterval
     # 로 translate, Linux systemd 는 OnCalendar 로 translate.
     cron: "30 7 * * *"
@@ -71,9 +69,9 @@ schedules:
     # mode: wake (sleep only) / poweron (off only) / wakeorpoweron (both)
     wake:
       enabled: true
-      pre_offset_minutes: 5      # cron 시간보다 N 분 일찍 wake
+      pre_offset_minutes: 5 # cron 시간보다 N 분 일찍 wake
       mode: "wakeorpoweron"
-      days_of_week: "MTWRFSU"    # M T W R(목) F S U(일) — 주말 포함
+      days_of_week: "MTWRFSU" # M T W R(목) F S U(일) — 주말 포함
 
     # 프로세스 우선순위 — plist ProcessType / LowPriorityIO 로 translate.
     process_type: "Background"
@@ -90,7 +88,6 @@ schedules:
       install.sh 실행 (OS 경계 단일 통로 — launchd LaunchAgent 생성 + lock 갱신).
       엔진 미구현 상태에서 실행 시 intake-only (no-op) 이므로 enabled: false 유지.
     enabled: false
-
     # 주간 — 매주 일요일 06:00 KST (daily_pipeline 07:30 과 분리).
     cron: "0 6 * * 0"
     timezone: "Asia/Seoul"

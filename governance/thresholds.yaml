@@ -13,15 +13,7 @@ schema: "investment-thresholds-v1"
 # ============================================================
 # Stage 0 — Macro Regime Gate (E)
 # ============================================================
-# [MIGRATION COMPLETE 2026-05-17]
-# Stage 0 macro config 는 domains/macro/config/regimes.yaml 로 완전 이전 (Run 7).
-# 본 thresholds.yaml 의 macro 섹션 제거.
-#
-# 이전 완료:
-#   - [Run 7] macro.regime_thresholds + cash_band + regime_shift_alert
-#       → domains/macro/config/regimes.yaml (thresholds + cash_band + regime_shift_alert)
-#   - [Run 7] risk_engine.macro_regime / macro_breadth_fetch 삭제
-#       → domains.macro.main / domains.macro.breadth_fetch
+# Macro config 는 domains/macro/config/regimes.yaml 로 완전 이전 (Run 7).
 
 # ============================================================
 # Stage 2 — Quality Filter (C ∩ A)
@@ -29,34 +21,12 @@ schema: "investment-thresholds-v1"
 # [MOVED 2026-05-15] quality.* 섹션 39줄 → domains/screener/config/profiles/quality_floor.yaml
 # + domains/screener/config/strategies/default.yaml.constants
 # DDD modular monolith 재설계 — screener bounded context 가 자체 SSoT 보유.
-# governance/deprecated-references.yaml + deprecated-artifacts.yaml 의 alpha_factory.*
-# 항목 참조. 본 위치는 historical anchor 만 — 신규 키 추가 금지.
+# 본 위치는 historical anchor 만 — 신규 키 추가 금지.
 
 # ============================================================
 # Stage 1 — Universe (A)
 # ============================================================
-# [MIGRATION COMPLETE 2026-05-17]
-# Stage 1 universe config 는 domains/universe/ 패키지의 self-contained
-# config/*.yaml 로 완전 이전 — thresholds.yaml 의 universe 섹션 제거.
-#
-# 이전 완료:
-#   - [Run 4] manual_additions / exclusions → domains/universe/config/{manual_additions,exclusions}.yaml
-#   - [Run 3] korean_special_situations.{treasury_actions, spin_off_window_months,
-#       activist_filings} → domains/universe/config/sources.yaml (DartDisclosureFilter)
-#   - [Run 3] 미사용 config 제거: holding_companies / preferred_share_pairs (nested) / stake_min
-#   - [Run 2] holding_companies_subsidiaries → domains/universe/config/subsidiaries.yaml
-#   - [Run 5] preferred_share_pairs.manual_pairs → domains/universe/config/preferred_pairs.yaml
-#   - [Run 5] stage1_nav_calc / stage1_pref_spread → enrichers/{nav_discount, spread_zscore}.py
-#
-# Legacy alpha_factory 삭제: universe.py / stage1_nav_calc.py / stage1_pref_spread.py.
-# ============================================================
-# NOTE: 2026-05-17 — universe 섹션 완전 비움 (Run 4 + Run 5).
-# 모든 stage 1 universe 관련 config 는 domains/universe/config/ 에 self-contained:
-#   - sources.yaml (active sources + DartDisclosureFilter 3 entry + preferred_share_pair_seed)
-#   - enrichers.yaml (nav_discount, spread_zscore)
-#   - manual_additions.yaml / exclusions.yaml / subsidiaries.yaml / preferred_pairs.yaml
-# legacy alpha_factory/{universe, stage1_nav_calc, stage1_pref_spread}.py 삭제 완료.
-# 본 키 자체를 thresholds.yaml 에서 완전 제거 — stage1 config drift 가능성 0.
+# Universe config 는 domains/universe/config/ 로 완전 이전 (Run 4+5).
 
 # ============================================================
 # Stage 3 — Catalyst Events
@@ -95,8 +65,8 @@ thesis:
     a_information_warning: true
     require_c_or_d_for_high_conviction: true
   asymmetry:
-    min_ratio: 2.0                        # downside_floor / upside_ceiling
-    reject_below_min: false                # false면 size 절반 cap
+    min_ratio: 2.0 # downside_floor / upside_ceiling
+    reject_below_min: false # false면 size 절반 cap
     half_size_below_ratio: 3.0
   time_horizon_months:
     min: 6
@@ -117,9 +87,9 @@ thesis:
   #   overdue  T+30 days   brief 첫 줄 alert (강화 — re-evaluation 필요)
   expiry_alert:
     tiers:
-      notice_days:   90
-      warn_days:     30
-      expired_days:   0
+      notice_days: 90
+      warn_days: 30
+      expired_days: 0
       overdue_days: -30
     surface_in_brief: true
 
@@ -128,18 +98,18 @@ thesis:
 # ============================================================
 sizing:
   kelly:
-    fraction: 0.25                        # quarter-Kelly default
-    portfolio_kelly_cap: 0.5              # 합산 Kelly 0.5 초과 금지
+    fraction: 0.25 # quarter-Kelly default
+    portfolio_kelly_cap: 0.5 # 합산 Kelly 0.5 초과 금지
   per_position:
-    max_pct: 0.25                         # 단일 종목 25% cap
-    min_pct: 0.02                         # 최소 진입 사이즈
+    max_pct: 0.25 # 단일 종목 25% cap
+    min_pct: 0.02 # 최소 진입 사이즈
   drawdown_brake:
-    threshold_pct: 0.15                   # -15% 도달 시
+    threshold_pct: 0.15 # -15% 도달 시
     action: "halve_all_sizes"
-    reset_threshold_pct: 0.05             # +5% 회복 시 brake 해제
+    reset_threshold_pct: 0.05 # +5% 회복 시 brake 해제
   requires_user_input:
-    portfolio_context: true               # 사용자 자본 / 변동성 허용 입력 필수
-    output_size_without_input: false      # 입력 없으면 사이즈 출력 보류
+    portfolio_context: true # 사용자 자본 / 변동성 허용 입력 필수
+    output_size_without_input: false # 입력 없으면 사이즈 출력 보류
 
 # ============================================================
 # Falsifier Proximity (Stage 5b)
@@ -156,7 +126,7 @@ falsifier:
     low_max: 0.5
     medium_max: 0.9
   alert_channels:
-    high: ["push_notification"]      # 알림 채널 — manual notification helper 책임
+    high: ["push_notification"] # 알림 채널 — manual notification helper 책임
     medium: []
     low: []
 
@@ -176,7 +146,7 @@ enforcement:
       - "must hold"
       - "set to rise"
       - "set to fall"
-    statistical:                          # sample size 미충족 시 차단
+    statistical: # sample size 미충족 시 차단
       - phrase: "outperformed the market"
         requires_n: 30
       - phrase: "alpha confirmed"
@@ -186,21 +156,21 @@ enforcement:
       - phrase: "beats benchmark"
         requires_n: 30
     valuation:
-      - "undervalued"                     # 단독 사용 금지, evidence 필요
-      - "long-term winner"                # falsifier 없으면 금지
+      - "undervalued" # 단독 사용 금지, evidence 필요
+      - "long-term winner" # falsifier 없으면 금지
   numbers_evidence_required:
     all_numbers_in_output_must_cite_helper: true
     citation_format: "{source}@{ISO_timestamp}={value}"
     examples:
       - "Yahoo@2026-05-03T16:00=178.50"
-      - "DART@2026-05-03={\"공시번호\":20260503000456,\"type\":\"자사주_소각\"}"
+      - 'DART@2026-05-03={"공시번호":20260503000456,"type":"자사주_소각"}'
       - "FRED@2026-05-03=DGS10:4.25"
   external_signal:
     only_via_explicit_ingest_command: true
     ingest_redaction_required: true
   default_action:
     most_days_no_new_candidate: true
-    matrix_unchanged_alert: true          # 일주일 변화 0이면 정상 신호
+    matrix_unchanged_alert: true # 일주일 변화 0이면 정상 신호
 
 # ============================================================
 # Statistical Honesty + Self-Disable
@@ -219,12 +189,12 @@ statistics:
   shadow_portfolio:
     update_frequency: "daily"
     rebalance_method: "buy-and-hold-snapshot"
-    initial_capital_krw: 100000000        # 1억원 paper-trade baseline
+    initial_capital_krw: 100000000 # 1억원 paper-trade baseline
     # 결정론 엔진 (domains/audit_integrity, F-6) knobs:
-    top_k: 5                              # tier_1/tier_3 동일비중 slot 수
-    max_hold_days: 30                     # tier_1(catalyst 미갱신)/tier_3 보유 만료
-    rebalance_threshold_pct: 0.05         # tier_0 weight drift 리밸런스 임계
-    tier0_tickers: ["US:SPY", "KR:069500"]  # passive_index 50/50 (SPY + KODEX200)
+    top_k: 5 # tier_1/tier_3 동일비중 slot 수
+    max_hold_days: 30 # tier_1(catalyst 미갱신)/tier_3 보유 만료
+    rebalance_threshold_pct: 0.05 # tier_0 weight drift 리밸런스 임계
+    tier0_tickers: ["US:SPY", "KR:069500"] # passive_index 50/50 (SPY + KODEX200)
   outcome_audit_frequency:
     weekly: "process audit (rule violation check)"
     quarterly: "outcome vs benchmarks"
@@ -233,10 +203,10 @@ statistics:
     # 단순 부호만 비교하면 noise 흔들림 → Welch t-test p-value 결합으로 강화.
     # 산출 helper: domains/audit_integrity/stat_tests.evaluate_self_disable_trigger
     condition: "tier_2 < tier_1 for 4 consecutive quarters AND Welch p_two_sided < p_max"
-    consecutive_required: 4               # 4분기 연속 부호 음수
-    p_max: 0.10                           # Welch t-test two-sided p-value cap
+    consecutive_required: 4 # 4분기 연속 부호 음수
+    p_max: 0.10 # Welch t-test two-sided p-value cap
     action: "alert + require user re-engineering decision"
-    minimum_quarters_before_check: 4      # 1년 누적 후부터 검사
+    minimum_quarters_before_check: 4 # 1년 누적 후부터 검사
   bootstrap:
     iters: 10000
     seed: 42

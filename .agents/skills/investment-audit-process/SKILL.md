@@ -10,8 +10,8 @@ description: Investment 파이프라인 주간 process audit. 지난 7일 일별
 지켰는지만 평가한다. process discipline이 깨지면 outcome이 좋아도 통계적
 의미 없음 (statistical-honesty.md).
 
-본 skill은 5stone-any-codeAuditor 패턴을 isomorphic하게 차용 — 결과
-verdict (PASS / FAIL with severity) 산출, 다른 산출물 수정 안 함.
+본 skill은 결과 verdict (PASS / FAIL with severity) 를 산출하며, 다른 산출물은
+수정하지 않는다.
 
 ---
 

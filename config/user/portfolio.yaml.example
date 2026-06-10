@@ -27,16 +27,15 @@ schema: investment-user-portfolio-v1
 total_capital_krw: null
 
 # ------------------------------------------------------------
-# [deprecated — derived from positions_sync] override 전용
+# override 전용 — positions_sync + portfolio_state_derive 가 자동 derive
 # ------------------------------------------------------------
-# 본 두 필드는 positions_sync + portfolio_state_derive 가 자동 derive 한다
-# (산출: $POSITIONS_DIR/_derived-{date}.json). 본 파일에 값을 명시하면
-# derived 값보다 우선 (사용자 manual override).
+# 본 두 필드는 $POSITIONS_DIR/_derived-{date}.json 에서 자동 derive 된다.
+# 본 파일에 값을 명시하면 derived 값보다 우선 (사용자 manual override).
 #
-# 자동화 우선순위 (sizing.py):
-#   1) portfolio.yaml 명시값 (본 파일 — null 이 아닐 때)
-#   2) $POSITIONS_DIR/_derived-{date}.json (자동 derive)
-#   3) 0 fallback (둘 다 미가용)
+# 우선순위 (sizing.py):
+#   1) portfolio.yaml 명시값 (null 이 아닐 때)
+#   2) $POSITIONS_DIR/_derived-{date}.json
+#   3) 0 fallback
 #
 # null 유지가 권장. KIS read-only 활성 + 보유 포지션 존재 시 자동 채워짐.
 current_drawdown_pct: null

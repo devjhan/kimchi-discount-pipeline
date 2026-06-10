@@ -1,6 +1,6 @@
 # Shared Bootstrap Contract — Investment Pipeline
 
-본 문서는 investment 파이프라인의 모든 agent / skill이 공유하는 bootstrap 규약이다. 5stone (`~/.agents/skills/_shared/5stone/bootstrap.md`)과 동일한 single-source 패턴을 따르며, investment 도메인 고유 룰을 정의한다.
+본 문서는 investment 파이프라인의 모든 agent / skill이 공유하는 bootstrap 규약이다. investment 도메인 고유의 cross-cutting 룰을 단일 source로 정의한다.
 
 각 skill은 본문에서 본 문서를 명시적으로 참조한다. 본 문서가 없거나 읽을 수 없으면 인용 skill은 즉시 ERROR로 중단한다.
 
@@ -263,7 +263,7 @@ NO 하나라도 있으면 산출물 작성 중단 후 누락 보고.
 
 ---
 
-## Section 7. Forbidden Actions (5stone 직역 + 투자 도메인 추가)
+## Section 7. Forbidden Actions
 
 다음 행동은 어떤 skill / 어떤 cron run에서도 수행 금지:
 

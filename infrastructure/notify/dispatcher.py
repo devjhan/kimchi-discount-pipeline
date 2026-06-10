@@ -5,12 +5,8 @@ infrastructure/notify/dispatcher.py — daily brief notification dispatcher.
 NOTIFY_CHANNELS env (`slack,gmail` 식 CSV) 또는 명시 인자로 활성 채널 list 결정,
 각 채널 adapter 의 render → validate → send 를 순차 호출 후 결과 dict 반환.
 
-cloud routine prompt 가 본 dispatcher 의 결과 (channel → payload) 를 받아 실제
-MCP tool 호출 (slack_send_message / create_draft) 을 수행한다. dispatcher 는
-LLM tool 을 직접 호출하지 않는다 (G6/G9 의 책임 분리).
-
 CLI:
-    python -m infrastructure.notify.dispatcher --brief operations/2026-05-09/daily-brief.md \\
+    python -m infrastructure.notify.dispatcher --brief operations/2026-05-09/daily-brief.md \
         [--channels slack,gmail] [--dry-run] [--out-json -]
 
 산출:
@@ -27,13 +23,13 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from infrastructure.notify import REGISTRY, AdapterResult, BriefBlocked, NotifierAdapter
 from infrastructure._common.utils import load_env_file, secret_safe_log
+from infrastructure.notify import REGISTRY, AdapterResult, BriefBlocked, NotifierAdapter
 
 
 def _merged_env(base: dict[str, str] | None) -> dict[str, str]:
-    """`.env` (local dev) + `os.environ` (cloud routine env). os.environ
-    가 우선 — cloud env 가 local override 를 정상 표현하기 위함.
+    """`.env` (local dev) + `os.environ`. os.environ
+    가 우선 — runtime env 가 local override 를 정상 표현하기 위함.
     """
     out: dict[str, str] = {}
     if base:
@@ -92,9 +88,7 @@ def dispatch_brief(
         try:
             adapter.validate_brief(brief_md)
         except BriefBlocked as exc:
-            results[ch] = AdapterResult(
-                channel=ch, status="blocked", error=str(exc)
-            )
+            results[ch] = AdapterResult(channel=ch, status="blocked", error=str(exc))
             continue
         try:
             payload = adapter.render(brief_md)

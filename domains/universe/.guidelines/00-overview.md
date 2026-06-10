@@ -63,11 +63,9 @@
 
 `01-universe.json` 의 envelope 구조 — legacy stage1 helper (삭제됨) 와 isomorphic:
 
-<!-- legacy-ok -->
 > 옛 산출 모듈: `domains.alpha_factory.universe` (Run 4 시점 삭제). envelope schema
 > `investment-stage1-universe-v1` 의 모든 top-level / entry 필드 보존 → downstream
 > (catalyst_scan, screener.io.universe_loader, brief_gate) 호환.
-<!-- /legacy-ok -->
 
 ```jsonc
 {

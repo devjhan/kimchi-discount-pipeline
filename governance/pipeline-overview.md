@@ -111,7 +111,7 @@ universe(Stage 1 *enrich*)↔screener(Stage 2 *cutoff*) 경계는 `01-universe.j
 
 자동 스케줄의 canonical 경로는 **launchd** (`infrastructure/scheduling/install.sh` 단일 통로) 다.
 현재 `daily_pipeline` 은 `schedules.yaml` 에서 `enabled: false` 라 비활성 — 아래는 수동 invoke.
-cloud (`/schedule`) · scheduled-tasks 경로는 **deprecated** (KIS/DART/KRX IP 차단 — `deployment-residency.md`).
+cloud 경로는 **비활성** (KIS/DART/KRX IP 차단).
 
 ```bash
 # 전체 파이프라인 (Stage 0~6 순차)

@@ -53,11 +53,7 @@ config/signals/macro/breadth.yaml
 operations/**/.trails/
 operations/
 
-# Hook audit logs — 로컬 dev artifact, 추적 불필요
-.claude/hooks/_audit.log
-.claude/hooks/*.log
-
-# 2026-06-02 operations/ 재편: 비일별 데이터를 telemetry/ · cache/ · secrets/ · config/ 로 이주.
+# 2026-06-02 operations/ 재편 완료 — 비일별 데이터는 telemetry/ · .cache/ · secrets/ · config/.
 
 # telemetry/logs — hook / cron / launchd 실행 로그 (관측용, 누적 방지; 디렉토리는 .gitkeep 으로 유지)
 telemetry/logs/
@@ -80,6 +76,3 @@ operations/**/_notify-results.json
 # Zed Agent project-local skills (tracked — all in .agents/skills/)
 # .agents/ 디렉토리 자체는 git tracked, 불필요한 파일만 ignore
 .agents/.DS_Store
-
-# Legacy Claude Code settings (removed in migration)
-# .claude/settings.local.json — deleted with .claude/ directory

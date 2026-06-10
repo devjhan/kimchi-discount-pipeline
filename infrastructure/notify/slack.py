@@ -1,11 +1,10 @@
 """
 infrastructure/notify/slack.py — Slack adapter.
 
-Slack 송신은 Anthropic-managed cloud routine 환경의 Slack MCP connector
-(`slack_send_message` tool) 가 담당한다. 본 adapter 는 payload (channel + text)
-를 빌드해 routine prompt 에 반환하고, 실제 tool invocation 은 LLM 본체가 한다.
+본 adapter 는 payload (channel + text) 를 빌드한다. 실제 송신은 호출자가
+담당한다.
 
-dry_run / connector 미가용 환경에서는 'skipped' status 만 반환.
+dry_run 환경에서는 'skipped' status 만 반환.
 
 Required env:
     NOTIFY_SLACK_CHANNEL — 발송 대상 채널 ID (예: C0123456) 또는 #channel-name
@@ -28,7 +27,9 @@ class SlackAdapter(NotifierAdapter):
     def render(self, brief_md: str) -> dict[str, Any]:
         text = brief_md
         if len(text) > MAX_MESSAGE_CHARS:
-            text = text[:MAX_MESSAGE_CHARS] + "\n\n... (truncated for Slack message limit)"
+            text = (
+                text[:MAX_MESSAGE_CHARS] + "\n\n... (truncated for Slack message limit)"
+            )
         channel = (self.env.get("NOTIFY_SLACK_CHANNEL") or "").strip()
         return {
             "channel": channel,
@@ -41,7 +42,10 @@ class SlackAdapter(NotifierAdapter):
         # LLM 이 Slack MCP 도구로 수행.  여기서는 검증 + payload 동봉만.
         if dry_run:
             return AdapterResult(
-                channel=self.name, status="skipped", payload=payload, skip_reason="dry_run"
+                channel=self.name,
+                status="skipped",
+                payload=payload,
+                skip_reason="dry_run",
             )
         return AdapterResult(channel=self.name, status="sent", payload=payload)
 

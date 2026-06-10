@@ -40,9 +40,9 @@ agent toolchain 은 `.env*` 파일 직접 접근 차단 (env-guard hook); 단
 | `FRED_API_KEY`   | Stage 0                   | 발급: fred.stlouisfed.org |
 | `TELEGRAM_BOT_TOKEN` | (옵셔널)              | manual notify 만 |
 | `TELEGRAM_CHAT_ID`   | (옵셔널)              | 위와 pair |
-| `NOTIFY_CHANNELS` (cloud routine 한정) | brief notify dispatcher | CSV — `slack,gmail` 형식 |
-| `NOTIFY_SLACK_CHANNEL` (cloud routine 한정) | Slack adapter | 발송 채널 ID |
-| `NOTIFY_EMAIL_TO` / `NOTIFY_EMAIL_FROM` (cloud routine 한정) | Gmail adapter | 수신 / 발신 주소 |
+| `NOTIFY_CHANNELS` | brief notify dispatcher | CSV — `slack,gmail` 형식 |
+| `NOTIFY_SLACK_CHANNEL` | Slack adapter | 발송 채널 ID |
+| `NOTIFY_EMAIL_TO` / `NOTIFY_EMAIL_FROM` | Gmail adapter | 수신 / 발신 주소 |
 
 `KIS_ACCOUNT_NUMBER` 는 G9b read-only 정책 활성 시 6종 endpoint
 (주식잔고조회 / 실현손익 / 일별체결 / 매수가능 / 매도가능수량 / 계좌자산) 호출에

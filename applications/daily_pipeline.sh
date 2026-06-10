@@ -13,18 +13,18 @@
 #   bash applications/daily_pipeline.sh                    # 오늘 (KST), --phase all
 #   bash applications/daily_pipeline.sh --date 2026-05-08
 #   bash applications/daily_pipeline.sh --date 2026-05-08 --dry-run
-#   bash applications/daily_pipeline.sh --phase pre-stage4  # Stage 0~3 (cloud routine 1단계)
-#   bash applications/daily_pipeline.sh --phase post-stage4 # Stage 5~5d (Stage 4 LLM skill 후)
+bash applications/daily_pipeline.sh --phase pre-stage4  # Stage 0~3
+bash applications/daily_pipeline.sh --phase post-stage4 # Stage 5~5d (Stage 4 LLM skill 후)
 #
 # Stage 0 → 1 → 2 → 3 → 5 의 deterministic helper 만 실행한다.
-# Stage 4 (thesis-auditor) 와 Stage 6 (brief-author) 는 LLM skill 이므로
-# Claude Code 안에서 별도로 invoke (`/investment-stage4-thesis-auditor` etc).
+Stage 4 (thesis-auditor) 와 Stage 6 (brief-author) 는 LLM skill 이므로
+Zed Agent 안에서 별도로 invoke (`investment-stage4-thesis-auditor` etc).
 #
 # --phase 분리 이유:
 #   Stage 5 sizing 은 Stage 4 thesis-auditor 산출물 (`04-thesis-candidates.json`)
 #   을 입력으로 받는다. 그러나 Stage 4 는 LLM skill 이라 shell 에서 직접
-#   호출 불가 → cloud routine 은 (1) pre-stage4 → (2) Stage 4 skill → (3)
-#   post-stage4 순으로 두 번 본 script 를 호출한다. 로컬 manual 실행은
+호출 불가 → 로컬 실행은 (1) pre-stage4 → (2) Stage 4 skill → (3)
+post-stage4 순으로 두 번 본 script 를 호출한다. 로컬 manual 실행은
 #   --phase all (default) 로 호환 — 단 Stage 5 는 Stage 4 없이 실행되므로
 #   thesis 검증 반영을 원하면 사용자가 Stage 4 skill 후 --phase post-stage4
 #   를 재호출.
@@ -219,8 +219,8 @@ if [[ "$PHASE" == "all" || "$PHASE" == "pre-stage4" ]]; then
 fi
 
 # Stage 4 = LLM skill (invest-stage4-thesis-auditor) — 본 script 는 helper 만 자동화.
-# cloud routine 의 경우 본 script 를 --phase pre-stage4 로 호출 → Stage 4 LLM
-# skill 호출 → 다시 --phase post-stage4 로 재호출. 로컬 manual 은 --phase all
+# 본 script 를 --phase pre-stage4 로 호출 → Stage 4 LLM
+# skill 호출 → 다시 --phase post-stage4 로 재호출. --phase all
 # 로 한 번에 실행되며, 이 경우 Stage 5 는 Stage 4 없이 빈 thesis_candidates 로
 # 실행됨 (G11 default no-action 정합).
 if [[ "$PHASE" == "all" ]]; then
@@ -242,18 +242,18 @@ echo "" | tee -a "$LOG_FILE"
 echo "============================================================" | tee -a "$LOG_FILE"
 echo "[$(date -Iseconds)] Pipeline run complete — date=$DATE_KST phase=$PHASE" | tee -a "$LOG_FILE"
 if [[ "$PHASE" == "pre-stage4" ]]; then
-  echo "Manual next step (Claude Code 안에서):" | tee -a "$LOG_FILE"
-  echo "  1. /investment-stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
+  echo "Manual next step:" | tee -a "$LOG_FILE"
+  echo "  1. investment-stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
   echo "  2. bash applications/daily_pipeline.sh --date $DATE_KST --phase post-stage4   # Stage 5~5d" | tee -a "$LOG_FILE"
-  echo "  3. /investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  3. investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
 elif [[ "$PHASE" == "post-stage4" ]]; then
-  echo "Manual next step (Claude Code 안에서):" | tee -a "$LOG_FILE"
-  echo "  1. /investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
+  echo "Manual next step:" | tee -a "$LOG_FILE"
+  echo "  1. investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
 else
-  echo "Manual next step (Claude Code 안에서):" | tee -a "$LOG_FILE"
-  echo "  1. /investment-stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
+  echo "Manual next step:" | tee -a "$LOG_FILE"
+  echo "  1. investment-stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
   echo "  2. (선택) bash applications/daily_pipeline.sh --date $DATE_KST --phase post-stage4   # Stage 4 검증 반영한 sizing 재산출" | tee -a "$LOG_FILE"
-  echo "  3. /investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  3. investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
 fi
 echo "  Optional:" | tee -a "$LOG_FILE"
 echo "  - /investment-stage0-regime-labeler    $DATE_KST" | tee -a "$LOG_FILE"

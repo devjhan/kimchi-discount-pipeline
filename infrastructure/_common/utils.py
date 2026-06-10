@@ -1,7 +1,7 @@
 """
 infrastructure/_common/utils.py — investment_v3 helper module.
 
-<!-- legacy-ok -->v1 `scripts/_common.py` 의 후신.<!-- /legacy-ok --> 모든 stage / domain / hook 가 공유하는 utility:
+v1 `scripts/_common.py` 의 후신. 모든 stage / domain / hook 가 공유하는 utility:
 - Path helpers (REPO_ROOT 기준 직접 빌더 — operations/governance 레이아웃, env-overridable)
 - env / config 로딩
 - secret-safe 로깅
@@ -192,9 +192,8 @@ def load_env_file(path: Path | str | None = None) -> dict[str, str]:
         2. `ENV_PATH` env var (alias resolver 가 export)
         3. `.env` (repo root)
 
-    Cloud routine fallback:
-        Anthropic Claude Code Routines (cloud) 환경에서는 `.env` 가
-        .gitignore 이므로 worktree 에 존재하지 않는다.  이 경우 cloud
+    `.env` 가 .gitignore 이므로 worktree 에 존재하지 않는
+    환경을 위해 os.environ 을 먼저 시도한다.
         Environment 탭에 등록된 secret/notify env 가 `os.environ` 에 주입되어
         있으므로, 본 함수가 알려진 key 들에 한해 fallback 으로 채택한다.
         File 값이 존재하는 key 는 file 우선 (local dev 의 명시적 override).
@@ -212,7 +211,7 @@ def load_env_file(path: Path | str | None = None) -> dict[str, str]:
                 continue
             key, _, value = line.partition("=")
             env[key.strip()] = value.split("#", 1)[0].strip()
-    # cloud routine fallback — file 미존재 또는 일부 key 누락 시 os.environ
+    # file 미존재 또는 일부 key 누락 시 os.environ
     # 에서 알려진 secret/notify key 만 채택.  G21 정합 — 임의 env var 가
     # leak 되지 않도록 whitelist.
     _CLOUD_FALLBACK_KEYS = SECRET_ENV_KEYS | {
@@ -283,9 +282,11 @@ def load_runtime_policy() -> dict[str, Any]:
         user_acknowledged.sample_size_limits: bool
         kis.read_only_account.enabled: bool
 
-    Cloud routine env fallback (.local.yaml gitignore 이므로 cloud worktree
-    부재).  본 env 들이 set 이면 final merged 값을 추가 override 한다 — env 가
+    .local.yaml gitignore 이므로 worktree 부재 환경에서
+    env 가 set 이면 final merged 값을 추가 override 한다 — env 가
     가장 우선. False 표기 ("false"/"0"/"no") 도 명시적 override 로 인정.
+
+    Env fallback mapping:
         RUNTIME_POLICY_USER_ACK_NOT_FINANCIAL_ADVICE  → user_acknowledged.not_financial_advice
         RUNTIME_POLICY_USER_ACK_NO_AUTO_TRADE         → user_acknowledged.no_auto_trade
         RUNTIME_POLICY_USER_ACK_SAMPLE_SIZE_LIMITS    → user_acknowledged.sample_size_limits
@@ -351,7 +352,7 @@ def all_user_acknowledged(
 
 def load_user_portfolio() -> dict[str, Any]:
     """
-    $USER_PORTFOLIO_PATH load. 미존재 / 누락 필드 시 cloud routine env fallback.
+    $USER_PORTFOLIO_PATH load. 미존재 / 누락 필드 시 env fallback.
 
     schema:
         total_capital_krw:    int | None
@@ -359,7 +360,7 @@ def load_user_portfolio() -> dict[str, Any]:
         current_cash_pct:     float | None
         volatility_tolerance: 'low' | 'medium' | 'high' | None  (helper 미참조)
 
-    Cloud fallback (file gitignore 이므로 cloud worktree 부재):
+    Env fallback (file gitignore 이므로 worktree 부재 시):
         USER_PORTFOLIO_TOTAL_KRW       → total_capital_krw    (int)
         USER_PORTFOLIO_DRAWDOWN_PCT    → current_drawdown_pct (float)
         USER_PORTFOLIO_CASH_PCT        → current_cash_pct     (float)
@@ -402,12 +403,12 @@ def load_user_portfolio() -> dict[str, Any]:
 
 def load_user_behavior() -> dict[str, Any]:
     """
-    $USER_BEHAVIOR_PATH load. 미존재 시 빈 dict + cloud env fallback.
+    $USER_BEHAVIOR_PATH load. 미존재 시 빈 dict + env fallback.
 
     schema:
         yahoo_fallback.enabled: bool
 
-    Cloud routine env fallback (file gitignore 이므로 cloud worktree 부재):
+    Env fallback (file gitignore 이므로 worktree 부재 시):
         USER_BEHAVIOR_YAHOO_FALLBACK_ENABLED  → yahoo_fallback.enabled
         File 값이 존재 (True/False 둘 다) 하면 file 우선.  env 는 file 키가
         없을 때만 채택.

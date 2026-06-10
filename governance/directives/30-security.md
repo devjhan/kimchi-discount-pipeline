@@ -87,12 +87,10 @@ price = quote_price("005930")  # 시세 read OK
 
 **근거**: 사용자 machine 절대경로가 본문에 등장하면 환경 leak + 다른 사용자 환경에서 reproducibility 깨짐. 모든 path 는 alias 경유.
 
-<!-- legacy-ok -->
 ❌ 금지 (의도적 anti-pattern 예시)
 ```python
 state = Path("/Users/me/projects/investment_v3/operations/_audit/state.json")
 ```
-<!-- /legacy-ok -->
 
 ✅ 올바름
 ```python

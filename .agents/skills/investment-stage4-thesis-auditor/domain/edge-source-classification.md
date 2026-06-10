@@ -1,6 +1,6 @@
 # Edge Source Classification (Stage 4)
 
-본 문서는 thesis의 `edge_source` 필드 분류 절차다. CLAUDE.md "엣지 원천
+본 문서는 thesis의 `edge_source` 필드 분류 절차다. AGENTS.md "엣지 원천
 명시" 원리 + $THRESHOLDS_PATH.thesis.edge_source가 single source. 본
 문서는 분류 enum과 A claim에 대한 추가 검증 절차를 정의한다.
 
@@ -48,8 +48,7 @@ Q3. 이 edge가 false면 어느 falsifier가 trigger되는가?
 ```
 
 답변 본문이 "시장이 틀렸다", "내가 맞다" 류 단정만 있고 정량/구조 추론
-없으면 reject. 본 검증은 ML 5stone codeAuditor의 PR cross-verify와
-isomorphic — claim에 대한 외부 reference 강제.
+없으면 reject. 본 검증은 claim에 대한 외부 reference를 강제한다.
 
 ### 2.3 fallback 권고
 

@@ -58,8 +58,6 @@ Institutional의 강제 (mandate / size / 분기 P&L) → 가격 inefficiency
 5. fallback 권고: A → B/C/D로 reframe 가능한지 재검토
 ```
 
-본 검증은 5stone codeAuditor의 PR cross-verify와 isomorphic — claim에
-대한 외부 reference 강제.
 
 ---
 

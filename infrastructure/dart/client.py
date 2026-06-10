@@ -1,7 +1,7 @@
 """
 infrastructure/dart/client.py — OPEN DART API minimal client.
 
-<!-- legacy-ok -->v1 `scripts/_dart.py` 의 후신.<!-- /legacy-ok --> Stage 1 (Universe) + Stage 3 (Catalyst) 공유.
+v1 `scripts/_dart.py` 의 후신. Stage 1 (Universe) + Stage 3 (Catalyst) 공유.
 helper script가 아닌 module이므로 직접 실행 안 함.
 
 DART OPEN API spec: https://opendart.fss.or.kr/guide/main.do
@@ -107,9 +107,7 @@ def _dart_get(
         raise DartUnavailable(str(exc)) from exc
     status = data.get("status")
     if status not in ("000", "013"):
-        raise DartUnavailable(
-            f"DART status={status} message={data.get('message')!r}"
-        )
+        raise DartUnavailable(f"DART status={status} message={data.get('message')!r}")
     return data
 
 
@@ -226,7 +224,12 @@ def fetch_financial_statements(
     """
     if len(bsns_year) != 4 or not bsns_year.isdigit():
         raise DartUnavailable(f"invalid bsns_year={bsns_year!r}")
-    if reprt_code not in (REPRT_CODE_ANNUAL, REPRT_CODE_HALF, REPRT_CODE_Q1, REPRT_CODE_Q3):
+    if reprt_code not in (
+        REPRT_CODE_ANNUAL,
+        REPRT_CODE_HALF,
+        REPRT_CODE_Q1,
+        REPRT_CODE_Q3,
+    ):
         raise DartUnavailable(f"invalid reprt_code={reprt_code!r}")
     if fs_div not in (FS_DIV_CONSOLIDATED, FS_DIV_SEPARATE):
         raise DartUnavailable(f"invalid fs_div={fs_div!r}")
@@ -236,7 +239,9 @@ def fetch_financial_statements(
         "reprt_code": reprt_code,
         "fs_div": fs_div,
     }
-    data = _dart_get(params, api_key, url=DART_FNLTT_SINGL_ACNT_ALL_URL, timeout=timeout)
+    data = _dart_get(
+        params, api_key, url=DART_FNLTT_SINGL_ACNT_ALL_URL, timeout=timeout
+    )
     if data.get("status") == "013":
         return []
     return list(data.get("list") or [])
@@ -247,9 +252,7 @@ def fetch_financial_statements(
 # ============================================================
 
 
-def _download_corp_code_zip(
-    api_key: str, *, timeout: float = 30.0
-) -> bytes:
+def _download_corp_code_zip(api_key: str, *, timeout: float = 30.0) -> bytes:
     """DART corpCode.xml endpoint 호출 — ZIP bytes 반환."""
     if not api_key:
         raise DartUnavailable("DART_API_KEY missing")

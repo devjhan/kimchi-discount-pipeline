@@ -14,13 +14,12 @@ screener 패키지와 isomorphic 한 DDD 구조 — _boundary.py (anti-corruptio
 schema: ``investment-stage1-universe-v1``
 
 대체 이력:
-<!-- legacy-ok -->
 - [Run 4 완료 2026-05-17] ``domains.alpha_factory.universe`` → 본 패키지의 ``main`` +
   ``application.build_universe``. 옛 파일 삭제됨.
 - [Run 5 완료 2026-05-17] ``domains.alpha_factory.stage1_nav_calc`` →
   ``enrichers.nav_discount`` + ``domains.alpha_factory.stage1_pref_spread`` →
   ``enrichers.spread_zscore`` + seed source ``sources.preferred_share_pair_seed``.
   옛 파일 모두 삭제됨.
-<!-- /legacy-ok -->
 """
+
 from __future__ import annotations

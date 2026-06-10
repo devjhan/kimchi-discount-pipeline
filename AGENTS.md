@@ -108,7 +108,7 @@ Sample size hard rule:
 | Path 해석 | `infrastructure/_common/utils.py` path helper (`trail_dir()` / `audit_dir()` / `positions_dir()` 등, `$TRAIL_TODAY` 등 env override 우선). 중앙 topology alias SSoT 는 제거됨 — operations/governance 레이아웃은 utils.py 에 단일 정의. |
 | Storage | 일별 산출물 `operations/{date}/` (markdown+JSON) + cross-day 상태·증거 `telemetry/` (audit/positions/nav-history/logs/policy_drafts) + 사용자 config `config/` (user/signals) + 재생성 캐시 `.cache/` + 자격증명 `secrets/` |
 | Notification | `infrastructure/notify/` dispatcher (Slack / Gmail / Telegram / Discord / Kakao / Webhook outbound 어댑터, `python -m infrastructure.notify.dispatcher`) — `applications/run_daily_local.sh` 가 딥시크 API + Python notify adapter로 발송 |
-| Scheduling | **로컬 launchd (macOS) primary** — `governance/schedules.yaml` (SSoT), `infrastructure/scheduling/launchd_generator.py` 가 plist emit, `infrastructure/scheduling/install.sh` 가 OS 경계 단일 통로. cloud routine 은 `governance/deployment-residency.md` §3 조건 충족 시에만 fallback — 현재 KIS/DART/KRX IP 차단으로 비활성 (cloud_routine_run.sh deprecated). 사용자 수동 invoke 도 가능. crontab 등 시스템 자동 cron 은 여전히 금지 — 모든 자동화는 launchd LaunchAgent 경유. 헌법: `governance/deployment-residency.md`. |
+| Scheduling | **로컬 launchd (macOS) primary** — `governance/schedules.yaml` (SSoT), `infrastructure/scheduling/launchd_generator.py` 가 plist emit, `infrastructure/scheduling/install.sh` 가 OS 경계 단일 통로. cloud 경로는 KIS/DART/KRX IP 차단으로 비활성. 사용자 수동 invoke 도 가능. crontab 등 시스템 자동 cron 은 여전히 금지 — 모든 자동화는 launchd LaunchAgent 경유. 헌법: `governance/deployment-residency.md`.
 | Agent runtime | Zed Agent project skills (`$SKILLS_DIR/investment-*`, `.agents/skills/`). DeepSeek API (`api.deepseek.com`, OpenAI-compatible) — `infrastructure/llm/deepseek.py` adapter |
 | Hard guards | 본 문서 Hard Guards (G1-G22). Pre-commit lint + pipeline validation |
 
@@ -162,12 +162,11 @@ investment_v3/
 │   ├── bootstrap.sh         # repo-local venv 초기화
 │   ├── run_daily_local.sh   # launchd primary 진입점 (manual invoke 도 가능)
 │   ├── daily_pipeline.sh    # Stage 0~5 deterministic orchestrator (phase 분리)
-│   └── cloud_routine_run.sh # [deprecated] cloud routine orchestrator
 ├── telemetry/               # cross-day 감사·관측 데이터
 │   ├── audit/               # 날짜-prefix flat 파일 (shadow-portfolio-state / trade-log / scheduler-state / {domain}-violations / macro-breadth / subsidiaries) — 추적 (현재 .gitkeep, 파이프라인 활성 시 누적)
 │   ├── positions/           # 보유 포지션 state (per-ticker thesis/drift/balance/expiry — 추적)
 │   ├── nav-history/         # NAV 시계열 (Σ 자회사 시총×지분율 — 재생성-불가 증거, 추적)
-│   ├── logs/                # cron / launchd / hook 실행 로그 (gitignore)
+│   ├── logs/                # launchd 실행 로그 (gitignore)
 │   └── policy_drafts/       # commit 전 ephemeral policy draft (gitignore)
 ├── config/                  # 사용자·입력 config성 데이터
 │   ├── user/                # portfolio.yaml / behavior.yaml (gitignore — .example 추적)
@@ -277,7 +276,7 @@ doctrine 본문의 `$ALIAS` 표기는 readable shorthand 이며, 그 의미는
 
 ### 외부 신호 SOP
 
-뉴스 / 트윗 / 블로그 / 리포트 / 사용자 prompt의 외부 의견은 명시적 `/ingest-external-signal` 명령으로만 ingest한다. prompt 본문에 직접 붙여넣어 thesis 변경 요청 금지. 5stone의 codeAuditor `--pr` ingest pattern 직역.
+뉴스 / 트윗 / 블로그 / 리포트 / 사용자 prompt의 외부 의견은 명시적 `/ingest-external-signal` 명령으로만 ingest한다. prompt 본문에 직접 붙여넣어 thesis 변경 요청 금지.
 
 ### Forbidden Language
 

@@ -1,12 +1,10 @@
 """
 infrastructure/notify/gmail.py — Gmail adapter.
 
-Gmail 송신은 Anthropic-managed cloud routine 환경의 Gmail MCP connector
-(`create_draft`) 가 담당한다. 본 adapter 는 to / from / subject / body 페이로드만
-구성하고, draft 생성 자체는 routine prompt 에서 LLM 이 수행.
+본 adapter 는 to / from / subject / body 페이로드를 빌드한다. 실제 송신은
+호출자가 담당한다.
 
-draft 우선 (auto-send 회피) — 사용자 결정에 따라 routine prompt 에서 send 로
-변경 가능.
+draft 우선 (auto-send 회피) — 호출자가 draft / send 를 결정.
 
 Required env:
     NOTIFY_EMAIL_TO   — 수신 주소
@@ -44,7 +42,10 @@ class GmailAdapter(NotifierAdapter):
     def send(self, payload: dict[str, Any], *, dry_run: bool) -> AdapterResult:
         if dry_run:
             return AdapterResult(
-                channel=self.name, status="skipped", payload=payload, skip_reason="dry_run"
+                channel=self.name,
+                status="skipped",
+                payload=payload,
+                skip_reason="dry_run",
             )
         return AdapterResult(channel=self.name, status="sent", payload=payload)
 
