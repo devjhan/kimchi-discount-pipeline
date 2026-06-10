@@ -107,7 +107,7 @@ Sample size hard rule:
 | Config | YAML (`governance/thresholds.yaml`) + dotenv (`.env`) |
 | Path 해석 | `infrastructure/_common/utils.py` path helper (`trail_dir()` / `audit_dir()` / `positions_dir()` 등, `$TRAIL_TODAY` 등 env override 우선). 중앙 topology alias SSoT 는 제거됨 — operations/governance 레이아웃은 utils.py 에 단일 정의. |
 | Storage | 일별 산출물 `operations/{date}/` (markdown+JSON) + cross-day 상태·증거 `telemetry/` (audit/positions/nav-history/logs/policy_drafts) + 사용자 config `config/` (user/signals) + 재생성 캐시 `.cache/` + 자격증명 `secrets/` |
-| Notification | `infrastructure/notify/` dispatcher (Slack / Gmail / Telegram / Discord / Kakao / Webhook outbound 어댑터, `python -m infrastructure.notify.dispatcher`) — `applications/run_daily_local.sh` 가 딥시크 API + Python notify adapter로 발송 (Claude Code MCP connector 대체됨) |
+| Notification | `infrastructure/notify/` dispatcher (Slack / Gmail / Telegram / Discord / Kakao / Webhook outbound 어댑터, `python -m infrastructure.notify.dispatcher`) — `applications/run_daily_local.sh` 가 딥시크 API + Python notify adapter로 발송 |
 | Scheduling | **로컬 launchd (macOS) primary** — `governance/schedules.yaml` (SSoT), `infrastructure/scheduling/launchd_generator.py` 가 plist emit, `infrastructure/scheduling/install.sh` 가 OS 경계 단일 통로. cloud routine 은 `governance/specs/deployment-residency.md` §3 조건 충족 시에만 fallback — 현재 KIS/DART/KRX IP 차단으로 비활성 (cloud_routine_run.sh deprecated). 사용자 수동 invoke 도 가능. crontab 등 시스템 자동 cron 은 여전히 금지 — 모든 자동화는 launchd LaunchAgent 경유. 헌법: `governance/specs/deployment-residency.md`. |
 | Agent runtime | Zed Agent project skills (`$SKILLS_DIR/investment-*`, `.agents/skills/`). DeepSeek API (`api.deepseek.com`, OpenAI-compatible) — `infrastructure/llm/deepseek.py` adapter |
 | Hard guards | `governance/decisions/0027-hook-disposition.md` (Claude Code hook 7종 파기 + 대체 수단 기록). Pre-commit lint + pipeline validation |
@@ -119,7 +119,6 @@ Sample size hard rule:
 ```
 investment_v3/
 ├── AGENTS.md                # canonical 에이전트 컨텍스트 (본 문서)
-├── CLAUDE.md → AGENTS.md    # symlink (Zed 미사용 — .gitignore 등록, legacy)
 ├── governance/              # 선언적 정책 — Python 코드와 분리된 입법부
 │   ├── AXIOMS/              # 5 철학 본문 (대문자 강조 — 변경 빈도 매우 낮음)
 │   │   ├── ergodicity.md
@@ -176,7 +175,7 @@ investment_v3/
 ├── .cache/                  # 재생성 가능 캐시 (gitignore, 숨김): dart / financials
 ├── secrets/                 # API 자격증명 (.kis_token.json — gitignore, chmod 0600)
 ├── .agents/
-│   └── skills/              # Zed project-local skills (전 .claude/skills/ — git mv 보존)
+│   └── skills/              # Zed project-local skills
 │       ├── _shared/investment/   # cross-cutting bootstrap 규약 (bootstrap.md)
 │       ├── investment-stage0-regime-labeler/  # Stage 0 LLM narrative labeler
 │       ├── investment-stage2-quality-lens/    # Stage 2 정성 lens 평가
