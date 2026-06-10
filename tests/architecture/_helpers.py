@@ -2,7 +2,7 @@
 tests/architecture/_helpers.py — fitness function 공용 헬퍼.
 
 stdlib (ast / pathlib) 만 사용 — 신규 dependency 0 (D-CORE-5). import-linter 등
-외부 도구 미도입. `.claude/hooks/_directive_lint.py` 의 분류 로직과 동형이나, `.claude`
+외부 도구 미도입. `governance/decisions/0027-hook-disposition.md/_directive_lint.py` 의 분류 로직과 동형이나, `.claude`
 는 패키지가 아니라 import 부적합 → 본 모듈에 자체 포함 (패턴 출처로만 참조). 삭제된
 `infrastructure/_common/doctrine_lint.py` 는 참조하지 않는다.
 

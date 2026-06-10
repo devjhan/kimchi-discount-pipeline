@@ -28,7 +28,7 @@ read 하며 본 스킬을 동기 호출하지 않는다.
 
 **Shared / 헌법:**
 - `$SKILLS_SHARED_DIR/bootstrap.md` — investment 파이프라인 cross-cutting 규약 (충돌 시 우선)
-- `CLAUDE.md` — 5 axiomatic principles (생존 / 반증가능성 / 엣지원천 / 비대칭 / 통계정직)
+- `AGENTS.md` — 5 axiomatic principles (생존 / 반증가능성 / 엣지원천 / 비대칭 / 통계정직)
 - `$SPECS_DIR/hard-guards.md` — G-rule (특히 G6/G7/G10/G20)
 
 **입력 (phase 1 산출 + evidence):**
@@ -47,7 +47,7 @@ read 하며 본 스킬을 동기 호출하지 않는다.
 ## Source of Truth Hierarchy
 
 1. 사용자 명시적 결정
-2. `CLAUDE.md` (5 철학)
+2. `AGENTS.md` (5 철학)
 3. `$AXIOMS_DIR/**/*.md`
 4. `$SPECS_DIR/hard-guards.md`
 5. `domains/screener/config/methods_manifest.yaml` (cutoff_rules 어휘)

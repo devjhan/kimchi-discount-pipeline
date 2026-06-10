@@ -30,9 +30,9 @@ Karl Popper의 과학철학: 어떤 진술이 과학적이려면 **그것을 거
 | Layer | 내용 |
 |---|---|
 | `thresholds.yaml.thesis` | required_fields=falsifier 강제, falsifier_categories 정의, falsifier_vague_patterns_reject 자동 reject |
-| `~/.claude/skills/investment-stage4-thesis-auditor/domain/falsifier-validation.md` | vague pattern 사전 검사 + 카테고리별 필수 필드 + anti-pattern (fake specificity 검출) |
+| `~/.agents/skills/investment-stage4-thesis-auditor/domain/falsifier-validation.md` | vague pattern 사전 검사 + 카테고리별 필수 필드 + anti-pattern (fake specificity 검출) |
 | `scripts/stage5-sizing.py` | (future) falsifier proximity monitoring helper와 join — proximity high 시 사이즈 절반 alert |
-| `~/.claude/skills/investment-audit-process/SKILL.md` | 주간 audit에서 falsifier vague 사례 / proximity tracking 누락 사례 flag |
+| `~/.agents/skills/investment-audit-process/SKILL.md` | 주간 audit에서 falsifier vague 사례 / proximity tracking 누락 사례 flag |
 
 ---
 
@@ -90,6 +90,6 @@ push notification (Telegram / scheduled-tasks MCP).
 
 ## Cross-references
 
-- 본 문서는 CLAUDE.md "2. 반증 가능성" 의 enforcement 상세
+- 본 문서는 AGENTS.md "2. 반증 가능성" 의 enforcement 상세
 - bootstrap.md Section 4 (Required Fields per Thesis) + thresholds.yaml.thesis single source
 - 충돌 시: thresholds.yaml > 본 문서 > skill 본문

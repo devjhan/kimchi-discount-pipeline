@@ -107,10 +107,10 @@ Sample size hard rule:
 | Config | YAML (`governance/thresholds.yaml`) + dotenv (`.env`) |
 | Path 해석 | `infrastructure/_common/utils.py` path helper (`trail_dir()` / `audit_dir()` / `positions_dir()` 등, `$TRAIL_TODAY` 등 env override 우선). 중앙 topology alias SSoT 는 제거됨 — operations/governance 레이아웃은 utils.py 에 단일 정의. |
 | Storage | 일별 산출물 `operations/{date}/` (markdown+JSON) + cross-day 상태·증거 `telemetry/` (audit/positions/nav-history/logs/policy_drafts) + 사용자 config `config/` (user/signals) + 재생성 캐시 `.cache/` + 자격증명 `secrets/` |
-| Notification | `infrastructure/notify/` dispatcher (Slack / Gmail / Telegram / Discord / Kakao / Webhook outbound 어댑터, `python -m infrastructure.notify.dispatcher`) — `applications/run_daily_local.sh` 가 헤드리스 `claude -p` + MCP 도구로 발송 |
+| Notification | `infrastructure/notify/` dispatcher (Slack / Gmail / Telegram / Discord / Kakao / Webhook outbound 어댑터, `python -m infrastructure.notify.dispatcher`) — `applications/run_daily_local.sh` 가 딥시크 API + Python notify adapter로 발송 (Claude Code MCP connector 대체됨) |
 | Scheduling | **로컬 launchd (macOS) primary** — `governance/schedules.yaml` (SSoT), `infrastructure/scheduling/launchd_generator.py` 가 plist emit, `infrastructure/scheduling/install.sh` 가 OS 경계 단일 통로. cloud routine 은 `governance/specs/deployment-residency.md` §3 조건 충족 시에만 fallback — 현재 KIS/DART/KRX IP 차단으로 비활성 (cloud_routine_run.sh deprecated). 사용자 수동 invoke 도 가능. crontab 등 시스템 자동 cron 은 여전히 금지 — 모든 자동화는 launchd LaunchAgent 경유. 헌법: `governance/specs/deployment-residency.md`. |
-| Agent runtime | Claude Code custom skills (`$SKILLS_DIR/investment-*`) |
-| Hard guards | `.claude/hooks/` (defensive guard + coding-directive hook. 상세: `.claude/hooks/AGENTS.md`) |
+| Agent runtime | Zed Agent project skills (`$SKILLS_DIR/investment-*`, `.agents/skills/`). DeepSeek API (`api.deepseek.com`, OpenAI-compatible) — `infrastructure/llm/deepseek.py` adapter |
+| Hard guards | `governance/decisions/0027-hook-disposition.md` (Claude Code hook 7종 파기 + 대체 수단 기록). Pre-commit lint + pipeline validation |
 
 ---
 
@@ -119,7 +119,7 @@ Sample size hard rule:
 ```
 investment_v3/
 ├── AGENTS.md                # canonical 에이전트 컨텍스트 (본 문서)
-├── CLAUDE.md → AGENTS.md    # symlink (Claude Code 호환)
+├── CLAUDE.md → AGENTS.md    # symlink (Zed 미사용 — .gitignore 등록, legacy)
 ├── governance/              # 선언적 정책 — Python 코드와 분리된 입법부
 │   ├── AXIOMS/              # 5 철학 본문 (대문자 강조 — 변경 빈도 매우 낮음)
 │   │   ├── ergodicity.md
@@ -175,26 +175,17 @@ investment_v3/
 │   └── signals/             # /ingest-external-signal 산출 + macro/breadth.yaml (Stage 0a)
 ├── .cache/                  # 재생성 가능 캐시 (gitignore, 숨김): dart / financials
 ├── secrets/                 # API 자격증명 (.kis_token.json — gitignore, chmod 0600)
-├── .claude/
-│   ├── settings.json        # SessionStart / UserPromptSubmit / PreToolUse / PostToolUse / Stop hooks 활성
-│   ├── hooks/               # defensive guard + coding-directive hook (AGENTS.md 참조)
-│   │   ├── bootstrap/inject_session_state/ # SessionStart: 오늘 KST 주요 경로/trail/positions/portfolio inject
-│   │   ├── context/inject_investment_contract/ # UserPromptSubmit: cross-cutting contract inject
-│   │   ├── context/inject_directive_context/   # UserPromptSubmit: 코딩 directive 본문 inject
-│   │   ├── context/inject_guidelines/          # UserPromptSubmit: hard-guards 룰 inject
-│   │   ├── guard/pre_env_guard/        # PreToolUse: .env 직접 접근 차단 (Bash/Read/Write/Edit)
-│   │   ├── guard/block_anti_patterns/  # PreToolUse Write/Edit: D-PY-1/D-SH-1/D-CFG-1/D-SEC-1 차단
-│   │   ├── quality/brief_citation_gate/ # PostToolUse Write/Edit + Stop: 숫자 citation 의무 검사
-│   │   ├── quality/lint_directives/    # PostToolUse Write/Edit: D-PY-2/3/5 등 검사 (dry-run)
-│   │   └── AGENTS.md            # 가드 hook 매핑 표 + 표준 spec (CLAUDE.md symlink)
-│   └── skills/              # Stage 0/2/4/6 LLM skill 4개 + audit skill 2개 (process/outcome read-only) + _shared/investment
-│       ├── investment-stage0-regime-labeler/
-│       ├── investment-stage2-quality-lens/
-│       ├── investment-stage4-thesis-auditor/
-│       ├── investment-stage6-brief-author/
-│       ├── investment-audit-process/
-│       ├── investment-audit-outcome/
-│       └── _shared/investment/   # (구 investment-audit-shadow-portfolio 는 F-6 으로 domains/audit_integrity 결정론 엔진 회수)
+├── .agents/
+│   └── skills/              # Zed project-local skills (전 .claude/skills/ — git mv 보존)
+│       ├── _shared/investment/   # cross-cutting bootstrap 규약 (bootstrap.md)
+│       ├── investment-stage0-regime-labeler/  # Stage 0 LLM narrative labeler
+│       ├── investment-stage2-quality-lens/    # Stage 2 정성 lens 평가
+│       ├── investment-stage4-thesis-auditor/  # Stage 4 thesis discipline gate (+ domain/)
+│       ├── investment-stage6-brief-author/    # Stage 6 daily brief author
+│       ├── investment-audit-process/          # 주간 process audit
+│       ├── investment-audit-outcome/          # 분기 outcome audit
+│       ├── investment-ingest-external-signal/ # 외부 신호 ingest
+│       └── investment-policy-profiler/        # Policy profile research
 ├── .env              # API keys (gitignore — 사용자가 manual 복사)
 └── .gitignore
 ```
@@ -223,7 +214,7 @@ BC 도메인 (macro/screener/universe/policy)은 `_boundary.py` 의 `resolve_pat
 | `$ENV_PATH` | `.env` |
 
 doctrine 본문의 `$ALIAS` 표기는 readable shorthand 이며, 그 의미는
-`.claude/skills/_shared/investment/bootstrap.md` 의 "경로 표기" 레전드에 정의돼 있다.
+`.agents/skills/_shared/investment/bootstrap.md` 의 "경로 표기" 레전드에 정의돼 있다.
 
 ---
 

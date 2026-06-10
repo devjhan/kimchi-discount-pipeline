@@ -37,7 +37,7 @@ sample_gates:
 | 30 ≤ N < 100 | `WEAK_SIGNAL` (t-stat 인용 시 p<0.10) |
 | N ≥ 100 | `MEANINGFUL_SIGNAL` (p<0.05) |
 
-canonical 표는 `CLAUDE.md` axiom #5 + `governance/AXIOMS/statistical-honesty.md`. forbidden-language
+canonical 표는 `AGENTS.md` axiom #5 + `governance/AXIOMS/statistical-honesty.md`. forbidden-language
 gate 는 `thresholds.yaml.enforcement.forbidden_language.statistical` (`"outperformed the market"`/30,
 `"alpha confirmed"`/100, `"strategy proven"`/100, `"beats benchmark"`/30) — G19.
 

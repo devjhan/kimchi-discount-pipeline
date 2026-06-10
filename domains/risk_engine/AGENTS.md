@@ -54,7 +54,7 @@ python -m domains.risk_engine.{positions_sync, portfolio_state_derive, sizing,
 **KisAccountPort (`ports/kis_account.py`)** = KIS 계좌 read 6 메서드 Protocol. surface 에
 order/submit/cancel 이 **부재** → 본 port 로는 매매 호출이 *타입상 불가능* = G9 의 **4번째
 구조 가드 (type-level read-only)**. 기존 3중 방어 무변경: ① `_boundary` 가 order endpoint
-미노출 ② `infrastructure/kis/client` 의 `KisAutoTradeBlocked` ③ `.claude/settings.json`
+미노출 ② `infrastructure/kis/client` 의 `KisAutoTradeBlocked` ③ `governance/runtime-policy.yaml`
 Bash deny + runtime-policy whitelist. `positions_sync.main()` 이 `kis_account_adapter()`
 구성 → `sync_account(..., account=...)` 주입 (composition root).
 

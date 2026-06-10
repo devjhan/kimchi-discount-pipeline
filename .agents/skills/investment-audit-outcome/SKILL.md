@@ -22,7 +22,7 @@ Section 5).
 - `$SKILLS_SHARED_DIR/bootstrap.md` — investment 파이프라인 cross-cutting 규약
 
 **프로젝트 root:**
-- `CLAUDE.md`
+- `AGENTS.md`
 - `$THRESHOLDS_PATH.statistics` (sample_gates / benchmark_tiers / shadow_portfolio / self_disable_trigger)
 - `$AXIOMS_DIR/statistical-honesty.md`
 

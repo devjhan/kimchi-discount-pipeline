@@ -21,7 +21,7 @@ description: Investment 파이프라인 Stage 0의 옵셔널 LLM narrative label
 - `$SKILLS_SHARED_DIR/bootstrap.md` — investment 파이프라인 cross-cutting 규약 (본 문서가 충돌 시 bootstrap.md 가 우선)
 
 **프로젝트 root:**
-- `CLAUDE.md`
+- `AGENTS.md`
 - `$THRESHOLDS_PATH` — `macro` 섹션 (regime_thresholds, cash_band)
 
 ---

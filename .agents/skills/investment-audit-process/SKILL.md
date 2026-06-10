@@ -21,7 +21,7 @@ verdict (PASS / FAIL with severity) 산출, 다른 산출물 수정 안 함.
 - `$SKILLS_SHARED_DIR/bootstrap.md` — investment 파이프라인 cross-cutting 규약
 
 **프로젝트 root:**
-- `CLAUDE.md`
+- `AGENTS.md`
 - `$THRESHOLDS_PATH.enforcement` + `$THRESHOLDS_PATH.statistics.outcome_audit_frequency.weekly`
 - `$AXIOMS_DIR/*.md` — 5 철학 enforcement source
 

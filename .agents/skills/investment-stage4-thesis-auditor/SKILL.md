@@ -28,7 +28,7 @@ Verification 등) 은 그대로 직역하지 않는다.
 - `edge-source-classification.md` — A/B/C/D enum, A claim 추가 검증, anti-pattern
 
 **프로젝트 root:**
-- `CLAUDE.md` — 5 axiomatic principles
+- `AGENTS.md` — 5 axiomatic principles
 - `$THRESHOLDS_PATH` — 정량 임계값 single source (`thesis`, `enforcement`, `catalyst.trigger_rule` 섹션 필수)
 - `.env` — 비-secret runtime 변수만 인용 (secret 노출 금지)
 
@@ -41,7 +41,7 @@ Verification 등) 은 그대로 직역하지 않는다.
 CONTRACT/bootstrap.md Section 1 + 본 skill 추가 항목:
 
 1. 사용자 명시적 결정
-2. CLAUDE.md
+2. AGENTS.md
 3. $AXIOMS_DIR/**/*.md
 4. $SPECS_DIR/**/*.md
 5. $SPECS_DIR/**/*.md
@@ -221,7 +221,7 @@ Q2. ...
 본 skill은 04-thesis-candidates.json write 직전에 다음 자가 검증 모두 통과 확인:
 
 ```
-1. CLAUDE.md / $THRESHOLDS_PATH / CONTRACT/bootstrap.md 읽었는가?
+1. AGENTS.md / $THRESHOLDS_PATH / CONTRACT/bootstrap.md 읽었는가?
 2. domain/thesis-fields-format.md / falsifier-validation.md / edge-source-classification.md 읽었는가?
 3. Stage 3 산출물 (03-catalyst-events.json)에서만 ticker 후보 추출했는가? (Stage 4 임의 추가 금지)
 4. 모든 accepted candidate가 5필드 모두 채웠는가?

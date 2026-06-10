@@ -93,7 +93,7 @@ annual:    "full review + self-disable check"
 (4-tier counterfactual). 연간은 self-disable check + 사용자 재참여
 의사결정 reminder.
 
-각 audit은 `~/.claude/skills/investment-audit-{process|outcome|shadow-portfolio}/SKILL.md`
+각 audit은 `~/.agents/skills/investment-audit-{process|outcome|shadow-portfolio}/SKILL.md`
 가 책임.
 
 ---
@@ -104,9 +104,9 @@ annual:    "full review + self-disable check"
 |---|---|
 | `thresholds.yaml.statistics` | sample_gates / benchmark_tiers / shadow_portfolio / self_disable_trigger single source |
 | `thresholds.yaml.enforcement.forbidden_language.statistical` | wording cutoff 표 |
-| `~/.claude/skills/investment-stage6-brief-author/SKILL.md` | brief 산출 직전 final redact pass — forbidden wording substring 검사 |
-| `~/.claude/skills/investment-audit-process/SKILL.md` | 주간 룰 위반 횟수 집계 |
-| `~/.claude/skills/investment-audit-outcome/SKILL.md` | 분기 4-tier 비교 → tier_2 vs tier_1 outperform check |
+| `~/.agents/skills/investment-stage6-brief-author/SKILL.md` | brief 산출 직전 final redact pass — forbidden wording substring 검사 |
+| `~/.agents/skills/investment-audit-process/SKILL.md` | 주간 룰 위반 횟수 집계 |
+| `~/.agents/skills/investment-audit-outcome/SKILL.md` | 분기 4-tier 비교 → tier_2 vs tier_1 outperform check |
 | `domains/audit_integrity/main.py` | 4-tier paper trade state 일별 결정론 갱신 ($AUDIT_DIR/shadow-portfolio-state.json) — F-6 으로 구 LLM 스킬 회수 |
 | `domains/audit_integrity/init_shadow_state.py` | shadow state 초기화 (`python -m domains.audit_integrity.init_shadow_state`, initial_capital_krw=1억) |
 
@@ -132,7 +132,7 @@ ALLOW "Q3 2026 outcome audit: tier_2 (LLM-filtered) -2.1% vs tier_1 (mechanical)
 
 ## Cross-references
 
-- 본 문서는 CLAUDE.md "5. 통계적 정직성" 의 enforcement 상세
+- 본 문서는 AGENTS.md "5. 통계적 정직성" 의 enforcement 상세
 - bootstrap.md Section 5.G + thresholds.yaml.statistics single source
 - 4-tier paper trade 운영은 audit skills 3개에서 single source로 처리
 - 충돌 시: thresholds.yaml > 본 문서 > audit skill 본문

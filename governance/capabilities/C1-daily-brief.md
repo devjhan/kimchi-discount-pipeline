@@ -34,7 +34,7 @@ output   operations/{date}/daily-brief.md  (+ _notify-results.json)
 
 ## 관련
 
-- skill: `.claude/skills/investment-stage6-brief-author/`
+- skill: `.agents/skills/investment-stage6-brief-author/`
 - 검증 hook: `brief_citation_gate` (PostToolUse + Stop)
 - forbidden language / citation 규칙: [`../specs/hard-guards.md`](../specs/hard-guards.md)
 - 결정론↔LLM 경계: [ADR-0003](../decisions/0003-llm-drafts-python-commits.md)

@@ -1,6 +1,6 @@
 # Investment Pipeline — Bootstrap Handoff
 
-본 문서는 본 프로젝트의 **System Prompt**로 작동한다. 새로 진입하는 agent / skill / contributor는 작업 전 본 문서를 우선 읽고, 어떤 산출물도 본 문서의 규약 안에서만 생성한다. 본 문서와 다른 reference (`CLAUDE.md`, `$SKILLS_SHARED_DIR/bootstrap.md`, `thresholds.yaml`)가 충돌하면 본 문서 + 상위 priority 룰을 따른다.
+본 문서는 본 프로젝트의 **System Prompt**로 작동한다. 새로 진입하는 agent / skill / contributor는 작업 전 본 문서를 우선 읽고, 어떤 산출물도 본 문서의 규약 안에서만 생성한다. 본 문서와 다른 reference (`AGENTS.md`, `$SKILLS_SHARED_DIR/bootstrap.md`, `thresholds.yaml`)가 충돌하면 본 문서 + 상위 priority 룰을 따른다.
 
 본 문서는 5stone (코딩 파이프라인) 의 design philosophy를 차용했지만, 이는 코딩 워크스페이스가 **아니다**. 본 문서가 적용되는 모든 작업은 투자 도메인의 비결정성 / risk / 시간 지연 audit를 통제하기 위한 **Investment Control Harness**의 일부다.
 
@@ -180,7 +180,7 @@ Event — Catalyst trigger           (방아쇠: 언제 당길 것인가)
 
 ```
 projects/investment/
-├── CLAUDE.md                              [완료] 5 철학 + architecture 요약
+├── AGENTS.md                              [완료] 5 철학 + architecture 요약
 ├── thresholds.yaml                      [완료] 정량 임계값 single source
 ├── .env                            [완료] secret + behavior switch template
 ├── .agent/
@@ -208,17 +208,17 @@ projects/investment/
     ├── run-daily-pipeline.sh              [완료, Phase 3 #4] Stage 0/1/2/3/5 orchestrator (Stage 4/6은 LLM skill manual)
     └── (의존성은 pyproject.toml 로 통합됨 — [project.dependencies] + [project.optional-dependencies.dev])
 
-~/.claude/skills/investment-stage0-regime-labeler/    [완료, Phase 3 #2]
-~/.claude/skills/investment-stage2-quality-lens/      [완료, Phase 3 #2]
-~/.claude/skills/investment-stage6-brief-author/      [완료, Phase 3 #2]
-~/.claude/skills/investment-audit-process/            [완료, Phase 3 #3] 주간 룰 위반 audit
-~/.claude/skills/investment-audit-outcome/            [완료, Phase 3 #3] 분기 4-tier outcome 비교 + self-disable trigger
+~/.agents/skills/investment-stage0-regime-labeler/    [완료, Phase 3 #2]
+~/.agents/skills/investment-stage2-quality-lens/      [완료, Phase 3 #2]
+~/.agents/skills/investment-stage6-brief-author/      [완료, Phase 3 #2]
+~/.agents/skills/investment-audit-process/            [완료, Phase 3 #3] 주간 룰 위반 audit
+~/.agents/skills/investment-audit-outcome/            [완료, Phase 3 #3] 분기 4-tier outcome 비교 + self-disable trigger
 domains/audit_integrity/main.py                       [F-6] 4-tier paper trade state 일별 결정론 갱신 (구 LLM 스킬 회수)
 
-~/.claude/skills/_shared/investment/
+~/.agents/skills/_shared/investment/
 └── bootstrap.md                           [완료] 9-section cross-cutting enforcement
 
-~/.claude/skills/investment-stage4-thesis-auditor/   [완료, Phase 2 Task 2.2]
+~/.agents/skills/investment-stage4-thesis-auditor/   [완료, Phase 2 Task 2.2]
 ├── SKILL.md
 ├── CONTRACT/
 │   └── bootstrap.md → ../../_shared/investment/bootstrap.md (symlink)
@@ -256,7 +256,7 @@ domains/audit_integrity/main.py                       [F-6] 4-tier paper trade s
 #### Task 2.2 — Thesis Auditor Skill (Stage 4 LLM skill) ✅
 
 산출 경로:
-- [~/.claude/skills/investment-stage4-thesis-auditor/SKILL.md](../../../.claude/skills/investment-stage4-thesis-auditor/SKILL.md) — entry point + 처리 절차 + Mode A/B/C 분기 + Hard Guard table + Self-validation 12 항목
+- [~/.agents/skills/investment-stage4-thesis-auditor/SKILL.md](../../../.agents/skills/investment-stage4-thesis-auditor/SKILL.md) — entry point + 처리 절차 + Mode A/B/C 분기 + Hard Guard table + Self-validation 12 항목
 - `CONTRACT/bootstrap.md` → `../../_shared/investment/bootstrap.md` (symlink, 5stone 패턴 직역)
 - `domain/thesis-fields-format.md` — 5필드 schema + verdict enum + amendment 처리
 - `domain/falsifier-validation.md` — 3 카테고리 validation + vague pattern + anti-pattern (`stock_price=0` 류 fake specificity)
@@ -318,12 +318,12 @@ domains/audit_integrity/main.py                       [F-6] 4-tier paper trade s
 
 ```
 1. 본 문서 (investment-bootstrap-handoff.md) 전문 읽기
-2. CLAUDE.md (프로젝트 루트) 읽기
+2. AGENTS.md (프로젝트 루트) 읽기
 3. $SKILLS_SHARED_DIR/bootstrap.md 읽기
 4. thresholds.yaml + .env (secret 외) 읽기
 ```
 
-위 4개 reference의 충돌 발견 시: 본 문서 → CLAUDE.md → bootstrap.md → thresholds.yaml priority. 충돌 사실은 stdout 보고에 1줄 명시.
+위 4개 reference의 충돌 발견 시: 본 문서 → AGENTS.md → bootstrap.md → thresholds.yaml priority. 충돌 사실은 stdout 보고에 1줄 명시.
 
 ---
 
@@ -332,11 +332,11 @@ domains/audit_integrity/main.py                       [F-6] 4-tier paper trade s
 | 문서 | 위치 | 역할 |
 |---|---|---|
 | 본 문서 | `.agent/docs/investment-bootstrap-handoff.md` | System Prompt — 후속 agent 진입점 |
-| CLAUDE.md | 프로젝트 루트 | 5 철학 + architecture 요약 |
+| AGENTS.md | 프로젝트 루트 | 5 철학 + architecture 요약 |
 | bootstrap.md | `$SKILLS_SHARED_DIR/bootstrap.md` | cross-cutting enforcement, namespace, forbidden language |
 | thresholds.yaml | 프로젝트 루트 | 정량 임계값 single source |
 | .env | 프로젝트 루트 | API keys, secrets, behavior switches |
-| 5stone bootstrap (참조용) | `~/.claude/skills/_shared/5stone/bootstrap.md` | 코딩 도메인 isomorphic 패턴 (직역 금지) |
+| 5stone bootstrap (참조용) | `~/.agents/skills/_shared/5stone/bootstrap.md` | 코딩 도메인 isomorphic 패턴 (직역 금지) |
 
 ---
 
@@ -396,14 +396,14 @@ v3 — 2026-05-04
   - 후속 분리 helper 5개를 TODO로 명시 (stage1-nav-calc, stage1-pref-spread,
     stage2-fin-fetch, stage3-index-deletion-fetch, stage3-earnings-panic)
   사용자 결정: ".gitignore 작성하고, git init/add 후 Phase 3 후속 진입해" 명령.
-              commit은 사용자 명시 명령 대기 (CLAUDE.md "Only create commits when
+              commit은 사용자 명시 명령 대기 (AGENTS.md "Only create commits when
               requested by the user" 준수). Phase 3 #2 (Stage 0/2/6 LLM skills),
               #6 (.agent/rules 5 철학 분할) 은 본 단위 보고 후 진행 예정.
 
 v2 — 2026-05-04
   - Phase 2 Task 2.1 / Task 2.2 완료 status 반영 (Section 5.2 전면 재작성)
   - Section 5.1 산출물 목록 갱신 — Phase 2 산출물 (scripts/stage1-watchlist.py,
-    ~/.claude/skills/investment-stage4-thesis-auditor/*) 추가
+    ~/.agents/skills/investment-stage4-thesis-auditor/*) 추가
   - .agent/rules / .agent/specs / .handoff 디렉토리에 .gitkeep 추가 (실제 상태와 sync)
   - Section 5.3 Phase 3에 ⚠️ Pre-flight 안내 추가 (.gitignore가 git init 직전 1순위)
   - Section 5.3 #5 항목 본문 보강 (.gitignore 등록 대상에 *.pyc / .DS_Store 추가)

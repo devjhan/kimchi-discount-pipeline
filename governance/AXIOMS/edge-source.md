@@ -89,9 +89,9 @@ Stage 4가 cap 직접 적용 안 함 (G6 — sizing은 Stage 5).
 | Layer | 내용 |
 |---|---|
 | `thresholds.yaml.thesis.edge_source` | enum + a_information_warning + require_c_or_d_for_high_conviction |
-| `~/.claude/skills/investment-stage4-thesis-auditor/domain/edge-source-classification.md` | 분류 enum + A claim 확장 검증 + anti-pattern |
+| `~/.agents/skills/investment-stage4-thesis-auditor/domain/edge-source-classification.md` | 분류 enum + A claim 확장 검증 + anti-pattern |
 | `scripts/stage5-sizing.py` | high_conviction_eligibility 입력으로 사이즈 cap |
-| `~/.claude/skills/investment-audit-process/SKILL.md` | 주간 audit에서 A 단독 claim 비율 / fallback failure 사례 flag |
+| `~/.agents/skills/investment-audit-process/SKILL.md` | 주간 audit에서 A 단독 claim 비율 / fallback failure 사례 flag |
 
 ---
 
@@ -120,6 +120,6 @@ Stage 4가 cap 직접 적용 안 함 (G6 — sizing은 Stage 5).
 
 ## Cross-references
 
-- 본 문서는 CLAUDE.md "3. 엣지 원천 명시" 의 enforcement 상세
+- 본 문서는 AGENTS.md "3. 엣지 원천 명시" 의 enforcement 상세
 - Stage 4 thesis-auditor의 domain/edge-source-classification.md가 절차 상세
 - 충돌 시: thresholds.yaml > 본 문서 > skill 본문

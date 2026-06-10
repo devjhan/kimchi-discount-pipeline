@@ -16,7 +16,7 @@ Export:
   ``KisUnavailable``
 - Yahoo API: ``yahoo_fetch_daily_ohlcv`` / ``yahoo_krx_to_yahoo`` / ``YahooUnavailable``
 
-새 외부 의존 추가 시 CLAUDE.md 동시 갱신 의무.
+새 외부 의존 추가 시 AGENTS.md 동시 갱신 의무.
 """
 from __future__ import annotations
 

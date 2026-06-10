@@ -113,7 +113,7 @@ domains           ←── operations 산출만 write
 
 ## D-CORE-7 — LLM 호출은 단일 port, vendor 종속은 bounded adapter (F-13)
 
-**근거**: LLM 종속은 (A)모델·(B)SDK·(C)런타임 3층 중 **(C)런타임(`claude -p` CLI) 한 층뿐**이며 얇고 contained 다 (Anthropic SDK/API import 0, 모델명 하드코딩 0). 이 얇은 종속을 한 곳에 모아두면 vendor 교체가 "adapter 1 클래스" 작업으로 끝난다. `claude -p "/skill"` 은 single completion 이 아니라 **agentic loop** (도구·파일·다단계) — raw model API 로 대체 불가, 대체 vendor 도 agentic harness 여야 한다. 현실 타깃은 "swap 을 bounded adapter 작업으로", "지금 vendor-free" 가 아니다.
+**근거**: LLM 종속은 (A)모델·(B)SDK·(C)런타임 3층 중 **(C)런타임(Zed agent CLI) 한 층뿐**이며 얇고 contained 다 (Anthropic SDK/API import 0, 모델명 하드코딩 0). 이 얇은 종속을 한 곳에 모아두면 vendor 교체가 "adapter 1 클래스" 작업으로 끝난다. Zed agent skill 은 single completion 이 아니라 **agentic loop** (도구·파일·다단계) — raw model API 로 대체 불가, 대체 vendor 도 agentic harness 여야 한다. 현실 타깃은 "swap 을 bounded adapter 작업으로", "지금 vendor-free" 가 아니다.
 
 ✅ 룰
 - LLM 런타임 호출은 `infrastructure/llm` dispatcher 경유 (`python -m infrastructure.llm.dispatcher`) — `notify` dispatcher 와 동형. 새 vendor = `LlmAdapter` 1 클래스 + REGISTRY 한 줄.
@@ -121,6 +121,6 @@ domains           ←── operations 산출만 write
 - **가드 = portable Python** (`domains/` · `infrastructure._common`), **훅 = thin marshaling** (stdin→env, exit code). 가드 로직을 훅 셸에 박으면 harness 교체 시 enforcement 가 깨진다.
 - 모든 LLM↔결정론 경계는 JSON schema envelope (D-Q-2) 로 gate — vendor-neutral seam.
 
-❌ 안티패턴: 새 스크립트에서 `claude -p` 를 직접 호출 / `import anthropic` 도입 / 모델명 하드코딩 / 결정론 산수를 LLM 에 위임 (G6).
+❌ 안티패턴: 새 스크립트에서 Zed agent 를 직접 호출 / `import anthropic` 도입 / 모델명 하드코딩 / 결정론 산수를 LLM 에 위임 (G6).
 
 **Hook**: inject_only (`inject_directive_context.sh`) — 아키텍처 불변식이라 syntactic 자동 검사 없음. PR/리뷰 시 인용.

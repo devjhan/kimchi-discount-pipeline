@@ -13,7 +13,7 @@ voting aggregation 은 단일 함수 (VotingStrategy ABC 미도입 — over-abst
 domains/macro/
   __init__.py
   _boundary.py             # FRED + Yahoo (breadth fetch) + 경로(path helper) + env
-  AGENTS.md                # (CLAUDE.md → AGENTS.md symlink, gitignored)
+  AGENTS.md                # (AGENTS.md → AGENTS.md symlink, gitignored)
   .guidelines/             # 6 markdown
   domain/
     regime.py              # IndicatorResult / RegimeResult (frozen)

@@ -30,7 +30,7 @@ asymmetry:
 
 ### Portfolio-level barbell
 
-CLAUDE.md "4. 비대칭 손익비" 명시:
+AGENTS.md "4. 비대칭 손익비" 명시:
 
 ```
 safe sleeve     : 현금 + 단기채 + low-vol 배당
@@ -116,9 +116,9 @@ implementation point.
 | Layer | 내용 |
 |---|---|
 | `thresholds.yaml.thesis.asymmetry` | min_ratio / reject_below_min / half_size_below_ratio |
-| `~/.claude/skills/investment-stage4-thesis-auditor/domain/thesis-fields-format.md` | downside_floor / upside_ceiling 본문 schema |
+| `~/.agents/skills/investment-stage4-thesis-auditor/domain/thesis-fields-format.md` | downside_floor / upside_ceiling 본문 schema |
 | `scripts/stage5-sizing.py` | extract_asymmetry_ratio() + compute_fractional_kelly() + cap chain |
-| `~/.claude/skills/investment-stage6-brief-author/SKILL.md` | brief에 ratio + cap 적용 사유 1줄 표시 |
+| `~/.agents/skills/investment-stage6-brief-author/SKILL.md` | brief에 ratio + cap 적용 사유 1줄 표시 |
 
 ---
 
@@ -153,6 +153,6 @@ implementation point.
 
 ## Cross-references
 
-- 본 문서는 CLAUDE.md "4. 비대칭 손익비" 의 enforcement 상세
+- 본 문서는 AGENTS.md "4. 비대칭 손익비" 의 enforcement 상세
 - bootstrap.md Section 4 (G5 hard guard) + thresholds.yaml.thesis.asymmetry single source
 - 충돌 시: thresholds.yaml > 본 문서 > skill 본문

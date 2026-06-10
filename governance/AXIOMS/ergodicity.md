@@ -33,8 +33,8 @@ catalyst 평가는 기하평균을 최대화하는 방향으로 정렬된다.
 | `thresholds.yaml.sizing` | per_position.max_pct=0.25, drawdown_brake.threshold_pct=0.15 |
 | `thresholds.yaml.macro.cash_band` | regime별 [min, max] 현금 비중 |
 | `scripts/stage5-sizing.py` | G16/G17/G18 enforce — fractional Kelly + cap + brake + cash band 모든 hard guard 적용 |
-| `~/.claude/skills/investment-stage6-brief-author/SKILL.md` | brief에 "should buy" / "must hold" forbidden 검사 |
-| `~/.claude/skills/investment-audit-process/SKILL.md` | 주간 audit에서 사이즈 위반 / brake 미적용 사례 flag |
+| `~/.agents/skills/investment-stage6-brief-author/SKILL.md` | brief에 "should buy" / "must hold" forbidden 검사 |
+| `~/.agents/skills/investment-audit-process/SKILL.md` | 주간 audit에서 사이즈 위반 / brake 미적용 사례 flag |
 
 ---
 
@@ -63,6 +63,6 @@ catalyst 평가는 기하평균을 최대화하는 방향으로 정렬된다.
 
 ## Cross-references
 
-- 본 문서는 CLAUDE.md "1. 생존 최우선" 의 enforcement 상세
+- 본 문서는 AGENTS.md "1. 생존 최우선" 의 enforcement 상세
 - bootstrap.md Section 5.F (Survival Bounds) + thresholds.yaml.sizing single source
 - 충돌 시: thresholds.yaml > 본 문서 > skill 본문

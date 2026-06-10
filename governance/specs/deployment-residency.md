@@ -33,7 +33,7 @@ artifact 는 <!-- legacy-ok -->`infrastructure/scheduling/*_generator.py`<!--
 
 ## 3. Fallback deployment (제한적 허용)
 
-Anthropic Claude Code Routines (cloud) 실행은 다음 조건 **모두** 만족 시에만
+Cloud LLM (claude-code-era, 현재 비활성) 실행은 다음 조건 **모두** 만족 시에만
 허용된다:
 
 1. 해당 stage 가 KIS / DART / KRX 어떤 endpoint 도 호출하지 않음
@@ -50,7 +50,7 @@ deprecated 처리되었으며, 첫 줄에서 즉시 `exit 1` 로 차단된다.
 
 ## 4. 결정 우선순위
 
-본 spec 은 CLAUDE.md / <!-- legacy-ok -->`governance/specs/hard-guards.md`
+본 spec 은 AGENTS.md / <!-- legacy-ok -->`governance/specs/hard-guards.md`
 <!-- /legacy-ok --> / 모든 deployment 관련 결정의 상위에 위치한다. 모순 발생
 시 본 spec 이 우선한다. 본 spec 의 개정은 governance layer 의 commit +
 audit-process review 가 동반된다.

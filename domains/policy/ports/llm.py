@@ -1,6 +1,6 @@
 """PolicyEngine — LLM research seam (인터페이스만; 내부 설계는 본 PR 범위 밖).
 
-구현(Claude skill / API)은 ``_boundary`` 뒤에 둔다. application 은 본 Protocol 에만
+구현(Zed skill / API)은 ``_boundary`` 뒤에 둔다. application 은 본 Protocol 에만
 의존 — LLM 교체 / mock 주입이 자유롭다 (테스트는 stub engine 주입).
 """
 from __future__ import annotations

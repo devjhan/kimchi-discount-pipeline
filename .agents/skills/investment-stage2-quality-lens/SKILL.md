@@ -22,7 +22,7 @@ context에서 정성 평가만 추가.
 - `$SKILLS_SHARED_DIR/bootstrap.md` — investment 파이프라인 cross-cutting 규약
 
 **프로젝트 root:**
-- `CLAUDE.md`
+- `AGENTS.md`
 - `$THRESHOLDS_PATH` — `quality.qualitative_lenses` 섹션 (single source)
 
 ---

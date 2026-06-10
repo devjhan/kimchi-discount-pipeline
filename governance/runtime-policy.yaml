@@ -25,7 +25,7 @@ agent:
 # ------------------------------------------------------------
 # 본 시스템의 KIS API 사용은 다음 3중 차단으로 매매를 막는다:
 #   1) 코드 부재  — infrastructure/kis/client.py 에 매매/주문 path 문자열 없음
-#   2) Bash deny  — .claude/settings.json 의 *kis_order* / *place_order* /
+#   2) Bash deny  — governance/runtime-policy.yaml 의 *kis_order* / *place_order* /
 #                   write TR_ID literal 거부
 #   3) Policy whitelist — 본 파일 allowed_tr_ids 에 없는 tr_id 호출 시 client 가
 #                         즉시 KisUnavailable raise

@@ -3,12 +3,13 @@
 **type-level G9c (4번째 구조 가드).** 본 Protocol surface 에는 order / submit / cancel
 류 메서드가 *존재하지 않는다* — 따라서 본 port 를 통한 매매 호출은 타입상 표현 불가능.
 G9 의 기존 3중 방어(① `_boundary` 가 order endpoint 미노출 ② `infrastructure/kis/client`
-의 `KisAutoTradeBlocked` ③ `.claude/settings.json` Bash deny + runtime-policy whitelist)
+        의 `KisAutoTradeBlocked` ③ `governance/runtime-policy.yaml` Bash deny + runtime-policy whitelist)
 에 *type-level read-only* 를 한 겹 더한다 (기존 가드 무변경, 추가만).
 
 impl = ``domains/risk_engine/_boundary.kis_account_adapter()`` (read endpoint 위임).
 주입: ``positions_sync.main()`` 이 adapter 구성 → ``sync_account(..., account=...)``.
 """
+
 from __future__ import annotations
 
 from typing import Any, Protocol, runtime_checkable

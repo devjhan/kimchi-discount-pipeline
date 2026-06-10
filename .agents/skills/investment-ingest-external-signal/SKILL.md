@@ -25,7 +25,7 @@ hard-guards.md G10 의 강제 메커니즘.
 
 본 skill 실행 전 다음 문서 의무 read:
 
-1. `CLAUDE.md` (= `AGENTS.md`) — 외부 신호 SOP 섹션
+1. `AGENTS.md` (= `AGENTS.md`) — 외부 신호 SOP 섹션
 2. `$AXIOMS_DIR/edge-source.md` — A (정보) edge 추가 검증 룰
 3. `$SPECS_DIR/hard-guards.md` G10, G21, G7
 4. `$SKILLS_SHARED_DIR/bootstrap.md` Section 5.C (External Signal SOP)

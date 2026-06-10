@@ -1,6 +1,6 @@
 # Shared Bootstrap Contract — Investment Pipeline
 
-본 문서는 investment 파이프라인의 모든 agent / skill이 공유하는 bootstrap 규약이다. 5stone (`~/.claude/skills/_shared/5stone/bootstrap.md`)과 동일한 single-source 패턴을 따르며, investment 도메인 고유 룰을 정의한다.
+본 문서는 investment 파이프라인의 모든 agent / skill이 공유하는 bootstrap 규약이다. 5stone (`~/.agents/skills/_shared/5stone/bootstrap.md`)과 동일한 single-source 패턴을 따르며, investment 도메인 고유 룰을 정의한다.
 
 각 skill은 본문에서 본 문서를 명시적으로 참조한다. 본 문서가 없거나 읽을 수 없으면 인용 skill은 즉시 ERROR로 중단한다.
 
@@ -11,7 +11,7 @@
 각 skill은 자체 역할별 지시를 적용하기 전에, 반드시 아래 순서로 읽고 준수한다.
 
 1. 사용자 명시적 결정
-2. 프로젝트 루트 `CLAUDE.md`
+2. 프로젝트 루트 `AGENTS.md`
 3. `$AXIOMS_DIR/**/*.md`
 4. `$SPECS_DIR/**/*.md` (있으면)
 5. `$THRESHOLDS_PATH` (정량 임계값)
@@ -22,7 +22,7 @@
 
 ### Hard Rules
 
-- `CLAUDE.md` / `$AXIOMS_DIR/**` / `$SPECS_DIR/**` / `$THRESHOLDS_PATH`은 현재 skill 문서보다 우선한다.
+- `AGENTS.md` / `$AXIOMS_DIR/**` / `$SPECS_DIR/**` / `$THRESHOLDS_PATH`은 현재 skill 문서보다 우선한다.
 - 현재 skill 문서는 상위 문서를 override / narrow / reinterpret할 수 없다.
 - 상위 문서와 현재 skill 문서가 충돌하면, 상위 문서를 따르고 충돌 사실을 stdout에 1줄 이상 명시한다.
 - 필요한 상위 문서가 없거나 읽을 수 없으면 추정하지 말고 즉시 보고한다.
@@ -248,7 +248,7 @@ monitoring 산출물: `$POSITIONS_DIR/{ticker}/drift-{date}.md`. 본문에 falsi
 
 각 skill은 산출물 작성 전에 다음 자가 검증 수행:
 
-1. CLAUDE.md / $AXIOMS_DIR / $THRESHOLDS_PATH 읽었는가?
+1. AGENTS.md / $AXIOMS_DIR / $THRESHOLDS_PATH 읽었는가?
 2. 출력에 forbidden language 없는가? (recommendation + statistical 둘 다)
 3. 모든 숫자에 helper citation 있는가? (`{source}@{timestamp}={value}` 형식)
 4. 새 thesis라면 5필드 모두 있는가? falsifier가 vague patterns에 매치되지 않는가?
@@ -297,7 +297,7 @@ NO 하나라도 있으면 산출물 작성 중단 후 누락 보고.
 
 ## Section 9. 본 Reference 문서의 우선순위 규약
 
-- 본 문서는 모든 참조 skill의 sub-rule이다. 사용자 결정 / 프로젝트 루트 `CLAUDE.md` / `$AXIOMS_DIR/**` / `$SPECS_DIR/**` / `$THRESHOLDS_PATH` 보다 하위다.
+- 본 문서는 모든 참조 skill의 sub-rule이다. 사용자 결정 / 프로젝트 루트 `AGENTS.md` / `$AXIOMS_DIR/**` / `$SPECS_DIR/**` / `$THRESHOLDS_PATH` 보다 하위다.
 - 본 문서가 없거나 읽을 수 없으면, 본 문서를 참조하는 skill은 즉시 ERROR로 중단한다. 추정으로 대체하지 않는다.
 - 본 문서와 개별 skill 본문이 충돌하면 본 문서를 따른다. 단, skill 본문이 본 문서 항목을 **확장**하는 경우 (예: 추가 hard rule, 추가 priority) 그 확장은 본 문서의 항목과 모순되지 않는 한 그대로 유효하다.
 - 모순이 의심되는 경우 본 문서의 항목을 채택하고 그 충돌 사실을 stdout 보고에 한 줄 이상 명시한다.

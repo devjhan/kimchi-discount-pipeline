@@ -80,7 +80,7 @@ python -m domains.screener.main --dry-run --date 2026-05-15
 
 ```
 domains/screener/
-├── AGENTS.md                # (CLAUDE.md → AGENTS.md symlink, gitignored)
+├── AGENTS.md                # (AGENTS.md → AGENTS.md symlink, gitignored)
 ├── main.py
 ├── _boundary.py             # 외부 의존 단일 게이트
 ├── errors.py

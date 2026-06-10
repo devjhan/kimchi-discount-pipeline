@@ -80,8 +80,12 @@ operations/**/_notify-results.json
 # v1 archive (legacy .handoff/ should never enter v2)
 .handoff/
 
-# Claude-Code - local symlink to AGENTS.md
+# Legacy symlink to AGENTS.md (kept for compatibility, not tracked)
 CLAUDE.md
 
-# Claude Code local settings (machine-specific env overrides — not committed)
-.claude/settings.local.json
+# Zed Agent project-local skills (tracked — all in .agents/skills/)
+# .agents/ 디렉토리 자체는 git tracked, 불필요한 파일만 ignore
+.agents/.DS_Store
+
+# Legacy Claude Code settings (removed in migration)
+# .claude/settings.local.json — deleted with .claude/ directory

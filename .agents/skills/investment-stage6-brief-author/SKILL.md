@@ -22,7 +22,7 @@ recommendation 추가 일체 금지.
 - `$SKILLS_SHARED_DIR/bootstrap.md` — investment 파이프라인 cross-cutting 규약
 
 **프로젝트 root:**
-- `CLAUDE.md`
+- `AGENTS.md`
 - `$THRESHOLDS_PATH` — `enforcement.forbidden_language` 필수 인용 + `default_action.most_days_no_new_candidate=true` 의 의미 적용
 
 **Pre-flight validator (호출 강제):**

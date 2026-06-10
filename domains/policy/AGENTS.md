@@ -28,7 +28,7 @@ domains/policy/
 **`ports/llm.py` 의 `PolicyEngine` Protocol** 이 Wave 5 전체 port 패턴의 원형이다 —
 `main(argv, *, engine: PolicyEngine | None = None)` 이 composition root 로 LLM 구현을
 주입하고, `application/analyze.run_analysis(trigger, engine, ...)` 은 Protocol 에만
-의존한다 (LLM 교체/테스트 stub 자유). 구현(Claude skill / API)은 `_boundary` 뒤 — 단,
+의존한다 (LLM 교체/테스트 stub 자유). 구현(Zed skill / API)은 `_boundary` 뒤 — 단,
 **스킬은 commit 안 함**: drift/버전 산술은 `commit_gate.py` 결정론 잔류 (F-10 불변식 —
 [ADR-0003](../../governance/decisions/0003-llm-drafts-python-commits.md)).
 

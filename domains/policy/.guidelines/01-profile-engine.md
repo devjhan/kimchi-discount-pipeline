@@ -9,7 +9,7 @@ class PolicyEngine(Protocol):
     def analyze(self, trigger: Trigger, *, evidence: tuple[str, ...]) -> ResearchOutput: ...
 ```
 
-산출은 **draft** = `ResearchOutput`. 구현 (Claude skill / API) 은 `_boundary` 뒤에서
+산출은 **draft** = `ResearchOutput`. 구현 (Zed skill / API) 은 `_boundary` 뒤에서
 composition root `main(engine=...)` 로 주입. `application/analyze.run_analysis(trigger, engine,
 *, evidence=())` 는 `return engine.analyze(trigger, evidence=evidence)` 로 Protocol 에만 의존.
 production research 는 `investment-policy-profiler` skill (phase 2) — **commit 안 함**.
