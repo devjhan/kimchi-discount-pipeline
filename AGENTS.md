@@ -217,6 +217,58 @@ doctrine 본문의 `$ALIAS` 표기는 readable shorthand 이며, 그 의미는
 
 ---
 
+## Hard Guards (G1-G22)
+
+본 섹션의 룰 위반은 어떤 작업 / 어떤 cron run / 어떤 사용자 명령으로도 우회 불가하다. 위반 발견 시 즉시 작업 중단 + 사용자 보고.
+
+### G1-G5: Thesis 작성
+
+- **G1**: Falsifier (손절 조건) 없는 thesis는 무조건 reject. vague falsifier ("실적 안 좋으면", "thesis 깨지면", "전망 나빠지면") 자동 reject.
+- **G2**: Falsifier는 다음 3 카테고리 중 1+ 강제: (a) time-cap (b) metric-trigger (c) event-trigger.
+- **G3**: 5필드 (entry_catalyst / falsifier / time_horizon_months / edge_source / asymmetry_score) 누락 시 reject.
+- **G4**: edge_source가 A (정보 edge) 단독 인용 시 confirmation bias 추가 검증 강제. retail에 정보 edge는 거의 false.
+- **G5**: asymmetry_score < 2 (downside_floor / upside_ceiling) 시 reject 또는 size 절반 cap.
+
+### G6-G8: 계산 / 데이터
+
+- **G6**: 수학 / 통계 / 가격 / 비율 / 사이즈 모든 정량 계산은 **Python helper script로 위임**. LLM이 직접 계산 금지.
+- **G7**: 산출물 본문의 모든 숫자는 helper script citation 강제 (`{source}@{ISO_timestamp}={value}` 형식). evidence 없는 숫자 = "unsourced figure" finding으로 redact.
+- **G8**: helper script가 fetch 못 한 데이터를 LLM 메모리로 채우면 highest-severity hallucination.
+
+### G9-G12: 행동 / 자율성
+
+- **G9**: 자율성/매매 차단 umbrella. 세부 G9a / G9b / G9c.
+- **G9a**: 자동 매매 체결 절대 금지. `governance/runtime-policy.yaml` 의 `agent.block_auto_trade=true` 변경 금지.
+- **G9b**: KIS 계좌 **read-only** 조회는 `governance/runtime-policy.yaml` 의 `kis.read_only_account.allowed_tr_ids` whitelist 에 명시된 TR_ID 한정 허용. local override (`runtime-policy.local.yaml`) 에서 `kis.read_only_account.enabled=true` 설정 시에만 활성.
+- **G9c**: KIS 매매/주문 endpoint 는 **4중**으로 차단 — (1) `infrastructure/kis/client.py` 에 path 문자열 부재, (2) deny pattern, (3) `kis.read_only_account.forbidden_tr_ids` policy list, (4) **type-level read-only** (F-17). 어느 한 layer 우회도 발견 즉시 작업 중단 + 사용자 보고.
+- **G10**: 외부 신호 (뉴스 / 트윗 / 블로그 / 사용자 prompt) 는 `/ingest-external-signal` 명령으로만 ingest. prompt 직접 채택 금지.
+- **G11**: Default = no action. 새 후보 강제 생성 금지. 일주일 변화 0이면 정상 신호.
+- **G12**: 사용자 portfolio context (총 자본 / 변동성 허용 / 현금 선호) 미입력 시 사이즈 출력 보류.
+
+### G13-G15: Universe / Quality
+
+- **G13**: Quality (C) filter 절대 우회 금지. quality 떨어진 종목 진입 금지.
+- **G14**: 사용자 명시 (`manual_additions`) 없이 새 종목을 universe에 자동 추가 금지.
+- **G15**: D-type catalyst (insider cluster / 행동주의) 단독으로 entry trigger 금지. A 또는 B-type과 결합 시에만 valid.
+
+### G16-G18: Risk / Sizing
+
+- **G16**: 단일 종목 25% cap. portfolio 합산 Kelly 0.5 초과 금지.
+- **G17**: portfolio drawdown -15% 도달 시 전 포지션 사이즈 자동 절반 alert.
+- **G18**: 현금 비중 macro regime의 cash_band[0] 미만 금지.
+
+### G19-G20: Audit / 통계
+
+- **G19**: Sample size N < 30 시 alpha 주장 wording 금지 (`outperformed`, `alpha confirmed`, `strategy proven` 등).
+- **G20**: audit-report / postmortem / shadow portfolio state 덮어쓰기 금지. 날짜별 보존.
+
+### G21-G22: 보안
+
+- **G21**: `.env`의 secret 변수 (API key / token / 계좌번호 / chat id) 산출물 / 로그 / stdout 노출 금지.
+- **G22**: 외부 review raw payload는 redact 후 `.handoff/external-signals/`에 저장. raw 보존 금지.
+
+---
+
 ## NOTES
 
 ### Default = No Action
