@@ -91,7 +91,7 @@ Sample size hard rule:
   Stage 6  Brief Author
 ```
 
-상세 계층 정의 / forbidden language / hard guard는 `governance/specs/hard-guards.md` 참조.
+상세 계층 정의 / forbidden language / hard guard는 본 문서의 Hard Guards (G1-G22) 참조.
 파이프라인 전체 흐름은 `governance/pipeline-overview.md` 참조 (인간용 reference).
 사용자 의도(job story) + capability→system trace 는 `governance/capabilities/`, 구조 결정 근거(ADR)는 `governance/decisions/` 참조.
 
@@ -209,7 +209,7 @@ BC 도메인 (macro/screener/universe/policy)은 `_boundary.py` 의 `resolve_pat
 | `policy_drafts_dir()` / `$POLICY_DRAFTS_DIR` | `telemetry/policy_drafts` |
 | `repo_path(".cache", …)` (캐시) / `repo_path("secrets", …)` (시크릿) | `.cache/…` / `secrets/…` |
 | `profiles_dir()` / `$PROFILES_DIR` | `governance/profiles` |
-| (literal) `$AXIOMS_DIR` / `$SPECS_DIR` / `$THRESHOLDS_PATH` | `governance/AXIOMS` / `governance/specs` / `governance/thresholds.yaml` |
+| (literal) `$AXIOMS_DIR` / `$SPECS_DIR` / `$THRESHOLDS_PATH` | `governance/AXIOMS` / `governance/proposals` / `governance/thresholds.yaml` |
 | `$ENV_PATH` | `.env` |
 
 doctrine 본문의 `$ALIAS` 표기는 readable shorthand 이며, 그 의미는
@@ -281,7 +281,7 @@ doctrine 본문의 `$ALIAS` 표기는 readable shorthand 이며, 그 의미는
 
 ### Forbidden Language
 
-산출물 본문에 다음 표현 금지 (상세는 `governance/specs/hard-guards.md` Section 3):
+산출물 본문에 다음 표현 금지 (상세는 본 문서 Hard Guards — G1~G8, G19):
 - "should buy/sell", "looks bullish/bearish", "guaranteed", "sure thing", "no-brainer"
 - "outperformed the market" (sample size 미충족 시)
 - "alpha confirmed", "strategy proven" (N < 100 시)

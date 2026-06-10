@@ -3,7 +3,7 @@ version: 1
 description: |
   Strategy-agnostic 잠금 영역. RuleFactory.build_strategy 가 outer wrapper 로
   자동 삽입 — 어떤 strategy / profile 도 우회 불가 (G13 enforcement).
-  catastrophic floor 변경은 governance/specs PR + 사용자 명시 ack 필요.
+  catastrophic floor 변경은 governance/proposals/ + 사용자 명시 ack 필요.
 
 guards:
   - type: "threshold"

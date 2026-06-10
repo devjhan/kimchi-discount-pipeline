@@ -12,7 +12,7 @@ infrastructure/_common/utils.py — investment_v3 helper module.
 
 본 module은 어떤 stage 자체 로직도 포함하지 않는다.
 
-Hard guards (governance/specs/hard-guards.md):
+Hard guards (AGENTS.md Hard Guards G1-G22):
 - G7: 모든 숫자 source citation 강제 — `format_citation()` 사용 권장
 - G8: API fetch 실패 시 hallucination 금지 — `safe_http_json()`은 raise 하므로 caller가 graceful degrade
 - G20: 산출물 덮어쓰기 금지 — `write_output_safely()` 사용 강제
@@ -246,11 +246,7 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     """
     out = dict(base)
     for k, v in override.items():
-        if (
-            k in out
-            and isinstance(out[k], dict)
-            and isinstance(v, dict)
-        ):
+        if k in out and isinstance(out[k], dict) and isinstance(v, dict):
             out[k] = _deep_merge(out[k], v)
         else:
             out[k] = v
@@ -308,14 +304,22 @@ def load_runtime_policy() -> dict[str, Any]:
         return None
 
     _ENV_OVERRIDES = (
-        ("RUNTIME_POLICY_USER_ACK_NOT_FINANCIAL_ADVICE",
-         ("user_acknowledged", "not_financial_advice")),
-        ("RUNTIME_POLICY_USER_ACK_NO_AUTO_TRADE",
-         ("user_acknowledged", "no_auto_trade")),
-        ("RUNTIME_POLICY_USER_ACK_SAMPLE_SIZE_LIMITS",
-         ("user_acknowledged", "sample_size_limits")),
-        ("RUNTIME_POLICY_KIS_READ_ONLY_ENABLED",
-         ("kis", "read_only_account", "enabled")),
+        (
+            "RUNTIME_POLICY_USER_ACK_NOT_FINANCIAL_ADVICE",
+            ("user_acknowledged", "not_financial_advice"),
+        ),
+        (
+            "RUNTIME_POLICY_USER_ACK_NO_AUTO_TRADE",
+            ("user_acknowledged", "no_auto_trade"),
+        ),
+        (
+            "RUNTIME_POLICY_USER_ACK_SAMPLE_SIZE_LIMITS",
+            ("user_acknowledged", "sample_size_limits"),
+        ),
+        (
+            "RUNTIME_POLICY_KIS_READ_ONLY_ENABLED",
+            ("kis", "read_only_account", "enabled"),
+        ),
     )
     for env_key, path in _ENV_OVERRIDES:
         v = _env_bool(env_key)
@@ -330,7 +334,9 @@ def load_runtime_policy() -> dict[str, Any]:
     return merged
 
 
-def all_user_acknowledged(policy: dict[str, Any] | None = None) -> tuple[bool, list[str]]:
+def all_user_acknowledged(
+    policy: dict[str, Any] | None = None,
+) -> tuple[bool, list[str]]:
     """
     runtime-policy 의 user_acknowledged 3 flag 모두 true 인지 검사.
     Returns (all_true, pending_keys).
@@ -715,13 +721,13 @@ def _open_with_retry(
         except urllib.error.HTTPError as exc:
             last_exc = exc
             if exc.code in retry_on and attempt < retry:
-                time.sleep(backoff_base * (2 ** attempt) + random.uniform(0, 0.5))
+                time.sleep(backoff_base * (2**attempt) + random.uniform(0, 0.5))
                 continue
             raise FetchError(f"HTTP fetch fail: {url_for_error} — {exc}") from exc
         except Exception as exc:  # noqa: BLE001
             last_exc = exc
             if _is_transient_url_error(exc) and attempt < retry:
-                time.sleep(backoff_base * (2 ** attempt) + random.uniform(0, 0.5))
+                time.sleep(backoff_base * (2**attempt) + random.uniform(0, 0.5))
                 continue
             raise FetchError(f"HTTP fetch fail: {url_for_error} — {exc}") from exc
     # 도달 불가 — 위 loop 가 항상 return 또는 raise. 방어 코드.
@@ -829,7 +835,9 @@ def base_report_envelope(
 # ============================================================
 
 
-def paged_with_pause(items: Iterable[Any], *, pause_seconds: float = 0.05) -> Iterable[Any]:
+def paged_with_pause(
+    items: Iterable[Any], *, pause_seconds: float = 0.05
+) -> Iterable[Any]:
     """generator 사이 짧은 pause 삽입 (DART 등 rate-limit courtesy)."""
     for it in items:
         yield it

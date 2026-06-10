@@ -4,7 +4,7 @@
 `last_updated: 2026-06-10`
 
 본 디렉토리는 **비자명한 구조 결정의 영구 ledger** 다. `governance/AXIOMS/`(왜 — 투자
-철학) · `governance/specs/`(무엇 — 계약) · `governance/directives/`(어떻게 — 코딩) 와
+철학) · `governance/proposals/`(무엇 — 제안) · `governance/directives/`(어떻게 — 코딩) 와
 나란히, **"왜 이 구조인가 / 왜 이건 안 하는가"** 라는 *결정 근거* 축을 담는다.
 
 `architecture-review-findings-2026-06.md` (transient backlog) 와의 본질적 차이:

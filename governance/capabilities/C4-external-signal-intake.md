@@ -32,5 +32,5 @@ downstream  다음 cron 의 Stage 4 thesis-auditor 가 fact-only 로 인용 (즉
 ## 관련
 
 - skill: `.agents/skills/investment-ingest-external-signal/`
-- SOP / forbidden: [`../specs/hard-guards.md`](../specs/hard-guards.md) (G10)
+- SOP / forbidden: [../../AGENTS.md](../../AGENTS.md) (Hard Guards G1-G22)
 - edge-source 본문: [`../AXIOMS/edge-source.md`](../AXIOMS/edge-source.md)

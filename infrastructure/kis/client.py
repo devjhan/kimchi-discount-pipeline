@@ -16,7 +16,7 @@ Stage 1 (preferred share spread, NAV calc 자회사 시총), Stage 3 (earnings p
                    `KisUnavailable` raise. `forbidden_tr_ids` 명시 호출은 즉시
                    `KisAutoTradeBlocked` raise (서로 다른 예외로 audit 분리).
 
-Hard guards (governance/specs/hard-guards.md):
+Hard guards (AGENTS.md Hard Guards G1-G22):
     - G7: 모든 가격 / 시총 / 잔고 숫자에 source citation (KIS@{yyyymmdd_hhmm}={value})
     - G8: token issue / fetch 실패 시 KisUnavailable raise — caller graceful skip
     - G9a: 자동 매매 체결 절대 금지
@@ -72,8 +72,8 @@ TR_ID_INQUIRE_DAILY_OHLCV = "FHKST03010100"
 # kis.read_only_account.allowed_tr_ids 와 동일 set 유지. 추가 시 양쪽 동시 갱신.)
 TR_ID_ACCOUNT_BALANCE = "TTTC8434R"
 TR_ID_BALANCE_REALIZED_PNL = "TTTC8494R"
-TR_ID_DAILY_EXECUTIONS_RECENT = "TTTC0081R"   # 3개월 이내
-TR_ID_DAILY_EXECUTIONS_OLDER = "CTSC9215R"    # 3개월 이전
+TR_ID_DAILY_EXECUTIONS_RECENT = "TTTC0081R"  # 3개월 이내
+TR_ID_DAILY_EXECUTIONS_OLDER = "CTSC9215R"  # 3개월 이전
 TR_ID_BUYABLE_AMOUNT = "TTTC8908R"
 TR_ID_SELLABLE_QTY = "TTTC8408R"
 TR_ID_ACCOUNT_ASSETS = "CTRP6548R"
@@ -103,8 +103,7 @@ class KisAutoTradeBlocked(RuntimeError):
 def has_kis_keys(env: dict[str, str]) -> bool:
     """편의 함수 — caller 가 graceful skip 분기 결정 시."""
     return bool(
-        env.get("KIS_APP_KEY", "").strip()
-        and env.get("KIS_APP_SECRET", "").strip()
+        env.get("KIS_APP_KEY", "").strip() and env.get("KIS_APP_SECRET", "").strip()
     )
 
 
@@ -158,13 +157,13 @@ def _post_json(
         except urllib.error.HTTPError as exc:
             last_exc = exc
             if exc.code in _KIS_POST_RETRY_STATUS and attempt < retry:
-                time.sleep(backoff_base * (2 ** attempt) + random.uniform(0, 0.5))
+                time.sleep(backoff_base * (2**attempt) + random.uniform(0, 0.5))
                 continue
             raise FetchError(f"KIS POST fail: {url} — {exc}") from exc
         except Exception as exc:  # noqa: BLE001
             last_exc = exc
             if _is_transient_kis_error(exc) and attempt < retry:
-                time.sleep(backoff_base * (2 ** attempt) + random.uniform(0, 0.5))
+                time.sleep(backoff_base * (2**attempt) + random.uniform(0, 0.5))
                 continue
             raise FetchError(f"KIS POST fail: {url} — {exc}") from exc
     if raw is None:
@@ -289,9 +288,7 @@ def _kis_get(
         raise KisUnavailable(f"KIS GET fail: {path} — {exc}") from exc
     rt_cd = data.get("rt_cd")
     if rt_cd not in (None, "0"):
-        raise KisUnavailable(
-            f"KIS rt_cd={rt_cd} msg={data.get('msg1')!r} path={path}"
-        )
+        raise KisUnavailable(f"KIS rt_cd={rt_cd} msg={data.get('msg1')!r} path={path}")
     return data
 
 
@@ -477,11 +474,11 @@ def fetch_account_balance(
         "ACNT_PRDT_CD": prdt,
         "AFHR_FLPR_YN": "N",
         "OFL_YN": "",
-        "INQR_DVSN": "02",       # 02=종목별
+        "INQR_DVSN": "02",  # 02=종목별
         "UNPR_DVSN": "01",
         "FUND_STTL_ICLD_YN": "N",
         "FNCG_AMT_AUTO_RDPT_YN": "N",
-        "PRCS_DVSN": "01",       # 01=전일매매포함
+        "PRCS_DVSN": "01",  # 01=전일매매포함
         "CTX_AREA_FK100": "",
         "CTX_AREA_NK100": "",
     }
@@ -575,10 +572,10 @@ def fetch_daily_executions(
         "ACNT_PRDT_CD": prdt,
         "INQR_STRT_DT": start_clean,
         "INQR_END_DT": end_clean,
-        "SLL_BUY_DVSN_CD": "00",   # 00=전체, 01=매도, 02=매수
+        "SLL_BUY_DVSN_CD": "00",  # 00=전체, 01=매도, 02=매수
         "INQR_DVSN": "00",
         "PDNO": "",
-        "CCLD_DVSN": "00",         # 00=전체
+        "CCLD_DVSN": "00",  # 00=전체
         "ORD_GNO_BRNO": "",
         "ODNO": "",
         "INQR_DVSN_3": "00",
@@ -621,7 +618,7 @@ def fetch_buyable_amount(
         "ACNT_PRDT_CD": prdt,
         "PDNO": stock_code,
         "ORD_UNPR": "0",
-        "ORD_DVSN": "01",          # 01=시장가
+        "ORD_DVSN": "01",  # 01=시장가
         "CMA_EVLU_AMT_ICLD_YN": "N",
         "OVRS_ICLD_YN": "N",
     }

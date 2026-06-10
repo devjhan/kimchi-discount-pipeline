@@ -42,7 +42,7 @@ Zed Agent 는 이 hook 시스템을 지원하지 않는다.
 | 속성 | 내용 |
 |---|---|
 | **역할** | hard-guards 관련 룰 주입 |
-| **파기 사유** | `AGENTS.md` + `governance/specs/hard-guards.md` 정적 참조로 대체 가능 |
+| **파기 사유** | `AGENTS.md` Hard Guards (G1-G22) 정적 참조로 대체 가능 |
 | **대체 수단** | 없음 (정적 context) |
 
 ### 4. `guard/pre_env_guard` (PreToolUse Read/Bash/Write/Edit)

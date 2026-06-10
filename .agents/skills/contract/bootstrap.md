@@ -65,7 +65,7 @@ YYYY-MM-DD (KST 기준)
 | `$DAILY_BRIEF_PATH` | `operations/{오늘 KST 거래일}/daily-brief.md` |
 | `$THRESHOLDS_PATH` | `governance/thresholds.yaml` |
 | `$AXIOMS_DIR` | `governance/AXIOMS` |
-| `$SPECS_DIR` | `governance/specs` |
+| `$SPECS_DIR` | `governance/proposals` |
 | `$SKILLS_SHARED_DIR` | `.agents/skills/contract` |
 
 ### 산출물 경로 매핑

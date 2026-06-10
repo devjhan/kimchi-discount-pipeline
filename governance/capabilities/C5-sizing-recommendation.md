@@ -35,5 +35,5 @@ guard    context 없으면 omit (G12) · 단일 종목 25% cap · Σ Kelly ≤ 0
 
 - BC: [`../../domains/risk_engine/AGENTS.md`](../../domains/risk_engine/AGENTS.md) (sizing concern)
 - config: `config/user/portfolio.yaml` ([`../procedures/config-files-reference.md`](../procedures/config-files-reference.md))
-- 사이즈 cap / asymmetry 규칙: [`../specs/hard-guards.md`](../specs/hard-guards.md) (G12 / G16)
+- 사이즈 cap / asymmetry 규칙: [../../AGENTS.md](../../AGENTS.md) (Hard Guards G12 / G16)
 - ergodicity / asymmetry 본문: [`../AXIOMS/ergodicity.md`](../AXIOMS/ergodicity.md) · [`../AXIOMS/asymmetry.md`](../AXIOMS/asymmetry.md)

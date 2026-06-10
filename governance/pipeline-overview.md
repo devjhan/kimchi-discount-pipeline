@@ -155,7 +155,7 @@ set 이면 우선 사용 — 테스트 / cron / cloud override 용. BC 도메인
 - 일주일 변화 0 이면 정상 신호.
 - 현금 100% 유지가 valid output.
 
-Forbidden language 표 + G1-G22 hard guard 정의는 [specs/hard-guards.md](specs/hard-guards.md).
+Forbidden language 표 + G1-G22 hard guard 정의는 [AGENTS.md](../AGENTS.md) Hard Guards.
 
 외부 의견(뉴스 / 트윗 / 리포트 / 사용자 prompt) 은 명시적 `/ingest-external-signal` 명령으로만 ingest. prompt 본문에 직접 붙여넣어 thesis 변경 요청 금지.
 
@@ -167,7 +167,7 @@ Forbidden language 표 + G1-G22 hard guard 정의는 [specs/hard-guards.md](spec
 - [governance/AXIOMS/](AXIOMS/) — 5 철학 본문
 - [governance/capabilities/](capabilities/README.md) — capability map + job story (의도 layer)
 - [governance/decisions/](decisions/README.md) — ADR register (구조 결정 영구 ledger)
-- [governance/specs/hard-guards.md](specs/hard-guards.md) — G1-G22 hard guard / forbidden language / output envelope
+- [AGENTS.md](../AGENTS.md) — G1-G22 hard guard / forbidden language / output envelope
 - [governance/thresholds.yaml](thresholds.yaml) — 정량 임계값 SSOT
 - 경로 해석 — `infrastructure/_common/utils.py` 의 path helper (중앙 topology alias SSoT 는 제거됨, 위 §6 참조)
 - [governance/procedures/](procedures/) — runtime / manual invoke 절차
