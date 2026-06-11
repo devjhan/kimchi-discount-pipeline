@@ -5,88 +5,45 @@ description: Investment 파이프라인 governance/ 규범적 규칙 주입. dir
 
 # context-governance
 
-`governance/` 디렉토리의 규범적 규칙을 agent 컨텍스트로 주입하는 인덱스 스킬. 작업 전 invoke 로 governance 문맥을 주입한다. 상세는 각 원본 `governance/` 하위 파일 참조.
+`governance/` 디렉토리의 규범적 규칙(SSoT)을 agent 컨텍스트로 주입하는 인덱스 스킬. 작업 성격에 따라 필요한 하위 인덱스만 선행 읽기. `governance/` = Layer 1 (규칙), `.agents/skills/` = Layer 2 (agent 컨텍스트 뷰).
 
 ## 선행 읽기
 
-1. `governance/directives/AGENTS.md` — D-ID 인덱스 + 우선순위 (G-rule > D-ID)
-2. `governance/directives/00-principles.md` — D-CORE-1~7 (KISS / YAGNI / DRY / 모듈경계 / 의존성 / LLM-결정론 분리)
-3. `governance/directives/05-architecture.md` — D-ARCH-1~6 (중앙분산 / CCP-CRP / 의존방향 / 포트·어댑터 / 문서표준 / ADR 기록)
-4. `governance/directives/10-python.md` — D-PY-1~7 (typing, dataclass, import, error, docstring, main 진입점)
-5. `governance/directives/12-config-text.md` — D-CFG-1~6 (YAML envelope, JSON schema, .env secret, markdown citation)
-6. `governance/directives/20-quality.md` — D-Q-1~6 (timeout+retry, 빈 envelope, pytest, 로깅, 관측성, emit_summary_line)
-7. `governance/directives/30-security.md` — D-SEC-1~6 (secret redact, 하드코딩 금지, alias-only path, 자동매매 차단, external signal SOP)
+| 작업 | 읽을 파일 | 원본 |
+|---|---|---|
+| 코딩 컨벤션 (D-ID) | `common/directives-index.md` | `governance/directives/` |
+| 파이프라인 기능 정의 | `common/capabilities-index.md` | `governance/capabilities/` |
+| 아키텍처 결정 이력 | `common/decisions-index.md` | `governance/decisions/` |
+| 제안 draft 검토 | `common/proposals-index.md` | `governance/proposals/` |
+| 5대 철학 | `common/axioms-index.md` | `governance/AXIOMS/` |
+| 정량 임계값 | `common/thresholds-index.md` | `governance/thresholds.yaml` |
 
 ## 핵심 불변식
 
-- **D-ID ↔ G-rule 충돌 시 G-rule 우선** (우선순위: AXIOMS > G1-G22 > D-ID)
-- **_boundary.py 단일 게이트**: 모든 BC 의 infra import 는 `_boundary.py` 만 허용 — 타 모듈에서 `from infrastructure` 직통 금지
-- **ADR append-only**: 구조 결정은 `governance/decisions/NNNN-*.md` 로 영구 기록, 삭제·덮어쓰기 금지
+- **우선순위: AXIOMS > G1-G22 > D-ID** — 충돌 시 상위 rule 우선
+- **governance/ = SSoT** — 본 skill 의 `common/` 파일은 agent-readable 뷰. 충돌 시 `governance/` 원본 우선
+- **ADR append-only**: `governance/decisions/NNNN-*.md` 로 영구 기록, 기각(`Rejected-proposal`)도 보존
+- **_boundary.py 단일 게이트**: 모든 BC 의 infra import 는 `_boundary.py` 만 허용
 
-## D-ID ↔ 파일 매핑
+## governance/ 디렉토리 구조
 
-| ID 범위 | 파일 | 주제 |
+| 디렉토리 | 성격 | 내용 |
 |---|---|---|
-| D-CORE-* | `governance/directives/00-principles.md` | 대원칙 (KISS / YAGNI / DRY / 모듈 경계 / 의존성 정책) |
-| D-ARCH-* | `governance/directives/05-architecture.md` | 아키텍처/배치 판단 기준 (중앙-분산 / 통폐합 CCP·CRP·ISP / 의존방향 / 포트 수명주기 / 문서표준 / ADR 기록) |
-| D-PY-* | `governance/directives/10-python.md` | Python 작성 컨벤션 (typing, dataclass, docstring, import, error pattern) |
-| D-CFG-* | `governance/directives/12-config-text.md` | YAML / JSON / `.env` / Markdown 작성 표준 (envelope, schema, citation) |
-| D-Q-* | `governance/directives/20-quality.md` | 에러 핸들링 / 테스트 / 로깅 / 관측성 |
-| D-SEC-* | `governance/directives/30-security.md` | secret redact / 하드코딩 금지 / alias-only path / 자동매매·주문 차단 |
-
-## D-ID 1줄 요약
-
-| ID | 1줄 |
-|---|---|
-| D-CORE-1 | SSoT — path/임계값 중복 선언 금지, `utils.py` path helper 사용 |
-| D-CORE-2 | KISS — 3줄 반복을 추상화로 포장하지 않음 |
-| D-CORE-3 | Default No-Action — 빈 산출물이 정상, fallback 자동 채움 금지 |
-| D-CORE-4 | 4-layer 단방향 의존 (governance ← infra ← domains → operations) |
-| D-CORE-5 | 새 third-party 의존 최소화, `pyproject.toml` 에 version cap |
-| D-CORE-6 | 작업 전 Read, 변경 후 verify (pytest / import 확인) |
-| D-CORE-7 | LLM 호출은 단일 port (`infrastructure/llm` dispatcher), vendor 종속은 bounded adapter |
-| D-ARCH-1 | 중앙/분산 배치 = 소유·변경빈도·독자범위 축 (파일포맷 오인 금지) |
-| D-ARCH-2 | 통폐합 = CCP·CRP·SDP 기준 — 함께 변하면 함께, 변경축 다르면 분리 |
-| D-ARCH-3 | 의존 방향 단방향 불변식 (fitness test `test_dependency_direction.py`) |
-| D-ARCH-4 | `_boundary` 는 typed adapter factory — 좁은 Protocol port 로 god-module 방지 |
-| D-ARCH-5 | 모든 BC = `AGENTS.md` + `.guidelines/` 6파일 (문서 표준, `test_doc_completeness.py`) |
-| D-ARCH-6 | 구조 결정은 ADR 로 — 기각도 `Rejected-proposal` 로 영구, 반복 패턴은 D-ARCH 승격 |
-| D-PY-1 | 모든 `.py` 헤더에 `from __future__ import annotations` |
-| D-PY-2 | public 함수 서명에 타입 힌트 의무 |
-| D-PY-3 | `except Exception` 은 `# noqa: BLE001` 코멘트 또는 명시적 타입 catch |
-| D-PY-4 | import 순서: future → stdlib → third-party → local (그룹 간 빈 줄) |
-| D-PY-5 | 함수/모듈 docstring 1~3줄 한국어 의무 (public 함수 한정) |
-| D-PY-6 | fatal → `SystemExit`, recoverable → `(data, err)` tuple |
-| D-PY-7 | 새 모듈은 `if __name__ == "__main__":` 진입점 보장 |
-| D-CFG-1 | governance YAML 헤더에 `version:` + `description:` 강제 |
-| D-CFG-2 | JSON 산출물 envelope 5필드 (`schema`, `generated_at`, `date`, `config_version`, `warnings`) |
-| D-CFG-3 | YAML 들여쓰기 2칸, 탭 금지 |
-| D-CFG-4 | Markdown 숫자는 `SRC@ISO_TS=VALUE` citation 의무 |
-| D-CFG-5 | `.env` / secret 내용 본문 직접 인용 절대 금지 (`secret_safe_log` 사용) |
-| D-CFG-6 | Markdown forbidden language — "should buy", "guaranteed", "alpha confirmed" 등 금지 |
-| D-Q-1 | 외부 I/O 는 항상 `timeout=` + retry budget 명시 |
-| D-Q-2 | 빈 산출물도 envelope 5필드 채워 write (`write_output_safely` G20 보존) |
-| D-Q-3 | 모든 도메인 helper 는 pytest 가능 (`tests/unit/test_{module}.py` 1개 이상) |
-| D-Q-4 | 로깅: `print(stdout)` handoff / `print(stderr)` 경고 — `logging` 모듈 금지 |
-| D-Q-5 | `$AUDIT_DIR` 에 `_hook_audit.log` / `cron-logs/` / `shadow-portfolio-state.json` 분리 |
-| D-Q-6 | `emit_summary_line` 표준 — `[stageN] verdict=... key=value -> path` |
-| D-SEC-1 | secret-like literal 본문 매립 금지 (regex prefix-bound guard) |
-| D-SEC-2 | `$ENV_PATH` 직접 Read/Bash/Write/Edit 차단 (`pre_env_guard.sh`) |
-| D-SEC-3 | 자동매매·주문 호출 절대 금지 — KIS read-only whitelist 만 허용 (G9) |
-| D-SEC-4 | Alias-only path — 절대경로 금지, `os.environ["ALIAS"]` 경유 |
-| D-SEC-5 | 외부 신호 ingest 는 `/ingest-external-signal` 명령으로만 (G10) |
-| D-SEC-6 | `_hook_audit.log` 본문에 secret 값 echo 금지 — 변수 이름만 인용 |
-
-## 부속 인덱스
-
-| 디렉토리 | 내용 | 파일 포맷 |
-|---|---|---|
-| `governance/capabilities/` | C1~C6 — daily brief / position monitoring / LLM-value audit / external signal intake / sizing / macro regime gate. 각 capability = Job Story → goal → trigger → stage → BC → config → output trace | `C<N>-<name>.md` |
-| `governance/decisions/` | ADR-0001~0011 — 배치·소유권·LLM위임·BC분할·포트·ISP·reorg기각·스토리지·마이그레이션·훅처분·에이전트하네스. append-only, 기각(`Rejected-proposal`)도 영구 보존 | `NNNN-title.md` |
-| `governance/proposals/` | ADR 승격 전 staging — draft 수정·폐기 자유, append-only 강제 없음 | `{topic}-{date}.md` |
+| `AXIOMS/` | 철학 (why) | 5대 철학 — 생존·반증·엣지·비대칭·통계정직 |
+| `directives/` | 코딩 컨벤션 (how) | D-CORE / D-ARCH / D-PY / D-CFG / D-Q / D-SEC |
+| `decisions/` | ADR (why this decision) | 0001~0011, append-only ledger |
+| `capabilities/` | 기능 정의 (what) | C1~C6 Job Story → End-to-end trace |
+| `proposals/` | 제안 draft | ADR 승격 전 staging, 자유 수정 |
+| `procedures/` | 절차 참조 | config-files-reference.md |
+| `profiles/` | 종목별 정책 | Enrich-Cutoff profile (runtime data) |
+| `thresholds.yaml` | 정량 SSoT | thesis·sizing·statistics·falsifier·enforcement |
+| `schedules.yaml` | 일정 | 파이프라인 cron schedule |
+| `runtime-policy.yaml` | 실행 정책 | G9 자동매매 차단 등 static enforcement |
+| `deployment-residency.md` | 배치 | 로컬 KR ISP primary deployment |
+| `pipeline-overview.md` | 개요 | Stage 0→6 파이프라인 전체 구조 |
 
 ## Out of Scope
 
-- 각 D-ID 의 상세 근거·코드 예시·hook 적용 (원본 `governance/directives/*.md` 참조)
-- AXIOMS (5대 철학) — `governance/AXIOMS/` 참조
-- G-rule 상세 — `AGENTS.md` Hard Guards G1-G22 참조
+- `governance/profiles/` — per-ticker runtime policy data (`/context-policy` + `/policy-profiler` 책임)
+- `domains/` BC 내부 코드 — 각 `/context-{bc}` skill 참조
+- 실제 governance rule 변경 — 본 skill 은 read-only 컨텍스트 주입만
