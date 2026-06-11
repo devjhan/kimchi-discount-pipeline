@@ -19,9 +19,9 @@ last_updated: "2026-05-13"
 
 # ------------------------------------------------------------
 # Schedules — key 는 OS-agnostic identifier (label 의 source).
-# launchd plist Label 은 "com.investment_v3.{key}" 로 derive
+# launchd plist Label 은 "com.kimchidiscountpipeline.{key}" 로 derive
 # (prefix SSoT: infrastructure/scheduling/_labels.py LABEL_PREFIX).
-# systemd timer unit 은 "investment_v3-{key}.timer" 로 derive (systemd generator 미구현).
+# systemd timer unit 은 "kimchi-discount-pipeline-{key}.timer" 로 derive (systemd generator 미구현).
 # ------------------------------------------------------------
 schedules:
   daily_pipeline:

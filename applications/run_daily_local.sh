@@ -5,7 +5,7 @@ set -uo pipefail
 # ============================================================
 #
 # governance/deployment-residency.md §2 primary 의 단일 wrapper.
-# launchd LaunchAgent (com.investment_v3.daily_pipeline) 가 매일 07:30 KST 호출.
+# launchd LaunchAgent (com.kimchidiscountpipeline.daily_pipeline) 가 매일 07:30 KST 호출.
 # 본 wrapper 가 한국 residential IP 환경에서 KIS/DART/KRX 통과를 보장한다.
 #
 # 책임:
@@ -55,7 +55,7 @@ done
 LOG_DIR="$REPO_ROOT/telemetry/logs/launchd"
 mkdir -p "$LOG_DIR"
 
-LOCK_FILE="/tmp/investment_v3.daily_pipeline.pid"
+LOCK_FILE="/tmp/kimchi-discount-pipeline.daily_pipeline.pid"
 ts() { date '+%Y-%m-%dT%H:%M:%S%z'; }
 
 echo "============================================================"

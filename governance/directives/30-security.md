@@ -89,7 +89,7 @@ price = quote_price("005930")  # 시세 read OK
 
 ❌ 금지 (의도적 anti-pattern 예시)
 ```python
-state = Path("/Users/me/projects/investment_v3/operations/_audit/state.json")
+state = Path("/Users/me/projects/kimchi-discount-pipeline/operations/_audit/state.json")
 ```
 
 ✅ 올바름

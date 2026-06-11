@@ -10,7 +10,7 @@
 
 ❌ 금지
 ```python
-KIS_BASE = "/Users/me/projects/investment_v3/.env"   # path literal
+KIS_BASE = "/Users/me/projects/kimchi-discount-pipeline/.env"   # path literal
 KELLY_MAX = 0.5   # thresholds.yaml 의 sizing.kelly_cap 와 중복 선언
 ```
 

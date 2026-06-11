@@ -2,7 +2,7 @@
 infrastructure/scheduling/drift_audit.py — 일별 scheduler-state snapshot.
 
 run_daily_local.sh 의 시작 / 종료 시점에 호출되어 다음을 기록한다:
-  1. ~/Library/LaunchAgents/com.investment_v3.*.plist 의 SHA256
+  1. ~/Library/LaunchAgents/com.kimchidiscountpipeline.*.plist 의 SHA256
   2. governance/schedules.lock.yaml 의 잠금 hash 와의 비교 결과
   3. `launchctl print gui/$UID/<label>` 출력 (state / runs / last_exit_code)
   4. `pmset -g sched` 출력 (wake/repeat 등록 여부)
@@ -27,7 +27,7 @@ import json
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -59,7 +59,7 @@ def run_cmd(cmd: list[str], timeout: float = 10.0) -> tuple[int, str, str]:
 
 
 def collect_plist_state(lock_data: dict[str, Any]) -> list[dict[str, Any]]:
-    """LaunchAgents 디렉토리의 com.investment_v3.*.plist 와 lock 대조."""
+    """LaunchAgents 디렉토리의 com.kimchidiscountpipeline.*.plist 와 lock 대조."""
     results: list[dict[str, Any]] = []
     locked_artifacts: dict[str, dict[str, Any]] = lock_data.get("artifacts", {}) or {}
     seen_paths: set[str] = set()
@@ -74,14 +74,18 @@ def collect_plist_state(lock_data: dict[str, Any]) -> list[dict[str, Any]]:
         locked = locked_artifacts.get(str(plist_path))
         if locked is None:
             entry["finding"] = "scheduler_unknown_artifact"
-            entry["detail"] = "lock 에 없는 plist — 사용자가 직접 작성했거나 다른 generator 가 emit"
+            entry["detail"] = (
+                "lock 에 없는 plist — 사용자가 직접 작성했거나 다른 generator 가 emit"
+            )
         else:
             entry["sha256_locked"] = locked.get("sha256")
             entry["source_sha"] = locked.get("source_sha")
             entry["emit_time"] = locked.get("emit_time")
             if entry["sha256_actual"] != entry["sha256_locked"]:
                 entry["finding"] = "scheduler_plist_drift"
-                entry["detail"] = "SHA256 불일치 — plist 손편집 의심. install.sh 재실행 필요."
+                entry["detail"] = (
+                    "SHA256 불일치 — plist 손편집 의심. install.sh 재실행 필요."
+                )
         results.append(entry)
 
     # lock 에는 있는데 실제 파일 부재 (사용자가 plist 삭제)
@@ -125,7 +129,9 @@ def collect_launchctl_state() -> dict[str, Any]:
                     agent_info["last_exit_code"] = line.split("=", 1)[1].strip()
             if agent_info.get("state") not in ("waiting", "running"):
                 agent_info["finding"] = "scheduler_agent_not_loaded"
-                agent_info["detail"] = f"state={agent_info.get('state')!r} — bootstrap 필요"
+                agent_info["detail"] = (
+                    f"state={agent_info.get('state')!r} — bootstrap 필요"
+                )
         else:
             agent_info["finding"] = "scheduler_agent_not_loaded"
             agent_info["detail"] = "launchctl print 실패 — bootstrap 안 됨"
@@ -166,10 +172,18 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    audit_dir = Path(os.environ.get("SCHEDULER_STATE_DIR", REPO_ROOT / "telemetry/audit/scheduler-state"))
+    audit_dir = Path(
+        os.environ.get(
+            "SCHEDULER_STATE_DIR", REPO_ROOT / "telemetry/audit/scheduler-state"
+        )
+    )
     audit_dir.mkdir(parents=True, exist_ok=True)
 
-    lock_path = Path(os.environ.get("SCHEDULES_LOCK_PATH", REPO_ROOT / "governance/schedules.lock.yaml"))
+    lock_path = Path(
+        os.environ.get(
+            "SCHEDULES_LOCK_PATH", REPO_ROOT / "governance/schedules.lock.yaml"
+        )
+    )
     lock_data: dict[str, Any] = {}
     if lock_path.exists():
         lock_data = yaml.safe_load(lock_path.read_text(encoding="utf-8")) or {}
@@ -206,7 +220,9 @@ def main() -> int:
 
     date = kst_now().strftime("%Y-%m-%d")
     out_path = audit_dir / f"scheduler-state-{date}.{args.phase}.json"
-    out_path.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")
+    out_path.write_text(
+        json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
     print(f"[drift_audit] {out_path} (findings={len(findings)})")
     if findings:
         for f in findings:

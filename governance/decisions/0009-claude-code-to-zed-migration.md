@@ -12,7 +12,7 @@
 
 ## 1. 문제 정의 (Problem Statement)
 
-`investment_v3` 프로젝트는 Claude Code 생태계에 구조적으로 결합되어 있다. Claude Code → Zed Agent로 이주하면서 아래 3개 축에서 호환성 단절이 발생했고, 이는 파이프라인 전체 실행불능 상태다.
+`kimchi-discount-pipeline` 프로젝트는 Claude Code 생태계에 구조적으로 결합되어 있다. Claude Code → Zed Agent로 이주하면서 아래 3개 축에서 호환성 단절이 발생했고, 이는 파이프라인 전체 실행불능 상태다.
 
 | Claude Code 의존 요소 | Zed 에서의 상태 | 영향 |
 |---|---|---|
@@ -351,7 +351,7 @@ ruff check .
 ## 6. 마이그레이션 후 디렉토리 구조 (Target State)
 
 ```diff
-investment_v3/
+kimchi-discount-pipeline/
 ├── AGENTS.md                          # [수정] Zed project context (Claude Code ref 제거)
 ├── CLAUDE.md → AGENTS.md              # [유지] legacy symlink (.gitignore 등록)
 │

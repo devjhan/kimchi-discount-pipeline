@@ -149,8 +149,8 @@ fi
 # 3. launchctl bootstrap (idempotent — bootout 후 재bootstrap)
 echo "[install] step 3/4: launchctl bootstrap"
 UID_NUM="$(id -u)"
-# glob 은 _labels.py LABEL_PREFIX(com.investment_v3) 와 수동 동기 (X-1).
-for plist in "$HOME/Library/LaunchAgents/com.investment_v3."*.plist; do
+# glob 은 _labels.py LABEL_PREFIX(com.kimchidiscountpipeline) 와 수동 동기 (X-1).
+for plist in "$HOME/Library/LaunchAgents/com.kimchidiscountpipeline."*.plist; do
   [ -f "$plist" ] || continue
   label="$(basename "$plist" .plist)"
   echo "[install]   $label"
@@ -162,8 +162,8 @@ done
 echo "[install] step 4/4: 사후 검증"
 echo "--- pmset -g sched ---"
 pmset -g sched | head -10
-echo "--- launchctl print (com.investment_v3.daily_pipeline) ---"
-launchctl print "gui/$UID_NUM/com.investment_v3.daily_pipeline" 2>&1 | head -20
+echo "--- launchctl print (com.kimchidiscountpipeline.daily_pipeline) ---"
+launchctl print "gui/$UID_NUM/com.kimchidiscountpipeline.daily_pipeline" 2>&1 | head -20
 
 # 5. drift_audit snapshot — 설치 직후 baseline
 "$PY" -m infrastructure.scheduling.drift_audit --phase start >/dev/null 2>&1 || true

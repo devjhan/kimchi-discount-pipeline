@@ -1,5 +1,5 @@
 """
-infrastructure/_common/utils.py — investment_v3 helper module.
+infrastructure/_common/utils.py — kimchi-discount-pipeline helper module.
 
 v1 `scripts/_common.py` 의 후신. 모든 stage / domain / hook 가 공유하는 utility:
 - Path helpers (REPO_ROOT 기준 직접 빌더 — operations/governance 레이아웃, env-overridable)

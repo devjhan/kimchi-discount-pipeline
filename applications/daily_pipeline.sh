@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # ============================================================
-# applications/daily_pipeline.sh — investment_v3 manual orchestrator
+# applications/daily_pipeline.sh — kimchi-discount-pipeline manual orchestrator
 # ============================================================
 #
 # !!! 중요 !!!
 # 본 script 는 applications/ 의 manual orchestrator 이며, crontab /
 # scheduled-tasks 에 직접 등록되지 않는다 (launchd 는 run_daily_local.sh 를
 # 호출하고, 그 안에서 본 script 를 phase 별로 부른다). 직접 자동 cron 등록은
-# investment_v3 의 명시적 design decision 으로 금지한다.
+# kimchi-discount-pipeline 의 명시적 design decision 으로 금지한다.
 #
 # 호출 방법:
 #   bash applications/daily_pipeline.sh                    # 오늘 (KST), --phase all
@@ -129,7 +129,7 @@ mkdir -p "$TRAIL_TODAY"
 export TRAIL_TODAY
 
 echo "============================================================" | tee -a "$LOG_FILE"
-echo "[$(date -Iseconds)] investment_v3 pipeline run — date=$DATE_KST $DRY_RUN_FLAG" | tee -a "$LOG_FILE"
+echo "[$(date -Iseconds)] kimchi-discount-pipeline run — date=$DATE_KST $DRY_RUN_FLAG" | tee -a "$LOG_FILE"
 echo "repo=$REPO_ROOT" | tee -a "$LOG_FILE"
 echo "trail=$TRAIL_TODAY" | tee -a "$LOG_FILE"
 echo "============================================================" | tee -a "$LOG_FILE"

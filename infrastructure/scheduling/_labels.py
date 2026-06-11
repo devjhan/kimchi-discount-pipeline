@@ -9,7 +9,8 @@ Python import 가 불가하므로 본 값과 **수동 동기** 의무 — 변경
   3. governance/schedules.yaml §Schedules 의 derive 주석
 을 함께 갱신한다.
 """
+
 from __future__ import annotations
 
-LABEL_PREFIX = "com.investment_v3"
-"""macOS launchd plist Label prefix. 최종 label = f"{LABEL_PREFIX}.{schedule_key}"."""
+LABEL_PREFIX = "com.kimchidiscountpipeline"
+"""macOS launchd plist Label prefix. 최종 label = f"{LABEL_PREFIX}.{schedule_key}" """
