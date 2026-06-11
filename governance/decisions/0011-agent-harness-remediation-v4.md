@@ -16,8 +16,8 @@ ADR-0009 (Claude Code → Zed Agent Migration) 이후 잔여 gap: Claude Code의
 2. **100줄 하드캡 + `common/`·`mode-{}/` 구조**: 모든 SKILL.md를 100줄 이내 index로 재작성. 상세는 `common/`(공통) + `mode-{name}/`(분기별) 서브디렉토리로 분산.
 3. **`investment-` prefix 제거**: 9개 skill 디렉토리 rename + 모든 cross-reference 갱신. Layer prefix만 유지 (`context-`, `stage{N}`, `audit-`, `ingest-`, `policy-`).
 4. **`.guidelines/` + BC `AGENTS.md` 흡수**: 7개 BC의 AGENTS.md와 42개 .guidelines/ 파일 전체를 `context-{bc}/common/`으로 물리 병합 후 원본 삭제.
-5. **README 흡수**: `governance/capabilities/`, `governance/decisions/`, `governance/proposals/`의 README.md를 `context-directives` skill 선행 읽기로 흡수 후 삭제.
-6. **`governance/directives/AGENTS.md` 흡수**: D-ID 매핑 인덱스를 `context-directives/SKILL.md`에 인라인. 실제 directive `.md` 파일은 존치.
+5. **README 흡수**: `governance/capabilities/`, `governance/decisions/`, `governance/proposals/`의 README.md를 `context-governance` skill 선행 읽기로 흡수 후 삭제.
+6. **`governance/directives/AGENTS.md` 흡수**: D-ID 매핑 인덱스를 `context-governance/SKILL.md`에 인라인. 실제 directive `.md` 파일은 존치.
 7. **결정론 도구 분리 우선**: Pre-commit/S6/S7/S8은 Phase 2~3으로 deferred.
 
 ## Consequences

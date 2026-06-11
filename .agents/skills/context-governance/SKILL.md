@@ -1,11 +1,11 @@
 ---
-name: context-directives
-description: Investment 파이프라인 코딩 컨벤션 주입. 7개 directive 파일의 D-ID 요약 + capabilities/decisions/proposals 인덱스를 1~2줄씩 포함. 작업 전 invoke 권장.
+name: context-governance
+description: Investment 파이프라인 governance/ 규범적 규칙 주입. directives/capabilities/decisions/proposals/AXIOMS/thresholds 인덱스를 포함. 작업 전 invoke 권장.
 ---
 
-# context-directives
+# context-governance
 
-`governance/directives/` 의 코딩 컨벤션을 한눈에 조회하는 인덱스 스킬. 작업 전 invoke 로 컨벤션 문맥을 주입한다. 상세는 각 원본 `governance/directives/` 파일 참조.
+`governance/` 디렉토리의 규범적 규칙을 agent 컨텍스트로 주입하는 인덱스 스킬. 작업 전 invoke 로 governance 문맥을 주입한다. 상세는 각 원본 `governance/` 하위 파일 참조.
 
 ## 선행 읽기
 

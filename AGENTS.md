@@ -9,7 +9,7 @@
 
 | 하려는 작업 | invoke |
 |---|---|
-| 코딩 컨벤션 / directive 조회 | `/context-directives` |
+| governance 규칙 / 코딩 컨벤션 조회 | `/context-governance` |
 | `domains/macro/` (Stage 0) 코드 | `/context-macro` |
 | `domains/universe/` (Stage 1) 코드 | `/context-universe` |
 | `domains/screener/` (Stage 2) 코드 | `/context-screener` |

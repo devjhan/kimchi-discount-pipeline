@@ -38,7 +38,7 @@ Layer:
 
 | Old (v3) | New (v4) |
 |---|---|
-| `investment-context-directives` | `context-directives` |
+| `investment-context-directives` | `context-governance` |
 | `investment-context-screener` | `context-screener` |
 | `investment-stage4-thesis-auditor` | `stage4-thesis-auditor` |
 | `investment-audit-outcome` | `audit-outcome` |
@@ -109,9 +109,9 @@ description: {1~2줄 요약}
 
 ## 3. Context Skills (신규 8종)
 
-### 3.1 `context-directives` (~80줄)
+### 3.1 `context-governance` (~80줄)
 
-코딩 컨벤션 주입. 7개 directive 파일의 D-ID 요약을 인라인 1~2줄씩 포함.
+Governance 규범적 규칙 주입. 7개 directive 파일의 D-ID 요약 + capabilities/decisions/proposals 인덱스를 포함.
 
 ### 3.2 BC Context Skills 7종 (각 ~60줄)
 
@@ -127,9 +127,9 @@ description: {1~2줄 요약}
 
 | 파일 | 처리 |
 |---|---|
-| `governance/capabilities/README.md` | → `context-directives` 선행 읽기 목록에 포함. 파일 삭제. |
-| `governance/decisions/README.md` | → `context-directives` 선행 읽기 목록에 포함. 파일 삭제. |
-| `governance/proposals/README.md` | → `context-directives` 선행 읽기 목록에 포함. 파일 삭제. |
+| `governance/capabilities/README.md` | → `context-governance` 선행 읽기 목록에 포함. 파일 삭제. |
+| `governance/decisions/README.md` | → `context-governance` 선행 읽기 목록에 포함. 파일 삭제. |
+| `governance/proposals/README.md` | → `context-governance` 선행 읽기 목록에 포함. 파일 삭제. |
 | `telemetry/positions/README.md` | → `context-risk` 선행 읽기 목록에 포함. 파일 유지 (store contract SSoT). |
 
 ---
@@ -224,7 +224,7 @@ description: {1~2줄 요약}
 
 | # | Name | 줄수 |
 |---|---|---|
-| C0 | `context-directives` | ~80 |
+| C0 | `context-governance` | ~80 |
 | C1~C7 | `context-{macro,universe,screener,catalyst,risk,policy,audit}` | 각 ~60 |
 
 ### Pipeline (4종, 재구성)
