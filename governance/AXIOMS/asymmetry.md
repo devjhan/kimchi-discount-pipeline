@@ -116,9 +116,9 @@ implementation point.
 | Layer | 내용 |
 |---|---|
 | `thresholds.yaml.thesis.asymmetry` | min_ratio / reject_below_min / half_size_below_ratio |
-| `~/.agents/skills/investment-stage4-thesis-auditor/domain/thesis-fields-format.md` | downside_floor / upside_ceiling 본문 schema |
+| `~/.agents/skills/stage4-thesis-auditor/domain/thesis-fields-format.md` | downside_floor / upside_ceiling 본문 schema |
 | `scripts/stage5-sizing.py` | extract_asymmetry_ratio() + compute_fractional_kelly() + cap chain |
-| `~/.agents/skills/investment-stage6-brief-author/SKILL.md` | brief에 ratio + cap 적용 사유 1줄 표시 |
+| `~/.agents/skills/stage6-brief-author/SKILL.md` | brief에 ratio + cap 적용 사유 1줄 표시 |
 
 ---
 

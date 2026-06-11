@@ -16,9 +16,9 @@ set -uo pipefail
 #   0e. alias env 로드 (TZ / TRAIL_TODAY 등)
 #
 #   1. pre-stage4 (Stage 0~3 결정적)
-#   2. Stage 4 LLM (investment-stage4-thesis-auditor)
+#   2. Stage 4 LLM (stage4-thesis-auditor)
 #   3. post-stage4 (Stage 5~5d 결정적)
-#   4. Stage 6 LLM (investment-stage6-brief-author)
+#   4. Stage 6 LLM (stage6-brief-author)
 #   5. Notify manifest 작성 (python -m infrastructure.notify.dispatcher)
 #   6. 알림 발송 (python -m infrastructure.notify.dispatcher)
 #   7. audit shadow-portfolio (python -m domains.audit_integrity.main — 결정론, F-6)
@@ -120,7 +120,7 @@ bash "$REPO_ROOT/applications/daily_pipeline.sh" --date "$DATE_KST" --phase pre-
 # 2. Stage 4 LLM (thesis-auditor) — infrastructure/llm dispatcher 경유 (F-13)
 echo "[run_daily_local] === 2. Stage 4 thesis-auditor ==="
 "$PY" -m infrastructure.llm.dispatcher \
-  --prompt "/investment-stage4-thesis-auditor $DATE_KST" \
+  --prompt "/stage4-thesis-auditor $DATE_KST" \
   --allowed-tools "Bash,Read,Write,Edit,Glob,Grep" \
   >> "$(phase_log stage4)" 2>&1 || \
   echo "[run_daily_local] WARN: Stage 4 non-zero exit" >&2
@@ -134,7 +134,7 @@ bash "$REPO_ROOT/applications/daily_pipeline.sh" --date "$DATE_KST" --phase post
 # 4. Stage 6 LLM (brief-author) — infrastructure/llm dispatcher 경유 (F-13)
 echo "[run_daily_local] === 4. Stage 6 brief-author ==="
 "$PY" -m infrastructure.llm.dispatcher \
-  --prompt "/investment-stage6-brief-author $DATE_KST" \
+  --prompt "/stage6-brief-author $DATE_KST" \
   --allowed-tools "Bash,Read,Write,Edit,Glob,Grep" \
   >> "$(phase_log stage6)" 2>&1 || \
   echo "[run_daily_local] WARN: Stage 6 non-zero exit" >&2

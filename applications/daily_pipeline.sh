@@ -18,7 +18,7 @@ bash applications/daily_pipeline.sh --phase post-stage4 # Stage 5~5d (Stage 4 LL
 #
 # Stage 0 → 1 → 2 → 3 → 5 의 deterministic helper 만 실행한다.
 Stage 4 (thesis-auditor) 와 Stage 6 (brief-author) 는 LLM skill 이므로
-Zed Agent 안에서 별도로 invoke (`investment-stage4-thesis-auditor` etc).
+Zed Agent 안에서 별도로 invoke (`stage4-thesis-auditor` etc).
 #
 # --phase 분리 이유:
 #   Stage 5 sizing 은 Stage 4 thesis-auditor 산출물 (`04-thesis-candidates.json`)
@@ -243,21 +243,21 @@ echo "============================================================" | tee -a "$L
 echo "[$(date -Iseconds)] Pipeline run complete — date=$DATE_KST phase=$PHASE" | tee -a "$LOG_FILE"
 if [[ "$PHASE" == "pre-stage4" ]]; then
   echo "Manual next step:" | tee -a "$LOG_FILE"
-  echo "  1. investment-stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  1. stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
   echo "  2. bash applications/daily_pipeline.sh --date $DATE_KST --phase post-stage4   # Stage 5~5d" | tee -a "$LOG_FILE"
-  echo "  3. investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  3. stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
 elif [[ "$PHASE" == "post-stage4" ]]; then
   echo "Manual next step:" | tee -a "$LOG_FILE"
-  echo "  1. investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  1. stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
 else
   echo "Manual next step:" | tee -a "$LOG_FILE"
-  echo "  1. investment-stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  1. stage4-thesis-auditor   $DATE_KST" | tee -a "$LOG_FILE"
   echo "  2. (선택) bash applications/daily_pipeline.sh --date $DATE_KST --phase post-stage4   # Stage 4 검증 반영한 sizing 재산출" | tee -a "$LOG_FILE"
-  echo "  3. investment-stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
+  echo "  3. stage6-brief-author     $DATE_KST" | tee -a "$LOG_FILE"
 fi
 echo "  Optional:" | tee -a "$LOG_FILE"
-echo "  - /investment-stage0-regime-labeler    $DATE_KST" | tee -a "$LOG_FILE"
-echo "  - /investment-stage2-quality-lens      $DATE_KST" | tee -a "$LOG_FILE"
+echo "  - /stage0-regime-labeler    $DATE_KST" | tee -a "$LOG_FILE"
+echo "  - /stage2-quality-lens      $DATE_KST" | tee -a "$LOG_FILE"
 echo "  - python -m domains.audit_integrity.main --date $DATE_KST   # 4-tier shadow portfolio (결정론, F-6)" | tee -a "$LOG_FILE"
 echo "Outputs in: $TRAIL_TODAY/" | tee -a "$LOG_FILE"
 echo "Cron log:   $LOG_FILE" | tee -a "$LOG_FILE"

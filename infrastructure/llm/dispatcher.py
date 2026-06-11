@@ -8,7 +8,7 @@ infrastructure/llm/dispatcher.py — LLM 런타임 호출 dispatcher.
 
 CLI:
     python -m infrastructure.llm.dispatcher \\
-        --prompt "/investment-stage4-thesis-auditor 2026-06-05" \\
+        --prompt "/stage4-thesis-auditor 2026-06-05" \
         --allowed-tools "Bash,Read,Write,Edit,Glob,Grep" [--vendor claude-cli] [--dry-run]
 
 exit code:

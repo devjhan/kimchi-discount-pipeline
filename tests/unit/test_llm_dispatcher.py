@@ -23,7 +23,7 @@ class TestClaudeCliAdapter:
     def test_command_assembly_dry_run(self) -> None:
         adapter = ClaudeCliAdapter(binary="/fake/claude")
         result = adapter.invoke(
-            "/investment-stage4-thesis-auditor 2026-06-05",
+            "/stage4-thesis-auditor 2026-06-05",
             allowed_tools="Bash,Read,Write,Edit,Glob,Grep",
             dry_run=True,
         )
@@ -31,7 +31,7 @@ class TestClaudeCliAdapter:
         assert result.cmd == [
             "/fake/claude",
             "-p",
-            "/investment-stage4-thesis-auditor 2026-06-05",
+            "/stage4-thesis-auditor 2026-06-05",
             "--allowed-tools",
             "Bash,Read,Write,Edit,Glob,Grep",
         ]
