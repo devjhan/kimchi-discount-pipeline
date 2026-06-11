@@ -1,6 +1,6 @@
 ---
 name: context-universe
-description: Investment 파이프라인 `domains/universe/` BC 작업 시 domain context 주입. 해당 BC의 AGENTS.md + .guidelines/ 파일을 선행 읽기로 안내. 작업 전 invoke 권장.
+description: Investment 파이프라인 `domains/universe/` BC 작업 시 domain context 주입. common/ 통합 가이드 파일을 선행 읽기로 안내. 작업 전 invoke 권장.
 ---
 
 # context-universe

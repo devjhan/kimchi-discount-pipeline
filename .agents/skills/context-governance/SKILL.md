@@ -1,6 +1,6 @@
 ---
 name: context-governance
-description: Investment 파이프라인 governance/ 규범적 규칙 주입. directives/capabilities/decisions/proposals/AXIOMS/thresholds 인덱스를 포함. 작업 전 invoke 권장.
+description: Investment 파이프라인 governance/ 규범적 규칙 주입. common/ 인덱스 파일을 통해 directives/capabilities/decisions/proposals/AXIOMS/thresholds 조회 경로 제공. 작업 전 invoke 권장.
 ---
 
 # context-governance
