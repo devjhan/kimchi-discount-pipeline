@@ -1,7 +1,6 @@
 ---
 name: stage2-quality-lens
 description: Investment 파이프라인 Stage 2의 LLM 정성 lens 평가 단계. screener 패키지 (domains.screener.main)의 deterministic 통과(verdict='pass') 종목에 대해서만 4 lens (moat / 자본배분 / 회계 적신호 / 지주사 자회사 매력도)를 평가. helper의 numeric verdict는 변경하지 않고 lens 보조 의견만 추가. $TRAIL_TODAY/02-quality-lens.json 산출. ROIC/debt/FCF 등 정량 재계산 일체 금지 (helper 책임).
-
 ---
 
 # stage2-quality-lens — Quality Qualitative Lens Evaluator

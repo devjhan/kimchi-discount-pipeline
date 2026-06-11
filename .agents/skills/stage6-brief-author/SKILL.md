@@ -1,7 +1,6 @@
 ---
 name: stage6-brief-author
 description: Investment 파이프라인 Stage 6 — Stage 0~5 일별 산출물을 종합해 사람용 markdown brief를 합성한다. $DAILY_BRIEF_PATH 산출 (= operations/{date}/daily-brief.md). 새 fact / 숫자 추가 일체 금지 — formatting only. 외부 reference / 시장 view / 매매 권고 일체 금지. 사용자 portfolio context 미입력 시 사이즈 섹션 omit.
-
 ---
 
 # stage6-brief-author — Daily Brief Author
