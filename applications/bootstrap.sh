@@ -12,7 +12,7 @@
 #   PYTHON_BOOTSTRAP=python3.13 bash applications/bootstrap.sh
 #
 # 멱등성: .venv/ 가 이미 존재하면 venv 재생성 없이 pip install 만 수행.
-# requirements.txt 가 갱신된 경우에도 같은 호출로 동기화 가능.
+# pyproject.toml 가 갱신된 경우에도 같은 호출로 동기화 가능.
 #
 # 제약:
 #   - 본 script 는 .env 를 읽지 않는다. secret 노출 가능성 0.
@@ -28,12 +28,6 @@ cd "$REPO_ROOT"
 
 PYTHON_BOOTSTRAP="${PYTHON_BOOTSTRAP:-python3}"
 VENV_DIR="$REPO_ROOT/.venv"
-REQ_FILE="$REPO_ROOT/requirements.txt"
-
-if [ ! -f "$REQ_FILE" ]; then
-  echo "[bootstrap] FATAL: $REQ_FILE 없음" >&2
-  exit 2
-fi
 
 # venv 생성 (멱등)
 if [ ! -x "$VENV_DIR/bin/python3" ]; then
@@ -51,15 +45,15 @@ if [ "$PY_MAJOR" -lt 3 ] || { [ "$PY_MAJOR" -eq 3 ] && [ "$PY_MINOR" -lt 11 ]; }
   echo "[bootstrap] WARN: Python $PY_VER detected — 3.11+ 권장 (일부 코드 호환성 영향 가능)" >&2
 fi
 
-# pip 업그레이드 + requirements 설치
+# pip 업그레이드 + pyproject.toml 기반 설치 (editable, dev extras 포함)
 "$VENV_DIR/bin/pip" install --quiet --upgrade pip
-"$VENV_DIR/bin/pip" install --quiet -r "$REQ_FILE"
+"$VENV_DIR/bin/pip" install --quiet -e ".[dev]"
 
 # 검증: import yaml 가능 여부
 if "$VENV_DIR/bin/python3" -c 'import yaml' 2>/dev/null; then
   YAML_VER="$("$VENV_DIR/bin/python3" -c 'import yaml; print(yaml.__version__)')"
   echo "[bootstrap] done. python=$PY_VER pyyaml=$YAML_VER venv=$VENV_DIR"
 else
-  echo "[bootstrap] FATAL: pyyaml import 실패 — requirements.txt 확인" >&2
+  echo "[bootstrap] FATAL: pyyaml import 실패 — pyproject.toml dependencies 확인" >&2
   exit 3
 fi

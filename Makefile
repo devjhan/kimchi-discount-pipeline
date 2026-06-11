@@ -3,7 +3,7 @@
 PYTHON ?= python3
 
 install-dev:
-	$(PYTHON) -m pip install -r infrastructure/requirements.txt
+	$(PYTHON) -m pip install -e ".[dev]"
 
 test:
 	$(PYTHON) -m pytest
