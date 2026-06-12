@@ -72,4 +72,4 @@ secrets/
 operations/**/_notify-results.json
 
 # Kiro compatibility layer
-.kiro/
+.kiro
