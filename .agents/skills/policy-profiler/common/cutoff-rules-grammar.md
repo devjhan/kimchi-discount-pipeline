@@ -4,7 +4,7 @@
 
 ## metric_path 화이트리스트 (환각 차단 — 필수 참조)
 
-- `domains/screener/config/methods_manifest.yaml` — resolver metric_path 화이트리스트 (single source)
+- `governance/policy/global/methods_manifest.yaml` — resolver metric_path 화이트리스트 참조 경로 (whitelist 실체는 `domains/screener/rules/resolver.py` / `methods.py` 코드에 있음)
 - `domains/screener/.guidelines/01-rules.md` — Rule 트리 문법 (type/op/metric_path)
 - `domains/screener/.guidelines/02-resolver.md` — resolver 소비 인터페이스
 - `domains/_shared/profile_registry/schema.py` — `EnrichCutoffProfile` 필드 계약
@@ -28,7 +28,7 @@
 2. `AGENTS.md` (5 철학)
 3. `$AXIOMS_DIR/**/*.md`
 4. `$SPECS_DIR/hard-guards.md`
-5. `domains/screener/config/methods_manifest.yaml` (cutoff_rules 어휘)
+5. `governance/policy/global/methods_manifest.yaml` (cutoff_rules 어휘 — whitelist 실체는 `domains/screener/rules/resolver.py` / `methods.py` 코드)
 6. `domains/_shared/profile_registry/schema.py` (출력 shape)
 7. `_intake-{date}.json` (trigger + 현 profile)
 8. `$EXTERNAL_SIGNALS_DIR/{ticker_dir}/*.md` (evidence)

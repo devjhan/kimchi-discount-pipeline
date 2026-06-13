@@ -57,6 +57,6 @@ statistics.bootstrap             → iters: 10000, seed: 42
 - `thresholds.yaml` 의 stage 0/1/2/3 섹션은 완전 이전됨 — 각 BC `config/` 로 migration 완료
   - Stage 0 (macro): `domains/macro/config/regimes.yaml`
   - Stage 1 (universe): `domains/universe/config/`
-  - Stage 2 (screener): `domains/screener/config/profiles/quality_floor.yaml` + `strategies/default.yaml`
+  - Stage 2 (screener): `governance/policy/global/profiles/quality_floor.yaml` + `governance/policy/global/strategies/default.yaml`
   - Stage 3 (catalyst): `domains/catalyst/config/detectors.yaml`
 - `thresholds.yaml` 에 남은 것은 **cross-BC 공통 정량** (thesis / sizing / falsifier / enforcement / statistics)

@@ -1,6 +1,6 @@
 # 4 Qualitative Lenses — stage2-quality-lens
 
-`screener` 패키지 `quality_floor` profile의 `qualitative_lenses` 키.
+`governance/policy/global/profiles/quality_floor.yaml` (screener RuleFactory 가 로드하는 global scope 정책) 의 `qualitative_lenses` 키.
 
 ---
 

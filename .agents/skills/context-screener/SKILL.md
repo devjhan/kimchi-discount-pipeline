@@ -41,4 +41,4 @@ description: Investment 파이프라인 `domains/screener/` BC 작업 시 domain
 
 - 다른 BC 의 책임 — catalyst / risk_engine / universe 내부 import 금지
 - Financial cache prefetch / DART raw data fetch — `io/` 어댑터 내부 구현
-- `governance/profiles/{ticker}/` 의 cutoff_rules 작성 — policy BC (`/policy-profiler`) 책임
+- `governance/policy/profiles/{ticker}/` 의 cutoff_rules 작성 — policy BC (`/policy-profiler`) 책임

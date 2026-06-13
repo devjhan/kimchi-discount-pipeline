@@ -11,7 +11,7 @@ class PolicyEngine(Protocol):
 
 ## EnrichCutoffProfile — ADR-0006 "fat contract"
 
-`_shared.profile_registry.schema.EnrichCutoffProfile` (`@dataclass(frozen=True)`):
+`_shared.profile_registry.schema.EnrichCutoffProfile` (`@dataclass(frozen=True)`) — 통합 `policy-profile-v1`(scope-tagged) 의 **scope=ticker in-memory view** (on-disk serde 단일 권위 = `domains/_shared/policy_profile/`; segment merge-slice 는 `PolicyContribution` = scope=segment view):
 
 ```python
 ticker: str                       # "KR:NNNNNN"
@@ -40,15 +40,18 @@ list_versions(ticker) -> tuple[int, ...]
 commit(profile, *, writer) -> Path    # versioned write, never overwrite (G20)
 ```
 
-serde: `to_dict(p)` / `from_dict(raw)` — `from_dict` 가 schema gate (미지원 `schema` → reject).
+serde: `to_dict(p)` / `from_dict(raw)` — on-disk serde 단일 권위는 `domains/_shared/policy_profile/serde`, profile_registry serde 는 `EnrichCutoffProfile`(scope=ticker view) ↔ `PolicyProfile` 투영 후 위임. `from_dict` 가 schema gate (미지원 `schema` → reject; legacy `enrich-cutoff-profile-v1` 은 마이그레이션 수용).
 
-## governance/profiles/ 파일 포맷
+## governance/policy/profiles/ 파일 포맷
+
+통합 `policy-profile-v1` (per-ticker 파일은 `scope: ticker`):
 
 ```yaml
-schema: enrich-cutoff-profile-v1
+schema: policy-profile-v1
 version: <int>
 description: <str>
-ticker: KR:NNNNNN
+scope: ticker
+key: KR:NNNNNN
 required_enrichments: [<enricher names>]
 cutoff_rules: { type: ..., ... }
 provenance:
@@ -59,4 +62,13 @@ provenance:
   rationale_ko: <str>
 ```
 
-layout: `governance/profiles/<ticker_dir>/v<N>.yaml`.
+layout: `governance/policy/profiles/<ticker_dir>/v<N>.yaml`.
+
+## 정책 계층 통합 (ADR-0013, 구현 완료 2026-06-13)
+
+profile 은 3 tier — per-ticker(`governance/policy/profiles/`, 본 BC) · segment(`governance/policy/segments|concepts|segment_profiles/`, ADR-0012) · global(`governance/policy/global/`, 구 `domains/screener/config/`). ADR-0013 결과:
+
+- **완료(Q2)**: 전 tier 가 `governance/policy/` 산하로 이전 + 세 tier 의 `required_enrichments + cutoff_rules` shape 가 `scope∈{global,segment,ticker}` tagged 단일 `policy-profile-v1` 스키마로 수렴. on-disk serde 단일 권위 = `domains/_shared/policy_profile/`. `EnrichCutoffProfile` 은 그 scope=ticker view, `PolicyContribution` 은 scope=segment merge-slice view. global profile YAML 은 `rule:` 키 대신 `cutoff_rules:` 키 사용(scope: global).
+- **보류(Q3)**: per-ticker 를 `selector=ticker` leaf segment 로 추상화하지 **않음**. per-ticker 는 identity-scoped 직접조회 tier 로 유지, `ProfileRegistry` 잔존. (합성 이득은 이미 `SegmentResolver.per_ticker_for` 주입으로 달성.)
+
+global cutoff *평가* 는 여전히 screener `RuleFactory` 소유 (스토리지만 이동, 엔진 통합 아님). screener `_boundary.load_profile` 이 통합 YAML 을 RuleFactory 가 기대하는 `{"rule": cutoff_rules}` shape 로 어댑트.

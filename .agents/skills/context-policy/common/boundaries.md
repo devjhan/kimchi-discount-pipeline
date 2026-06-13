@@ -26,7 +26,7 @@
 
 ### Output (draft JSON vs commit YAML 구분)
 - `write_output_safely(out_path, payload)` — G20 JSON (ephemeral draft)
-- `write_profile_safely(out_path, payload)` — G20 YAML (governance/profiles SSoT commit)
+- `write_profile_safely(out_path, payload)` — G20 YAML (governance/policy/profiles SSoT commit)
 
 ### DART API (intake)
 `dart_has_key(env)` / `dart_iter_disclosures(api_key, *, bgn_de, end_de, **kw)`

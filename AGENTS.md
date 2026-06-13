@@ -77,7 +77,7 @@
 | `$POSITIONS_DIR` | `telemetry/positions` |
 | `$EXTERNAL_SIGNALS_DIR` | `config/signals` |
 | `$POLICY_DRAFTS_DIR` | `telemetry/policy_drafts` |
-| `$PROFILES_DIR` | `governance/profiles` |
+| `$PROFILES_DIR` | `governance/policy/profiles` |
 | `$THRESHOLDS_PATH` | `governance/thresholds.yaml` |
 | `$AXIOMS_DIR` | `governance/AXIOMS` |
 
@@ -87,7 +87,7 @@
 
 | 디렉토리 | 역할 |
 |---|---|
-| `governance/` | 선언적 정책 (AXIOMS, directives, decisions, proposals, thresholds, profiles) |
+| `governance/` | 선언적 정책 (AXIOMS, directives, decisions, proposals, thresholds, **policy/**=정책 전 tier) |
 | `domains/` | 기계적 실행 — BC별 Python (macro, universe, screener, catalyst, risk_engine, policy, audit_integrity) |
 | `infrastructure/` | 외부 I/O (DART, KIS, Yahoo, FRED, notify, scheduling, _common/utils.py) |
 | `operations/` | 일별 파이프라인 산출물 (`{YYYY-MM-DD}/`) |

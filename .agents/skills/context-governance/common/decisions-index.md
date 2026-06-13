@@ -1,6 +1,6 @@
 # Decisions — ADR (Architecture Decision Records)
 
-> **원본**: `governance/decisions/0001-*.md` ~ `0011-*.md` (11파일)
+> **원본**: `governance/decisions/0001-*.md` ~ `0013-*.md` (13파일)
 > **본 파일**: agent-readable 인덱스. append-only ledger — 기각(`Rejected-proposal`)도 영구 보존.
 
 | ADR | 제목 | Status | 핵심 결정 |
@@ -16,10 +16,13 @@
 | 0009 | Claude Code → Zed Agent 마이그레이션 | Accepted | `.claude/skills/` → `.agents/skills/`. hook 전면 파기, inject_session_state 만 Python 재구현 |
 | 0010 | Hook Disposition | Accepted | 8개 hook 중 7개 파기. `inject_session_state` 만 `bootstrap_context.py` 로 이관 |
 | 0011 | Agent Harness Remediation v4 | Accepted | Skill-First Context Injection. `domains/` BC 문서 → `skills/context-{bc}/` 흡수. 100줄 하드캡 |
+| 0012 | Segment-scoped profile 계층 + 벡터 semantic 분류 | Accepted | per-ticker·global 사이 *부분집합* profile tier 신설. `_shared/segment_registry`. rule+semantic(임베딩 cosine) 동급 selector. 벡터=telemetry sqlite-vec. `--use-segments` opt-in. 명세 검증으로 `vec_distance_cosine`(vec0 미사용) 채택 |
+| 0013 | 정책 계층 통합: 전 tier governance/ 단일화 + scope-tagged 스키마 통합 (per-ticker→segment 보류) | Accepted (구현 완료) | **Q2 완료(2026-06-13)**: global(구 `domains/screener/config/`) → `governance/policy/global` 이전, 전 tier `governance/policy/` 산하 + `scope∈{global,segment,ticker}` tagged 단일 `policy-profile-v1` 스키마. global cutoff *평가* 는 여전히 screener `RuleFactory` 소유(스토리지만 이동). **Q3 보류**: per-ticker→leaf segment 추상화 — 합성 이득은 이미 `per_ticker_for` 주입으로 달성, degenerate-selector/퇴화/blast radius 비용 큼 |
 
 ## 우선순위
 
 - ADR-0009 + 0010 + 0011: 현재 아키텍처의 기본 골격 — 작업 시 가장 자주 참조
 - ADR-0003 + 0005: G6 / DDD 경계 enforcement — 일상적 코딩 시 참조
 - ADR-0004 + 0006 + 0007: BC 경계 / 프로파일 구조 — 신규 BC 추가 검토 시 참조
+- ADR-0006 + 0012 + 0013: **정책(profile) 계층** — per-ticker / segment / global 3 tier + 통합 완료(0013). profile·segment 작업 시 필수 참조
 - ADR-0001 + 0002 + 0008: 배치 / 설정 / 저장소 — 환경 설정 변경 시 참조

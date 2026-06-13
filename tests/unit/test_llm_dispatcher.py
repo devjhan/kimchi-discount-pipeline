@@ -17,6 +17,20 @@ from infrastructure.llm.dispatcher import invoke
 pytestmark = pytest.mark.unit
 
 
+@pytest.fixture(autouse=True)
+def _hermetic_llm_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    """셸에 set 된 DEEPSEEK_API_KEY / LLM_VENDOR 의존 제거 — 테스트 결정성(hermetic).
+
+    dispatcher.invoke 와 DeepSeekAdapter() 는 명시 api_key 가 없으면 ambient env 의
+    DEEPSEEK_API_KEY 를 읽는다. 셸에 키가 set 이면 skip-경로 테스트가 비결정적으로
+    실패(또는 실 API 호출)했다 — 본 autouse fixture 가 env 를 비워 격리한다. 명시
+    api_key 를 주입하는 테스트는 영향 없음. LLM_VENDOR 를 setenv 하는 테스트는 본
+    fixture(setup) 이후 본문에서 재설정하므로 정상 동작.
+    """
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    monkeypatch.delenv("LLM_VENDOR", raising=False)
+
+
 class TestClaudeCliAdapter:
     """claude-cli adapter — subprocess command 조립 / binary-absent skip."""
 

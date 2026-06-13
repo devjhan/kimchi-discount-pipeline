@@ -41,7 +41,7 @@ grep -rn "^from infrastructure\|^import infrastructure" domains/_shared/ports/  
 
 ### Path / time / citation
 - `resolve_path(alias, *, date=None) -> Path`
-- `profiles_root() -> Path` — `governance/profiles`
+- `profiles_root() -> Path` — `governance/policy/profiles`
 - `now_kst()` / `now_iso_kst()`
 - `is_trading_day(date)`, `format_citation(source, ts, value)`
 - `citation_adapter() -> CitationPort`

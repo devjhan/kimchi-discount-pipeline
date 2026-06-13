@@ -57,7 +57,7 @@ phase 3 (결정론)  python -m domains.policy.main --commit-draft <draft>
 | 입력 (trigger) | DART 공시 / CLI manual / news | `_boundary.dart_iter_disclosures` + `intake.build_triggers` |
 | 입력 (LLM research) | trigger + evidence → ResearchOutput | `PolicyEngine` (ports/llm.py) — 주입 |
 | 입력 (env) | `DART_API_KEY` | `_boundary.load_env` |
-| 출력 (profile) | `governance/profiles/{ticker}/` 신규 버전 | `_boundary.write_profile_safely` → `ProfileRegistry` |
+| 출력 (profile) | `governance/policy/profiles/{ticker}/` 신규 버전 | `_boundary.write_profile_safely` → `ProfileRegistry` |
 | 출력 (draft) | `telemetry/policy_drafts/` (ephemeral) | `_boundary.drafts_dir` |
 
 ## CLI
@@ -66,7 +66,7 @@ phase 3 (결정론)  python -m domains.policy.main --commit-draft <draft>
 
 ## Cutover 상태 (dormant)
 
-- `governance/profiles/` 비어있음 (`.gitkeep` 만)
+- `governance/policy/profiles/` 비어있음 (`.gitkeep` 만)
 - universe `--use-profile-registry` default OFF
 - `DRIFT_BLOCKS_COMMIT = False` (advisory)
 
