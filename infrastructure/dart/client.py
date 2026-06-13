@@ -476,3 +476,200 @@ def fetch_other_corp_investment(
     }
     data = _dart_get(params, api_key, url=DART_OTR_CPR_INVESTMENT_URL, timeout=timeout)
     return list(data.get("list") or [])
+
+
+# ============================================================
+# 사업보고서 "사업의 내용" 본문 — semantic 임베딩 텍스트 source (Task 8 / 14-b)
+# ============================================================
+
+DART_DOCUMENT_URL = f"{DART_BASE}/document.xml"
+
+# "사업의 내용" 다음에 통상 등장하는 정기보고서 섹션 제목 — 본문 절단 경계 휴리스틱.
+_BUSINESS_CONTENT_MARKER = "사업의 내용"
+_NEXT_SECTION_MARKERS = (
+    "재무에 관한 사항",
+    "감사인의 감사의견",
+    "이사회 등 회사의 기관",
+    "주주에 관한 사항",
+    "임원 및 직원",
+    "이사의 경영진단",
+)
+_TAG_RE = None  # lazy compile (regex 모듈 import 회피)
+
+
+def find_latest_annual_report_rcept_no(
+    api_key: str,
+    *,
+    corp_code: str,
+    bgn_de: str,
+    end_de: str,
+) -> str | None:
+    """corp 의 최신 *사업보고서* rcept_no (없으면 None).
+
+    정기공시(pblntf_ty='A') 중 report_nm 에 '사업보고서' 포함 + rcept_dt 최신.
+    """
+    latest: tuple[str, str] | None = None  # (rcept_dt, rcept_no)
+    for item in iter_disclosures(
+        api_key, bgn_de=bgn_de, end_de=end_de, pblntf_ty="A", corp_code=corp_code
+    ):
+        report_nm = item.get("report_nm") or ""
+        if "사업보고서" not in report_nm:
+            continue
+        rcept_no = (item.get("rcept_no") or "").strip()
+        rcept_dt = (item.get("rcept_dt") or "").strip()
+        if rcept_no and (latest is None or rcept_dt > latest[0]):
+            latest = (rcept_dt, rcept_no)
+    return latest[1] if latest else None
+
+
+def _download_document_zip(api_key: str, rcept_no: str, *, timeout: float = 30.0) -> bytes:
+    """DART document.xml endpoint — 단일 공시 원문 ZIP bytes."""
+    if not api_key:
+        raise DartUnavailable("DART_API_KEY missing")
+    if not rcept_no:
+        raise DartUnavailable("rcept_no missing")
+    params = {"crtfc_key": api_key, "rcept_no": rcept_no}
+    full_url = f"{DART_DOCUMENT_URL}?{urllib.parse.urlencode(params)}"
+    req = urllib.request.Request(
+        full_url, headers={"User-Agent": "investment-pipeline/1.0"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return resp.read()
+    except Exception as exc:  # noqa: BLE001
+        raise DartUnavailable(f"document.xml fetch fail: {exc}") from exc
+
+
+def _decode_document_bytes(raw: bytes) -> str:
+    """DART 원문 XML bytes 디코드. 인코딩 선언 다양(UTF-8 / EUC-KR / CP949) → 순차 시도."""
+    for enc in ("utf-8", "cp949", "euc-kr", "latin-1"):
+        try:
+            return raw.decode(enc)
+        except (UnicodeDecodeError, LookupError):
+            continue
+    return raw.decode("utf-8", errors="ignore")
+
+
+def _strip_tags_to_text(markup: str) -> str:
+    """DART 원문(SGML/XML 유사) → 가시 텍스트. 태그 제거 + 공백 정규화 (best-effort)."""
+    global _TAG_RE
+    if _TAG_RE is None:
+        import re
+
+        _TAG_RE = re.compile(r"<[^>]+>")
+    import re
+
+    no_tags = _TAG_RE.sub(" ", markup)
+    # 흔한 엔티티 최소 복원.
+    for ent, ch in (("&nbsp;", " "), ("&amp;", "&"), ("&lt;", "<"), ("&gt;", ">"), ("&quot;", '"')):
+        no_tags = no_tags.replace(ent, ch)
+    return re.sub(r"\s+", " ", no_tags).strip()
+
+
+# '사업의 내용' 마커 직후에 오면 본문 섹션이 아니라 상호참조로 간주하는 신호
+# (라이브 검증: 후속 섹션이 "앞의 '사업의 내용'을 참조" / "사업의 내용 > 5..." 식으로 인용).
+_XREF_OPENERS = ("'", '"', "\u2018", "\u2019", "\u201c", "\u201d", "\u300c", "\u300e", ">")
+
+
+def _is_cross_reference(text: str, after: int) -> bool:
+    """marker 직후 window 에 인용부호/꺾쇠 또는 '참조/참고' 어구가 오면 상호참조."""
+    window = text[after : after + 12]
+    if window.lstrip()[:1] in _XREF_OPENERS:
+        return True
+    return "참조" in window or "참고" in window
+
+
+def _segment_from(text: str, start: int, *, max_chars: int) -> str:
+    """``start`` 부터 다음 정기보고서 섹션 제목(또는 ``max_chars``)까지 본문 segment."""
+    segment = text[start:]
+    cut = len(segment)
+    for marker in _NEXT_SECTION_MARKERS:
+        idx = segment.find(marker, len(_BUSINESS_CONTENT_MARKER))
+        if 0 <= idx < cut:
+            cut = idx
+    return segment[:cut].strip()[:max_chars]
+
+
+def _select_business_content_start(text: str, *, max_chars: int) -> int:
+    """'사업의 내용' 실제 섹션 시작 위치. 목차(맨 앞) + 상호참조 회피 (라이브 검증 발견).
+
+    DART 실제 보고서에서 '사업의 내용' 은 (1) 목차, (2) 실제 섹션 제목, (3) 후속 섹션의
+    상호참조("앞의 '사업의 내용'을 참조") 로 여러 번 등장한다. 단순 ``rfind`` (마지막 등장)
+    은 보통 상호참조라 본문 대신 참조 문구를 잡는다(라이브 검증: LG 003550 → 43자 참조 문구,
+    삼성전자 005930 → 참조 문구 중간부터 시작).
+
+    선택 규칙: (1) 상호참조 신호가 없는 등장만 후보로, (2) 그 중 다음 섹션 경계까지 *본문이
+    가장 긴* 등장을 채택한다. 실제 섹션은 목차 항목(다음 섹션 제목이 곧장 뒤따라 짧음)이나
+    참조 문구보다 길다. 동률이면 더 앞선 위치. 비-참조 등장이 없으면 전체에서 최장 채택.
+    """
+    marker = _BUSINESS_CONTENT_MARKER
+    mlen = len(marker)
+    occurrences: list[int] = []
+    i = text.find(marker)
+    while i != -1:
+        occurrences.append(i)
+        i = text.find(marker, i + mlen)
+    if not occurrences:
+        return -1
+    pool = [p for p in occurrences if not _is_cross_reference(text, p + mlen)] or occurrences
+    return max(pool, key=lambda p: (len(_segment_from(text, p, max_chars=max_chars)), -p))
+
+
+def extract_business_content_from_document(
+    zip_bytes: bytes, *, max_chars: int = 20000
+) -> str:
+    """document.xml ZIP → '사업의 내용' 본문 텍스트 (best-effort, truncated).
+
+    휴리스틱: 상호참조/목차가 아닌 실제 '사업의 내용' 섹션(``_select_business_content_start``)
+    부터 다음 정기보고서 섹션 제목 또는 ``max_chars`` 까지 추출. 마커 부재 → '' (G8 — 날조
+    금지, caller 가 빈 텍스트를 skip).
+
+    NOTE: DART 원문 XML 포맷은 비정형·인코딩 다양 → 본 추출은 best-effort 다. 운영 투입
+    전 실제 보고서로 검증 필요(라이브 endpoint 미검증).
+    """
+    try:
+        with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+            names = [n for n in zf.namelist() if not n.endswith("/")]
+            if not names:
+                return ""
+            # 본문 XML = 가장 큰 멤버 (목차/첨부보다 본문이 큼).
+            main = max(names, key=lambda n: zf.getinfo(n).file_size)
+            raw = zf.read(main)
+    except (zipfile.BadZipFile, OSError):
+        return ""
+    markup = _decode_document_bytes(raw)
+    text = _strip_tags_to_text(markup)
+    if not text:
+        return ""
+    # 실제 섹션 시작 위치 — 목차(맨 앞)·상호참조("'사업의 내용'을 참조")를 회피 (라이브 검증).
+    start = _select_business_content_start(text, max_chars=max_chars)
+    if start < 0:
+        return ""
+    return _segment_from(text, start, max_chars=max_chars)
+
+
+def fetch_business_content(
+    api_key: str,
+    *,
+    corp_code: str,
+    bgn_de: str,
+    end_de: str,
+    max_chars: int = 20000,
+    timeout: float = 30.0,
+) -> str:
+    """corp 최신 사업보고서의 '사업의 내용' 본문 텍스트.
+
+    Raises:
+        DartUnavailable: key 부재 / 보고서 부재 / fetch 실패 / 본문 추출 실패.
+        → caller(TickerTextSource adapter)가 '' 로 graceful degrade.
+    """
+    rcept_no = find_latest_annual_report_rcept_no(
+        api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
+    )
+    if not rcept_no:
+        raise DartUnavailable(f"사업보고서 부재: corp_code={corp_code}")
+    zip_bytes = _download_document_zip(api_key, rcept_no, timeout=timeout)
+    text = extract_business_content_from_document(zip_bytes, max_chars=max_chars)
+    if not text:
+        raise DartUnavailable(f"'사업의 내용' 추출 실패: rcept_no={rcept_no}")
+    return text

@@ -17,6 +17,12 @@ dev = [
     "pytest>=8.0",
     "pytest-cov>=4.1",
 ]
+# segment-scoped profile 의 semantic 분류 — 임베디드 벡터 가속(sqlite-vec).
+# 미설치 시 infrastructure/vectorstore 는 stdlib sqlite3 + brute-force cosine 로 graceful
+# degrade (정확·충분, KR 특수상황 universe 규모). 임베딩은 기존 requests 사용 (신규 의존 0).
+semantic = [
+    "sqlite-vec==0.1.6",
+]
 
 [tool.setuptools.packages.find]
 include = ["domains*", "infrastructure*"]
@@ -43,6 +49,7 @@ markers = [
     "integration: end-to-end smoke tests (file I/O, no network)",
     "unit: pure-function tests (no file I/O)",
     "arch: architecture fitness functions (repo-wide AST invariants, no I/O — tests/architecture/)",
+    "live: network-dependent live verification (skipped unless RUN_DART_LIVE=1; e.g. DART document.xml)",
 ]
 filterwarnings = [
     "ignore::DeprecationWarning",
