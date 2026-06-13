@@ -1,69 +1,55 @@
-"""dict ↔ EnrichCutoffProfile 직렬화/역직렬화.
+"""dict ↔ EnrichCutoffProfile 직렬화/역직렬화 (ADR-0013 Q2: policy_profile 단일 serde 위임).
 
-on-disk YAML 형식은 하우스 헤더 컨벤션(``schema`` / ``version`` / ``description``)을
-top-level 에 둔다 — config-header lint(D-CFG-1) 대응. 내부 dataclass 필드명과
-on-disk 키가 다른 부분:
-- ``schema`` (on-disk) ↔ ``schema_version`` (dataclass)
-- ``version`` (on-disk) ↔ ``profile_version`` (dataclass)
-
-``from_dict`` 은 ``schema`` 게이트 — 미지원 schema_version 은 ProfileSchemaError.
+on-disk 형식은 통합 ``policy-profile-v1`` (scope=ticker). 본 모듈은 EnrichCutoffProfile
+(ticker scope **view**) ↔ ``PolicyProfile`` 투영 + ``policy_profile.serde`` 위임만 한다.
+legacy ``enrich-cutoff-profile-v1`` 읽기는 ``policy_profile.serde`` 가 마이그레이션 게이트로
+처리한다 (silent pass 금지 — 손상/미지원 schema 는 PolicyProfileSchemaError, 이는
+ProfileSchemaError 의 하위라 기존 except 절이 그대로 잡는다).
 """
 from __future__ import annotations
 
-from dataclasses import asdict
 from typing import Any, Mapping
 
-from domains._shared.profile_registry.errors import ProfileSchemaError
-from domains._shared.profile_registry.schema import (
-    SCHEMA_VERSION,
-    EnrichCutoffProfile,
-    Provenance,
+from domains._shared.policy_profile import serde as _policy_serde
+from domains._shared.policy_profile.schema import (
+    SCHEMA_VERSION as _POLICY_SCHEMA_VERSION,
 )
+from domains._shared.policy_profile.schema import PolicyProfile
+from domains._shared.profile_registry.errors import ProfileSchemaError
+from domains._shared.profile_registry.schema import SCHEMA_VERSION, EnrichCutoffProfile
 
 
 def to_dict(p: EnrichCutoffProfile) -> dict[str, Any]:
-    """EnrichCutoffProfile → on-disk dict (YAML dump 직전 형태)."""
-    return {
-        "schema": p.schema_version,
-        "version": p.profile_version,
-        "description": p.description,
-        "ticker": p.ticker,
-        "required_enrichments": list(p.required_enrichments),
-        "cutoff_rules": dict(p.cutoff_rules),
-        "provenance": {
-            **asdict(p.provenance),
-            "citations": list(p.provenance.citations),
-        },
-    }
+    """EnrichCutoffProfile(scope=ticker view) → on-disk dict (policy-profile-v1)."""
+    pp = PolicyProfile(
+        scope="ticker",
+        key=p.ticker,
+        schema_version=_POLICY_SCHEMA_VERSION,
+        profile_version=p.profile_version,
+        required_enrichments=p.required_enrichments,
+        cutoff_rules=p.cutoff_rules,
+        provenance=p.provenance,
+        description=p.description,
+    )
+    return _policy_serde.to_dict(pp)
 
 
 def from_dict(raw: Mapping[str, Any]) -> EnrichCutoffProfile:
-    """on-disk dict → EnrichCutoffProfile. schema 게이트 + KeyError wrap.
+    """on-disk dict → EnrichCutoffProfile. native(policy-profile-v1) + legacy 모두 수용.
 
-    손상 / 누락 필드는 ProfileSchemaError 로 전파 (silent pass 금지).
+    per-ticker 레지스트리는 scope=ticker 만 받는다 (다른 scope 파일은 fail-loud).
     """
-    sv = raw.get("schema")
-    if sv != SCHEMA_VERSION:
+    pp = _policy_serde.from_dict(raw)
+    if pp.scope != "ticker":
         raise ProfileSchemaError(
-            f"unsupported schema: {sv!r} (expected {SCHEMA_VERSION!r})"
+            f"per-ticker profile 은 scope=ticker 여야 함 (got {pp.scope!r})"
         )
-    prov = raw.get("provenance") or {}
-    try:
-        return EnrichCutoffProfile(
-            ticker=raw["ticker"],
-            schema_version=sv,
-            profile_version=int(raw["version"]),
-            required_enrichments=tuple(raw.get("required_enrichments") or ()),
-            cutoff_rules=raw["cutoff_rules"],
-            description=raw.get("description", ""),
-            provenance=Provenance(
-                committed_at=prov.get("committed_at", ""),
-                committed_by=prov.get("committed_by", ""),
-                trigger=prov.get("trigger", ""),
-                citations=tuple(prov.get("citations") or ()),
-                rationale_ko=prov.get("rationale_ko", ""),
-            ),
-        )
-    except (KeyError, TypeError, ValueError) as exc:
-        # __post_init__ 의 ProfileSchemaError 는 그대로 통과, 그 외는 wrap.
-        raise ProfileSchemaError(f"profile dict 파싱 실패: {exc}") from exc
+    return EnrichCutoffProfile(
+        ticker=pp.key,
+        schema_version=SCHEMA_VERSION,
+        profile_version=pp.profile_version,
+        required_enrichments=pp.required_enrichments,
+        cutoff_rules=pp.cutoff_rules,
+        description=pp.description,
+        provenance=pp.provenance,
+    )

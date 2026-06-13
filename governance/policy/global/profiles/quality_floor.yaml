@@ -1,21 +1,30 @@
-schema: "screener-profile-v1"
-name: "quality_floor"
+schema: "policy-profile-v1"
 version: 1
 description: "ROIC + 부채 + 현금흐름 + 자본배분 기본 퀄리티 통과 게이트"
+scope: "global"
+key: "quality_floor"
+
+# ADR-0013 Q2: whole-universe(global) scope 정책. 구 screener-profile-v1 → 통합
+# policy-profile-v1 로 수렴 (rule: → cutoff_rules:, scope/key 추가). cutoff *평가* 는
+# 여전히 screener RuleFactory 소유 — _boundary.load_profile 이 cutoff_rules 를
+# RuleFactory 가 기대하는 rule 트리로 어댑트한다 (decision 3, 스토리지 이동 ≠ 엔진 통합).
 
 # profile 자체가 SSoT — 별도 thresholds.yaml 없음.
-# 정량 임계값은 rule.children 의 threshold/scoring params 에 직접 명시.
+# 정량 임계값은 cutoff_rules.children 의 threshold/scoring params 에 직접 명시.
 # 상수 (tax_rate / cache TTL) 는 strategy YAML 의 constants 에서 주입.
 
+# global scope 는 universe 보강을 강제하지 않음 (per-ticker/segment 가 담당).
+required_enrichments: []
+
 # LLM 정성 검증 메타 — investment-stage2-quality-lens skill 의 4 lens 정의.
-# 본 profile 의 rule 평가 결과 (pass) 종목에만 lens 적용.
+# 본 profile 의 cutoff 평가 결과 (pass) 종목에만 lens 적용.
 qualitative_lenses:
   - "moat (산업 점유, 브랜드, 진입장벽)"
   - "자본배분 합리성 (소각 의지 / 재투자 ROI)"
   - "회계 적신호 (영업CF vs 순이익 괴리, 충당금 패턴)"
   - "지주사 자회사 산업 매력도 (지주사 한정)"
 
-rule:
+cutoff_rules:
   type: "and"
   name: "quality_floor"
   children:

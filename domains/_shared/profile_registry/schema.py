@@ -22,8 +22,11 @@ from typing import Any, Mapping
 
 from domains._shared.profile_registry.errors import ProfileSchemaError
 
-SCHEMA_VERSION = "enrich-cutoff-profile-v1"
-"""bump => serde.from_dict 가 마이그레이션 게이트로 reject. 호환 깨질 때만 올림."""
+SCHEMA_VERSION = "policy-profile-v1"
+"""ADR-0013 Q2: 통합 scope-tagged 스키마(``policy_profile``)로 수렴 — EnrichCutoffProfile
+은 그 **scope=ticker view** 다. on-disk 직렬화/역직렬화는 ``policy_profile.serde`` 단일
+권위에 위임한다(``serde.py``). 본 상수는 ``policy_profile.SCHEMA_VERSION`` 과 동일 값
+(순환 import 회피 위해 리터럴 중복). bump => 마이그레이션 게이트 reject."""
 
 
 @dataclass(frozen=True)

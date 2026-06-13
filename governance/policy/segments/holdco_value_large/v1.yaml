@@ -1,0 +1,29 @@
+schema: segment-def-v1
+version: 1
+description: "대형 지주사 가치주 부분집합 — semantic(지주 NAV 할인) + rule(대형주) 동급 합성 (예시)"
+segment_id: holdco_value_large
+parent: null
+priority: 0
+profile_ref: holdco_value_floor
+selector:
+  type: and
+  children:
+    # semantic leaf — 임베딩 cosine (concept anchor)
+    - type: semantic_similarity
+      concept: holdco_value_trap
+      op: ge
+      threshold: 0.78
+    # rule-based leaf — 선택 속성 namespace (screener metric_path 와 분리)
+    - type: threshold
+      attribute: market_cap_krw
+      op: ge
+      threshold: 300000000000          # 3000억 KRW
+merge:
+  required_enrichments: union          # segment + per-ticker enrich 합집합
+  cutoff_rules: and                    # cutoff 는 AND 결합 (둘 다 통과)
+provenance:
+  committed_at: "2026-06-12T15:00:00+09:00"
+  committed_by: manual
+  trigger: manual
+  citations: []
+  rationale_ko: "지주사 NAV 할인 가치주 중 대형주 부분집합 (예시 segment)"

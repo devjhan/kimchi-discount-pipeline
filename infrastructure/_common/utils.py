@@ -145,7 +145,49 @@ def external_signals_dir() -> Path:
 
 
 def profiles_dir() -> Path:
-    return _env_or("governance/profiles", "PROFILES_DIR")
+    # ADR-0013 Q2: per-ticker(scope=ticker) 정책은 governance/policy/profiles 로 통합.
+    return _env_or("governance/policy/profiles", "PROFILES_DIR")
+
+
+def segments_dir() -> Path:
+    """governance/policy/segments — segment 선언 SSoT (selector + profile_ref + merge)."""
+    # ADR-0013 Q2: 전 정책 tier 를 governance/policy/ 단일 루트로 통합.
+    return _env_or("governance/policy/segments", "SEGMENTS_DIR")
+
+
+def concepts_dir() -> Path:
+    """governance/policy/concepts — semantic concept anchor 선언 SSoT (9-a/12-a)."""
+    # ADR-0013 Q2: 전 정책 tier 를 governance/policy/ 단일 루트로 통합.
+    return _env_or("governance/policy/concepts", "CONCEPTS_DIR")
+
+
+def named_profiles_dir() -> Path:
+    """governance/policy/segment_profiles — segment 가 profile_ref 로 참조하는 named 정책."""
+    # ADR-0013 Q2: 전 정책 tier 를 governance/policy/ 단일 루트로 통합.
+    return _env_or("governance/policy/segment_profiles", "SEGMENT_PROFILES_DIR")
+
+
+def global_policy_dir() -> Path:
+    """governance/policy/global — whole-universe(global) scope 정책 루트.
+
+    ADR-0013 Q2: screener 의 strategy / profile / hard_guards 를 엔진 내부
+    (domains/screener/config) 에서 governance/policy/global 로 이전. 하위 레이아웃:
+    ``strategies/<name>.yaml`` / ``profiles/<name>.yaml`` / ``hard_guards.yaml``.
+    cutoff *평가* 는 여전히 screener RuleFactory 소유 (스토리지 이동 ≠ 엔진 통합).
+    """
+    return _env_or("governance/policy/global", "GLOBAL_POLICY_DIR")
+
+
+def segment_vector_store_path() -> Path:
+    """telemetry/segments/vectors.sqlite — 임베딩 벡터 + scalar 선택 속성 저장소.
+
+    벡터는 모델 버전 의존 *재생성 불가 증거* → telemetry 거주 (ADR-0008). scalar 는
+    재생성 가능하나 13-a 결정대로 동일 sqlite 파일에 동거.
+    """
+    env = os.environ.get("SEGMENT_VECTOR_DB")
+    if env:
+        return Path(env)
+    return REPO_ROOT / "telemetry" / "segments" / "vectors.sqlite"
 
 
 def policy_drafts_dir() -> Path:

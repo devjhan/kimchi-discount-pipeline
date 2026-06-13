@@ -1,0 +1,13 @@
+schema: policy-profile-v1
+version: 1
+description: "지주사 가치주 부분집합 enrich-cutoff 정책 (예시 — segment profile_ref 대상)"
+scope: segment
+key: holdco_value_floor
+required_enrichments:
+  - nav_discount
+cutoff_rules:
+  type: threshold
+  name: nav_discount_floor
+  metric_path: enrichments.nav_discount.discount_pct
+  op: ge
+  threshold: 0.30
