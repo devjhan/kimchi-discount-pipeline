@@ -22,8 +22,17 @@ from dataclasses import asdict
 from datetime import date as _date
 from datetime import datetime
 from pathlib import Path
+from typing import Callable
 
 from domains._shared.profile_registry.registry import ProfileRegistry
+from domains._shared.segment_registry.concepts import ConceptRegistry
+from domains._shared.segment_registry.errors import SegmentRegistryError
+from domains._shared.segment_registry.registry import (
+    NamedProfileRegistry,
+    SegmentRegistry,
+)
+from domains._shared.segment_registry.resolver import SegmentResolver
+from domains._shared.segment_registry.schema import PolicyContribution
 from domains._shared.time.clock import AsOfClock
 from domains.universe import _boundary
 from domains.universe.application.build_universe import build_universe
@@ -48,6 +57,38 @@ def _parse_date(s: str | None) -> _date:
     if s:
         return datetime.strptime(s, "%Y-%m-%d").date()
     return _boundary.now_kst().date()
+
+
+def _build_segment_resolver(
+    *, default_contribution: PolicyContribution | None = None
+) -> SegmentResolver | None:
+    """segment 해소기 구성 (boundary→registries→resolver). 실패 시 None.
+
+    per-ticker profile 은 ProfileRegistry 로 resolver 가 fold(union). ``default_contribution``
+    은 ADR-0013 decision 4 의 global=root segment seam — universe 는 *required_enrichments*
+    만 union 하는데, whole-universe global *enrichment* 산출물은 존재하지 않는다(global
+    정책 quality_floor 의 required_enrichments=[] — global scope 는 screener cutoff 전용,
+    decision 3). 따라서 caller 는 현재 None 을 주입한다(global enrichment base 부재).
+    cutoff 측 global=root segment 는 screener 가 주입한다. 구성 단계 실패
+    (segment 순환 / 손상 segment·concept 파일 / 인덱스 IO)는 SegmentRegistryError 또는
+    OSError 로 잡아 None 반환 → caller 가 segment 비활성으로 graceful fallback.
+    """
+    try:
+        seg_registry = SegmentRegistry(root=_boundary.segments_root())
+        concept_registry = ConceptRegistry(root=_boundary.concepts_root())
+        named_registry = NamedProfileRegistry(root=_boundary.named_profiles_root())
+        per_ticker_registry = ProfileRegistry(root=_boundary.profiles_root())
+        return SegmentResolver(
+            segments=seg_registry.load_all_latest(),
+            known_concepts=frozenset(concept_registry.list_concepts()),
+            vector_index=_boundary.vector_index(),
+            named_profile_for=named_registry.load_latest,
+            per_ticker_for=per_ticker_registry.load_latest,
+            default_contribution=default_contribution,
+            now_iso=_boundary.now_iso_kst,
+        )
+    except (SegmentRegistryError, OSError):
+        return None
 
 
 def _emit_runtime_invariant_violations(
@@ -134,6 +175,14 @@ def main(argv: list[str] | None = None) -> int:
         "required_enrichments 로 보강 (기본 OFF = backward-compat applies_to). "
         "policy 가 프로파일을 생산하고 회귀 parity 가 증명된 뒤 활성화.",
     )
+    parser.add_argument(
+        "--use-segments",
+        action="store_true",
+        help="segment 계층(부분집합 profile) 해소로 required_enrichments 보강 (기본 OFF). "
+        "SegmentResolver 가 매칭 segment + per-ticker(profile_registry) 의 "
+        "required_enrichments 를 union 한다. --use-profile-registry 의 상위집합이며 "
+        "동시 지정 시 본 플래그가 우선. 벡터 인덱스 미빌드/키 부재 시 graceful degrade.",
+    )
     args = parser.parse_args(argv)
 
     target_date = _parse_date(args.date)
@@ -180,15 +229,43 @@ def main(argv: list[str] | None = None) -> int:
     # --use-profile-registry 시에만 종목별 required_enrichments 로 보강.
     # 미등록 ticker → frozenset() (보강 안 함 — policy 미실행 정상, Default No-Action).
     # 손상 profile → ProfileSchemaError 전파 (fail-open 금지 — main 에서 surface).
-    required_enrichments_for = None
+    required_enrichments_for: Callable[[str], frozenset[str]] | None = None
     if args.use_profile_registry:
-        registry = ProfileRegistry(root=_boundary.profiles_root())
+        _profile_registry = ProfileRegistry(root=_boundary.profiles_root())
 
-        def required_enrichments_for(ticker: str) -> frozenset[str]:  # noqa: F811
-            profile = registry.load_latest(ticker)
+        def _req_from_profile_registry(ticker: str) -> frozenset[str]:
+            profile = _profile_registry.load_latest(ticker)
             if profile is None:
                 return frozenset()
             return frozenset(profile.required_enrichments)
+
+        required_enrichments_for = _req_from_profile_registry
+
+    # ----- segment 계층 해소 (Task 11, --use-segments; --use-profile-registry 의 상위집합) -----
+    # ON 시 SegmentResolver 가 매칭 segment + per-ticker 를 union 한 required_enrichments 로
+    # 위 closure 를 대체한다. segment config 문제(SegmentRegistryError: 순환/손상/merge
+    # 충돌/selector 오류)는 frozenset() 으로 graceful degrade (부분집합 보강 생략). 손상
+    # per-ticker(ProfileSchemaError)는 기존 --use-profile-registry 와 동일하게 전파(fail-loud).
+    # resolver 구성 자체 실패는 stderr warning 후 위 경로로 fallback (segment 비활성).
+    if args.use_segments:
+        seg_resolver = _build_segment_resolver()
+        if seg_resolver is None:
+            print(
+                f"[{STAGE_NAME}] WARN: segment 해소기 구성 실패 — segment 비활성",
+                file=sys.stderr,
+            )
+        else:
+
+            def _req_from_segments(ticker: str) -> frozenset[str]:
+                try:
+                    resolution = seg_resolver.resolve(ticker)
+                except SegmentRegistryError:
+                    return frozenset()  # segment config 문제 → 보강 생략(graceful)
+                if resolution.profile is None:
+                    return frozenset()
+                return frozenset(resolution.profile.required_enrichments)
+
+            required_enrichments_for = _req_from_segments
 
     # ----- orchestrate -----
     allow_yahoo = _boundary.resolve_allow_yahoo_fallback(args.allow_yahoo_fallback)

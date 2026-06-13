@@ -29,6 +29,7 @@ from __future__ import annotations
 
 from datetime import date as _date
 from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
@@ -36,7 +37,9 @@ from infrastructure._common import utils as _utils
 from infrastructure.dart import client as _dart
 from infrastructure.dart import holding_subsidiaries_parser as _dart_subs
 from infrastructure.dart import preferred_pairs_parser as _dart_pref
+from infrastructure.embedding import client as _embedding
 from infrastructure.kis import client as _kis
+from infrastructure.vectorstore.store import SqliteVectorStore as _SqliteVectorStore
 from infrastructure.yahoo import client as _yahoo
 
 KST = _utils.KST
@@ -66,8 +69,102 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
 
 
 def profiles_root() -> Path:
-    """``governance/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
+    """``governance/policy/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
     return _utils.profiles_dir()
+
+
+# ----------------------------------------------------------------------
+# Segment 계층 (부분집합 profile) — root 주입 + 임베딩/벡터 adapter factory.
+# 임베딩/벡터 I/O 는 본 _boundary 만 infra 를 import (불변식 C). kernel(SegmentResolver
+# / build)은 EmbeddingPort / VectorIndexPort / TickerTextSource Protocol 만 받는다.
+# ----------------------------------------------------------------------
+def segments_root() -> Path:
+    """``governance/policy/segments`` — SegmentRegistry(root=...) 주입용."""
+    return _utils.segments_dir()
+
+
+def concepts_root() -> Path:
+    """``governance/policy/concepts`` — ConceptRegistry(root=...) 주입용."""
+    return _utils.concepts_dir()
+
+
+def named_profiles_root() -> Path:
+    """``governance/policy/segment_profiles`` — NamedProfileRegistry(root=...) 주입용."""
+    return _utils.named_profiles_dir()
+
+
+def vector_store_path() -> Path:
+    """``telemetry/segments/vectors.sqlite`` — 벡터 저장소 경로 (모델 버전 증거)."""
+    return _utils.segment_vector_store_path()
+
+
+def vector_index(db_path: Path | None = None) -> Any:
+    """VectorIndexPort 구현(sqlite-vec 가속) 반환. 경로 미지정 → 기본 telemetry 경로."""
+    return _SqliteVectorStore(db_path or _utils.segment_vector_store_path())
+
+
+def embedding_port(env: dict[str, str], *, dry_run: bool = False) -> Any:
+    """EmbeddingPort 구현 반환. 키 부재 → available=False (semantic graceful skip).
+
+    transport 는 ``infrastructure.embedding.client.embed_texts`` 에 키/모델 바인딩.
+    """
+    from domains._shared.adapters.embedding_remote import RemoteEmbeddingAdapter
+
+    api_key = env.get("EMBEDDING_API_KEY", "")
+    model = _embedding.resolve_model(env)
+    base_url = _embedding.resolve_base_url(env)
+
+    def _transport(texts: list[str]) -> tuple[list[list[float]], str, int]:
+        return _embedding.embed_texts(
+            texts, api_key=api_key, base_url=base_url, model=model
+        )
+
+    return RemoteEmbeddingAdapter(
+        transport=_transport,
+        model_id=model,
+        available=bool(api_key),
+        dry_run=dry_run,
+    )
+
+
+def embedding_has_key(env: dict[str, str]) -> bool:
+    """``.env`` 의 EMBEDDING_API_KEY 존재 검사 (값 자체는 노출 금지, G21)."""
+    return _embedding.has_embedding_key(env)
+
+
+def ticker_text_source(env: dict[str, str], *, lookback_days: int = 460) -> Any | None:
+    """DART 사업보고서 "사업의 내용" 기반 TickerTextSource (14-b production source).
+
+    벡터 인덱스 build(Task 9)의 per-ticker 임베딩 텍스트 출처. corp_index(stock_code→
+    corp_code) 와 최신 사업보고서 검색 날짜창(기본 ~15개월)을 바인딩한 fetch 를
+    ``DartTickerTextSource`` 에 주입한다. DART 키 부재 / corp_index 로드 실패 → ``None``
+    (build 는 수기 source 만 사용 — graceful). 본 source 는 종목별 fetch 실패 시 '' 반환.
+
+    NOTE: DART document.xml 본문 추출은 best-effort (인코딩·포맷 비정형) — 운영 투입 전
+    실제 보고서로 검증 필요(infrastructure.dart.extract_business_content_from_document).
+    """
+    if not _dart.has_dart_key(env):
+        return None
+    api_key = env.get("DART_API_KEY", "")
+    try:
+        corp_index = _dart.load_or_fetch_corp_code_index(
+            api_key, resolve_path("dart_cache") / "corp_index.json"
+        )
+    except _dart.DartUnavailable:
+        return None
+
+    end = datetime.now(KST).date()
+    bgn = end - timedelta(days=lookback_days)
+    bgn_de, end_de = bgn.isoformat(), end.isoformat()
+
+    def _fetch(corp_code: str) -> str:
+        return _dart.fetch_business_content(
+            api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
+        )
+
+    from domains._shared.adapters.ticker_text import DartTickerTextSource
+
+    return DartTickerTextSource(fetch=_fetch, corp_index=corp_index)
 
 
 def now_kst() -> datetime:

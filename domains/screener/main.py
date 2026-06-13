@@ -37,6 +37,14 @@ from domains.screener.rules.factory import RuleFactory
 from domains._shared.profile_registry.errors import ProfileSchemaError
 from domains._shared.profile_registry.registry import ProfileRegistry
 from domains._shared.profile_registry.schema import EnrichCutoffProfile
+from domains._shared.segment_registry.concepts import ConceptRegistry
+from domains._shared.segment_registry.errors import SegmentRegistryError
+from domains._shared.segment_registry.registry import (
+    NamedProfileRegistry,
+    SegmentRegistry,
+)
+from domains._shared.segment_registry.resolver import SegmentResolver
+from domains._shared.segment_registry.schema import PolicyContribution
 from domains._shared.time.clock import AsOfClock
 
 
@@ -71,6 +79,71 @@ def _parse_date(s: str | None) -> _date:
     return _boundary.now_kst().date()
 
 
+def _expand_profile_refs(spec: Any, profiles: dict[str, dict]) -> dict[str, Any]:
+    """rule 트리의 ``profile_ref`` 노드를 참조 profile 의 rule 트리로 재귀 확장.
+
+    ADR-0013 decision 4: global = root segment. 전략의 global cutoff 트리를
+    ``SegmentResolver.default_contribution`` 으로 주입할 때 쓴다. resolver 가 합성한
+    cutoff 는 screener ``rule_for`` 가 빈 profiles(``{}``)로 RuleFactory build 하므로
+    profile_ref 가 남아 있으면 안 된다 — 여기서 미리 전부 펼친다 (RuleFactory._from_dict
+    의 profile_ref 확장과 동형 → 빌드된 Rule 트리는 default_rule 의 inner 와 byte-identical).
+    """
+    if not isinstance(spec, dict):
+        return spec
+    if spec.get("type") == "profile_ref":
+        name = spec.get("profile")
+        prof = profiles.get(name, {}) if isinstance(name, str) else {}
+        return _expand_profile_refs(prof.get("rule", {}), profiles)
+    out = dict(spec)
+    children = spec.get("children")
+    if isinstance(children, list):
+        new_children = []
+        for c in children:
+            if isinstance(c, dict) and "rule" in c and "weight" in c:  # weighted_sum child
+                new_children.append({**c, "rule": _expand_profile_refs(c["rule"], profiles)})
+            else:
+                new_children.append(_expand_profile_refs(c, profiles))
+        out["children"] = new_children
+    inner = spec.get("inner")
+    if isinstance(inner, dict):
+        out["inner"] = _expand_profile_refs(inner, profiles)
+    return out
+
+
+def _build_segment_resolver(
+    per_ticker_registry: ProfileRegistry,
+    warnings: list[str],
+    *,
+    default_contribution: PolicyContribution | None = None,
+) -> SegmentResolver | None:
+    """segment 해소기 구성 (boundary→registries→resolver). 실패 시 None + warning.
+
+    per-ticker profile 은 ``per_ticker_registry`` 로 resolver 가 fold 한다. ``default_contribution``
+    은 ADR-0013 decision 4 의 global=root segment — precedence(general→specific)가
+    global → segment → per-ticker 로 일관되게 드러난다 (general base 로 가장 먼저 fold).
+    구성 단계 실패(segment 순환 / 손상 segment·concept 파일 / 인덱스 파일 IO)는
+    SegmentRegistryError 또는 OSError 로 잡아 segment 비활성(None) 후 비-segment 경로로
+    graceful fallback.
+    """
+    try:
+        seg_registry = SegmentRegistry(root=_boundary.segments_root())
+        concept_registry = ConceptRegistry(root=_boundary.concepts_root())
+        named_registry = NamedProfileRegistry(root=_boundary.named_profiles_root())
+        segments = seg_registry.load_all_latest()
+        return SegmentResolver(
+            segments=segments,
+            known_concepts=frozenset(concept_registry.list_concepts()),
+            vector_index=_boundary.vector_index(),
+            named_profile_for=named_registry.load_latest,
+            per_ticker_for=per_ticker_registry.load_latest,
+            default_contribution=default_contribution,
+            now_iso=_boundary.now_iso_kst,
+        )
+    except (SegmentRegistryError, OSError) as exc:
+        warnings.append(f"segment 해소기 구성 실패 — segment 비활성 ({exc})")
+        return None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="domains.screener.main",
@@ -84,6 +157,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--dry-run", action="store_true",
         help="DART fetch skip. cache miss 인 종목은 verdict=unknown",
+    )
+    parser.add_argument(
+        "--use-segments", action="store_true",
+        help="segment 계층(부분집합 profile) 해소 활성화 (기본 OFF = per-ticker/default 와 "
+        "byte-parity). ON 시 governance/policy/segments|concepts|segment_profiles + telemetry "
+        "벡터 인덱스로 매칭 종목의 cutoff 를 합성. 인덱스 미빌드/키 부재 시 graceful degrade.",
     )
     args = parser.parse_args(argv)
 
@@ -204,6 +283,64 @@ def main(argv: list[str] | None = None) -> int:
     def profile_for(ticker: str) -> EnrichCutoffProfile | None:
         profile, corrupt = _load(ticker)
         return None if corrupt else profile
+
+    # ----- segment 계층 해소 (Task 10, --use-segments; 기본 OFF = 위 경로와 parity) -----
+    # ON 시 SegmentResolver 가 매칭 segment + per-ticker(ProfileRegistry) 를 합성한
+    # cutoff 로 rule_for/profile_for 를 대체한다. 미매칭 + per-ticker 부재 → profile=None
+    # → 기존 default_rule (parity 유지). 해소 실패(손상 config / merge 충돌 / 손상
+    # per-ticker)는 per-ticker caution 으로 격리(fail-open 금지). resolver 구성 자체
+    # 실패(예: segment 순환)는 warning 후 비-segment 경로로 graceful fallback.
+    if args.use_segments:
+        # ADR-0013 decision 4: global = root segment. 전략의 확장된 global cutoff 트리를
+        # default_contribution(general base)으로 주입 → precedence global→segment→per-ticker.
+        # flag OFF 는 본 블록 자체가 비활성이라 byte-parity 보존. ON 에서 미매칭+per-ticker
+        # 부재 종목은 resolved=global → 빌드 결과가 default_rule 과 byte-identical(아래
+        # rule_for 가 default_rule 로 fallback 하지 않아도 동치). 매칭 종목은 global AND
+        # segment 로 합성돼 global quality floor 를 일관 적용.
+        _global_contribution = PolicyContribution(
+            required_enrichments=(),
+            cutoff_rules=_expand_profile_refs(strategy["rule"], profiles),
+        )
+        seg_resolver = _build_segment_resolver(
+            registry, warnings, default_contribution=_global_contribution
+        )
+        if seg_resolver is not None:
+            _seg_cache: dict[str, tuple[Any, BaseException | None]] = {}
+            _seg_rule_cache: dict[str, Rule | None] = {}
+
+            def _resolve(ticker: str) -> tuple[Any, BaseException | None]:
+                if ticker not in _seg_cache:
+                    try:
+                        _seg_cache[ticker] = (seg_resolver.resolve(ticker), None)
+                    except (SegmentRegistryError, ProfileSchemaError) as exc:
+                        warnings.append(f"{ticker}: segment 해소 실패 — {exc}")
+                        _seg_cache[ticker] = (None, exc)
+                return _seg_cache[ticker]
+
+            def rule_for(ticker: str) -> Rule | None:  # noqa: F811
+                resolution, err = _resolve(ticker)
+                if err is not None:
+                    return None  # 손상 → caution (default fallback 아님)
+                if resolution is None or resolution.profile is None:
+                    return default_rule  # 미매칭 + per-ticker 부재 → 기존 default
+                if ticker not in _seg_rule_cache:
+                    try:
+                        strat = {
+                            "name": f"segment[{ticker}]",
+                            "rule": dict(resolution.profile.cutoff_rules),
+                        }
+                        _seg_rule_cache[ticker] = RuleFactory.build_strategy(
+                            strat, {}, hard_guards, tax_rate=tax_rate
+                        )
+                    except (ValueError, HardGuardViolationError):
+                        _seg_rule_cache[ticker] = None  # 불량 cutoff → caution
+                return _seg_rule_cache[ticker]
+
+            def profile_for(ticker: str) -> EnrichCutoffProfile | None:  # noqa: F811
+                resolution, err = _resolve(ticker)
+                if err is not None or resolution is None:
+                    return None
+                return resolution.profile
 
     # ----- run -----
     cache_dir = _boundary.resolve_path("financials_cache")

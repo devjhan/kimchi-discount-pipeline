@@ -13,7 +13,9 @@ from typing import Any, Iterable
 
 from infrastructure._common import utils as _utils
 from infrastructure.dart import client as _dart
+from infrastructure.vectorstore.store import SqliteVectorStore as _SqliteVectorStore
 
+from domains._shared.policy_profile import serde as _policy_serde
 from domains._shared.ports.citation import CitationPort
 
 KST = _utils.KST
@@ -49,8 +51,44 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
 
 
 def profiles_root() -> Path:
-    """``governance/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
+    """``governance/policy/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
     return _utils.profiles_dir()
+
+
+# ----------------------------------------------------------------------
+# Segment 계층 (부분집합 profile) — read-only 소비 (Task 10).
+# screener 는 segment 인덱스를 *읽기* 만 한다 (cosine/top_k/scalar 조회). 임베딩
+# 생성(EmbeddingPort)은 build 단계(universe boundary)의 책임이라 여기엔 없다.
+# kernel(SegmentResolver)은 VectorIndexPort Protocol 만 받고, 본 _boundary 가
+# sqlite-vec 백엔드를 주입한다 (불변식 C — infra import 는 boundary 한정).
+# ----------------------------------------------------------------------
+def segments_root() -> Path:
+    """``governance/policy/segments`` — SegmentRegistry(root=...) 주입용."""
+    return _utils.segments_dir()
+
+
+def concepts_root() -> Path:
+    """``governance/policy/concepts`` — ConceptRegistry(root=...) 주입용."""
+    return _utils.concepts_dir()
+
+
+def named_profiles_root() -> Path:
+    """``governance/policy/segment_profiles`` — NamedProfileRegistry(root=...) 주입용."""
+    return _utils.named_profiles_dir()
+
+
+def vector_store_path() -> Path:
+    """``telemetry/segments/vectors.sqlite`` — 벡터 인덱스 경로 (모델 버전 증거)."""
+    return _utils.segment_vector_store_path()
+
+
+def vector_index(db_path: Path | None = None) -> Any:
+    """VectorIndexPort 구현(sqlite-vec 가속) 반환. 경로 미지정 → 기본 telemetry 경로.
+
+    인덱스 파일이 없으면 빈 store 가 생성되고 cosine/top_k 는 None/[] 을 돌려
+    semantic leaf 가 UNKNOWN 으로 격하된다 (G8/G11 — build 미실행 시 정상 degrade).
+    """
+    return _SqliteVectorStore(db_path or _utils.segment_vector_store_path())
 
 
 def now_kst() -> datetime:
@@ -132,21 +170,40 @@ def write_envelope(
 
 
 def _config_root() -> Path:
-    return Path(__file__).resolve().parent / "config"
+    """global scope 정책 루트 — ADR-0013 Q2: ``governance/policy/global`` (구 screener/config).
+
+    strategy / profile / hard_guards 의 *저장* 은 governance/ 로 이전됐으나 cutoff *평가*
+    는 여전히 screener RuleFactory 소유 (decision 3 — 스토리지 이동 ≠ 엔진 통합).
+    """
+    return _utils.global_policy_dir()
 
 
 def load_profile(name: str) -> dict[str, Any]:
-    """``config/profiles/{name}.yaml`` 로드. rule 트리 + scoring params self-contained."""
-    return _utils.load_yaml_config(_config_root() / "profiles" / f"{name}.yaml")
+    """``governance/policy/global/profiles/{name}.yaml`` 로드 → RuleFactory 소비 shape.
+
+    ADR-0013 Q2: on-disk 는 통합 ``policy-profile-v1`` (scope=global, ``cutoff_rules:``).
+    RuleFactory 는 profile 의 rule 트리를 ``["rule"]`` 키에서 읽으므로(decision 3 —
+    cutoff *평가* 는 RuleFactory 소유), 본 어댑터가 통합 스키마를 RuleFactory 가 기대하는
+    ``{"name", "rule", "qualitative_lenses", "description"}`` dict 로 투영한다. 구
+    ``screener-profile-v1``(``rule:`` 키)도 ``policy_profile.serde`` legacy 게이트로 수용.
+    """
+    raw = _utils.load_yaml_config(_config_root() / "profiles" / f"{name}.yaml")
+    pp = _policy_serde.from_dict(raw)
+    return {
+        "name": pp.key,
+        "rule": dict(pp.cutoff_rules),
+        "qualitative_lenses": list(pp.qualitative_lenses),
+        "description": pp.description,
+    }
 
 
 def load_strategy(name: str) -> dict[str, Any]:
-    """``config/strategies/{name}.yaml`` 로드. profile 조합 + constants."""
+    """``governance/policy/global/strategies/{name}.yaml`` 로드. profile 조합 + constants."""
     return _utils.load_yaml_config(_config_root() / "strategies" / f"{name}.yaml")
 
 
 def load_hard_guards() -> dict[str, Any]:
-    """``config/hard_guards.yaml`` 로드. strategy-agnostic 잠금 영역."""
+    """``governance/policy/global/hard_guards.yaml`` 로드. strategy-agnostic 잠금 영역."""
     return _utils.load_yaml_config(_config_root() / "hard_guards.yaml")
 
 

@@ -38,7 +38,7 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
 
 
 def profiles_root() -> Path:
-    """``governance/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
+    """``governance/policy/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
     return _utils.profiles_dir()
 
 
@@ -83,7 +83,7 @@ def write_output_safely(out_path: Path, payload: Any) -> Path:
 
 
 def write_profile_safely(out_path: Path, payload: Any) -> Path:
-    """G20 collision-safe YAML write — governance/profiles 의 사람-리뷰 SSoT commit 용."""
+    """G20 collision-safe YAML write — governance/policy/profiles 의 사람-리뷰 SSoT commit 용."""
     return _utils.write_yaml_safely(out_path, payload)
 
 
