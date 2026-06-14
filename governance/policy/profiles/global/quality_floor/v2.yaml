@@ -1,0 +1,76 @@
+schema: "policy-profile-v1"
+version: 2
+description: "ROIC + 부채 + 현금흐름 + 자본배분 기본 퀄리티 통과 게이트 (v2 재정비 — 솔벤시/레버리지 보수화)"
+scope: "global"
+key: "quality_floor"
+
+# ADR-0014: scope-미러 versioned 트리(profiles/global/<name>/v<N>.yaml). load_profile 는 최신
+# 버전(v2)을 resolve. v1 은 이력 보존(G20).
+#
+# v2 재정비 근거 (정책 판단 — 통계/백테스트 주장 아님, 철학 #5/G8 준수):
+#   AGENTS.md 철학 #1 "생존 최우선"(기하평균 극대화) 에 맞춰 *quality* 게이트의 솔벤시·
+#   레버리지 버퍼를 catastrophic hard_guards(D/E≤2.0, interest_coverage≥1.5) 위에서 더
+#   보수적으로 둔다. 두 임계만 조정, 나머지 v1 동일:
+#     - debt_to_equity   le 1.0 → le 0.8   (레버리지 규율 강화)
+#     - interest_coverage ge 4.0 → ge 5.0  (이자보상 버퍼 확대)
+#   수익률/아웃퍼폼 주장 일체 없음 — universe 보수화 trade-off 는 사용자 재조정 가능.
+
+# global scope 는 universe 보강을 강제하지 않음 (per-ticker/segment 가 담당).
+required_enrichments: []
+
+# LLM 정성 검증 메타 — investment-stage2-quality-lens skill 의 4 lens 정의.
+qualitative_lenses:
+  - "moat (산업 점유, 브랜드, 진입장벽)"
+  - "자본배분 합리성 (소각 의지 / 재투자 ROI)"
+  - "회계 적신호 (영업CF vs 순이익 괴리, 충당금 패턴)"
+  - "지주사 자회사 산업 매력도 (지주사 한정)"
+
+cutoff_rules:
+  type: "and"
+  name: "quality_floor"
+  children:
+    - type: "threshold"
+      name: "roic_3y_avg"
+      metric_path: "annuals_avg.roic"
+      period_years: 3
+      op: "ge"
+      threshold: 0.10                  # 10% (3년 평균) — v1 유지
+
+    - type: "threshold"
+      name: "debt_to_equity"
+      metric_path: "latest_annual.debt_to_equity"
+      op: "le"
+      threshold: 0.8                   # v2: 100% → 80% (레버리지 규율 강화)
+
+    - type: "threshold"
+      name: "interest_coverage"
+      metric_path: "latest_annual.interest_coverage"
+      op: "ge"
+      threshold: 5.0                   # v2: 4.0 → 5.0 (이자보상 버퍼 확대)
+
+    - type: "threshold"
+      name: "fcf_positive_years"
+      metric_path: "fcf_positive_years"
+      period_years: 3
+      op: "ge"
+      threshold: 3                     # 최근 3년 모두 FCF 양수 — v1 유지
+
+    - type: "threshold"
+      name: "fcf_to_revenue_ttm"
+      metric_path: "ttm.fcf_to_revenue"
+      op: "ge"
+      threshold: 0.05                  # FCF margin 5% — v1 유지
+
+    - type: "signal_presence"
+      name: "capital_allocation"
+      required_any_of:
+        - dividend_payment
+        - treasury_share_purchase
+        - treasury_share_cancellation
+
+provenance:
+  committed_at: "2026-06-14T13:30:00+09:00"
+  committed_by: manual
+  trigger: manual
+  citations: []
+  rationale_ko: "v2 재정비 — 생존 최우선(철학 #1) 정렬 위해 debt_to_equity 1.0→0.8, interest_coverage 4.0→5.0 보수화. catastrophic hard_guards 위 quality 버퍼 확대. 통계/아웃퍼폼 주장 없음(철학 #5/G8). 나머지 임계 v1 유지."

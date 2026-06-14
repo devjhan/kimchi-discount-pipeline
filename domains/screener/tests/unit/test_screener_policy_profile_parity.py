@@ -14,7 +14,10 @@ from domains.screener.rules.factory import RuleFactory
 
 pytestmark = pytest.mark.unit
 
-# 마이그레이션 전 quality_floor 의 rule 트리 (golden 참조 — on-disk 와 독립한 리터럴).
+# quality_floor 의 현행(v2, ADR-0014 재정비) rule 트리 (golden 참조 — on-disk 와 독립한 리터럴).
+# load_profile 는 최신 버전(v2)을 resolve. v2 는 debt_to_equity 1.0→0.8, interest_coverage
+# 4.0→5.0 보수화 (생존 최우선 정렬); 나머지 v1 동일. 어댑터가 통합 스키마 → RuleFactory
+# rule-dict 로 투영하는 결과가 본 golden 과 byte-identical 임을 고정.
 _GOLDEN_RULE_TREE = {
     "type": "and",
     "name": "quality_floor",
@@ -22,9 +25,9 @@ _GOLDEN_RULE_TREE = {
         {"type": "threshold", "name": "roic_3y_avg", "metric_path": "annuals_avg.roic",
          "period_years": 3, "op": "ge", "threshold": 0.10},
         {"type": "threshold", "name": "debt_to_equity",
-         "metric_path": "latest_annual.debt_to_equity", "op": "le", "threshold": 1.0},
+         "metric_path": "latest_annual.debt_to_equity", "op": "le", "threshold": 0.8},
         {"type": "threshold", "name": "interest_coverage",
-         "metric_path": "latest_annual.interest_coverage", "op": "ge", "threshold": 4.0},
+         "metric_path": "latest_annual.interest_coverage", "op": "ge", "threshold": 5.0},
         {"type": "threshold", "name": "fcf_positive_years",
          "metric_path": "fcf_positive_years", "period_years": 3, "op": "ge", "threshold": 3},
         {"type": "threshold", "name": "fcf_to_revenue_ttm",
