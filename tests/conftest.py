@@ -36,24 +36,28 @@ def isolated_workspace(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
     2026-06-02 operations/ 재편: audit→telemetry/audit, positions→telemetry/positions,
     external_signals→config/signals 로 helper default 경로가 이동했으나 env-var 이름은
-    유지되어 (테스트 격리 seam) tmp 재지정은 동일하게 동작한다.
+    유지되어 (테스트 격리 seam) tmp 재지정은 동일하게 동작한다. per-ticker ingest 증거는
+    telemetry/external_signals (EXTERNAL_SIGNAL_INTAKE_DIR) 로 분리 — breadth(config/signals)
+    와 다른 helper(external_signal_intake_dir).
 
     Returns:
         dict with keys: trail_today, audit_dir, positions_dir, external_signals_dir,
-                        user_context_dir, root.
+                        external_signal_intake_dir, user_context_dir, root.
     """
     trail = tmp_path / "operations" / "2026-05-09" / ".trails"
     audit = tmp_path / "telemetry" / "audit"
     positions = tmp_path / "telemetry" / "positions"
     external = tmp_path / "config" / "signals"
+    external_intake = tmp_path / "telemetry" / "external_signals"
     user_ctx = tmp_path / "config" / "user"
-    for d in (trail, audit, positions, external, user_ctx):
+    for d in (trail, audit, positions, external, external_intake, user_ctx):
         d.mkdir(parents=True, exist_ok=True)
 
     monkeypatch.setenv("TRAIL_TODAY", str(trail))
     monkeypatch.setenv("AUDIT_DIR", str(audit))
     monkeypatch.setenv("POSITIONS_DIR", str(positions))
     monkeypatch.setenv("EXTERNAL_SIGNALS_DIR", str(external))
+    monkeypatch.setenv("EXTERNAL_SIGNAL_INTAKE_DIR", str(external_intake))
     # USER_CONTEXT_DIR 은 utils 가 직접 참조하지 않음 (user_context 는 config/user
     # 하드코딩 — env override 불가). dict-key 호환 위해 set 만 유지.
     monkeypatch.setenv("USER_CONTEXT_DIR", str(user_ctx))
@@ -64,6 +68,7 @@ def isolated_workspace(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
         "audit_dir": audit,
         "positions_dir": positions,
         "external_signals_dir": external,
+        "external_signal_intake_dir": external_intake,
         "user_context_dir": user_ctx,
     }
 

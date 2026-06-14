@@ -141,7 +141,19 @@ def nav_history_dir() -> Path:
 
 
 def external_signals_dir() -> Path:
+    # config/signals — 사용자 입력 signal config 루트. 현재 macro breadth
+    # (config/signals/macro/breadth.yaml) 전용 (재생성 가능 · 매일 overwrite ·
+    # gitignored = 진성 config). agent 생성 per-ticker ingest 증거는 분리되어
+    # external_signal_intake_dir() (telemetry/) 가 소유 (ADR-0008 분류축 정합).
     return _env_or("config/signals", "EXTERNAL_SIGNALS_DIR")
+
+
+def external_signal_intake_dir() -> Path:
+    # telemetry/external_signals — /ingest-external-signal 스킬의 per-ticker 산출
+    # ({ticker}/{date}-{seq}.md). agent 생성 · 비재생성(원문 트윗/페이월 소멸 시 복구 불가)
+    # · cross-day(다음 cron Stage 4 가 인용) · append-only(G20). ADR-0008 축상
+    # telemetry (audit/nav-history/policy_drafts 와 동류, git-tracked 증거).
+    return _env_or("telemetry/external_signals", "EXTERNAL_SIGNAL_INTAKE_DIR")
 
 
 def policy_root_dir() -> Path:
