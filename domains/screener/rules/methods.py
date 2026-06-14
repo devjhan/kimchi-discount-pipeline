@@ -1,7 +1,8 @@
 """Scoring method registry — value → [0.0, 1.0] 매핑 함수 화이트리스트.
 
 YAML 의 ``method:`` 필드는 본 registry 의 등록된 이름만 허용. 새 method 추가는
-본 모듈에 한 줄 추가 + ``config/methods_manifest.yaml`` 에 등록 + unit test 의무.
+본 모듈에 한 줄 추가 + ``python -m applications.gen_methods_manifest`` 재생성
+(``governance/policy/methods_manifest.yaml`` 동기, ADR-0014) + unit test 의무.
 """
 from __future__ import annotations
 

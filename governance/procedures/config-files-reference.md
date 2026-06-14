@@ -19,6 +19,8 @@ agent toolchain 은 `.env*` 파일 직접 접근 차단 (env-guard hook); 단
 | `governance/runtime-policy.local.yaml` | governance | 사용자 USER_ACKNOWLEDGED override | ignore (`.example` 추적) | 첫 활성화 시 |
 | `config/user/portfolio.yaml` | config | 사용자 자본 / drawdown / cash | ignore (`.example` 추적) | 분기 / 자본 변경 시 |
 | `config/user/behavior.yaml` | config | runtime 행동 switch (Yahoo fallback 등) | ignore (`.example` 추적) | 환경 결정 시 1회 |
+| `config/user/manual_additions.yaml` | config | 사용자 명시 universe 추가 종목 (G14) | ignore (`.example` 추적) | 후보 추가 시 (ADR-0015) |
+| `config/user/exclusions.yaml` | config | 사용자 명시 universe 제외 ticker | ignore (`.example` 추적) | 제외 결정 시 (ADR-0015) |
 | `config/signals/macro/breadth.yaml` | config | S&P breadth manual input | ignore (`.example` 추적) | 주 1회 권장 갱신 |
 
 `thresholds.yaml` 은 정량 임계값 SSoT 로 별도. 경로는 `infrastructure/_common/utils.py`

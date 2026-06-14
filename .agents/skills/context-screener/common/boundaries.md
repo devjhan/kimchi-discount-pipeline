@@ -51,7 +51,7 @@ grep -rn "^from infrastructure\|^import infrastructure" domains/_shared/ports/  
 - `write_envelope(out_path, payload, *, schema, date, ...)`
 
 ### Config loader
-- `load_profile(name)` / `load_strategy(name)` / `load_hard_guards()` / `load_methods_manifest()`
+- `load_profile(name)` / `load_strategy(name)` / `load_hard_guards()` — governance/policy/ 의 versioned 정책 로드 (ADR-0014)
 
 ### Env / secret
 - `load_env(path=None) -> dict` / `secret_safe_log(msg, env) -> str`

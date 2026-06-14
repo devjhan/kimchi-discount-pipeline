@@ -5,7 +5,7 @@
 1. **base Rule ABC 상속**: `rules/base.py` 의 `Rule` 상속. `name` property + `evaluate(snapshot)` 메서드 의무
 2. **frozen dataclass 강제**: `@dataclass(frozen=True)` — Rule 인스턴스 immutable
 3. **factory dispatch 분기 추가**: `rules/factory.py` 의 `RuleFactory._from_dict` 에 새 rule type 분기 한 줄 추가
-4. **methods_manifest.yaml 갱신**: scoring method 신규 등록 시 `config/methods_manifest.yaml` 에 entry 추가
+4. **methods_manifest 재생성**: rule type/metric/scoring 어휘 변경 시 `python -m applications.gen_methods_manifest` 로 `governance/policy/methods_manifest.yaml` 동기 (ADR-0014; `test_methods_manifest_sync` 가 강제)
 5. **unit test 의무**: pass/fail/edge case 각 1+; composite 은 children 평가 정합도 검증
 
 ## 직접 생성 금지

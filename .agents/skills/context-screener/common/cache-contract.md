@@ -52,7 +52,7 @@ class MyRule(Rule):
 
 ## TTL / grace
 
-`governance/policy/global/strategies/{name}.yaml.constants.financial_cache`:
+`governance/policy/strategies/{name}/v{N}.yaml.constants.financial_cache`:
 - `financials_ttl_days: 30` / `capital_signals_ttl_days: 7` / `staleness_grace_days: 14`
 
 ## atomic write

@@ -35,17 +35,18 @@ description: Investment 파이프라인 governance/ 규범적 규칙 주입. com
 | `capabilities/` | 기능 정의 (what) | C1~C6 Job Story → End-to-end trace |
 | `proposals/` | 제안 draft | ADR 승격 전 staging, 자유 수정 |
 | `procedures/` | 절차 참조 | config-files-reference.md |
-| `policy/` | 정책 전 tier 단일 부모 (ADR-0013) | profiles / segments / concepts / segment_profiles / global |
-| `policy/profiles/` | per-ticker 정책 (scope=ticker) | Enrich-Cutoff profile (runtime data) |
-| `policy/segments/` `policy/concepts/` `policy/segment_profiles/` | segment 정책 (subset scope) | ADR-0012 — selector + concept anchor + named 정책 |
-| `policy/global/` | global 정책 (whole-universe scope) | strategies / profiles / hard_guards.yaml (구 `domains/screener/config/`) |
+| `policy/` | 정책 전 tier 단일 부모 (ADR-0014) | profiles/{global,segment,ticker} / segments / concepts / strategies / hard_guards.yaml / methods_manifest.yaml |
+| `policy/profiles/<scope>/` | scope 별 enrich-cutoff 정책 | scope∈{global,segment,ticker}; `<key>/v<N>.yaml` (path↔scope 불변식) |
+| `policy/segments/` `policy/concepts/` | segment 멤버십 + semantic anchor | ADR-0012 — selector + concept anchor (segment 정책은 `profiles/segment/`) |
+| `policy/strategies/` `policy/hard_guards.yaml` | screener 조합 + G13 floor | strategies/<name>/v<N>.yaml + hard_guards singleton (구 `domains/screener/config/`) |
+| `policy/methods_manifest.yaml` | cutoff 어휘 화이트리스트 | 코드 SSoT 생성물 (ADR-0014, `gen_methods_manifest`) |
 | `thresholds.yaml` | 정량 SSoT | thesis·sizing·statistics·falsifier·enforcement |
 | `schedules.yaml` | 일정 | 파이프라인 cron schedule |
 | `runtime-policy.yaml` | 실행 정책 | G9 자동매매 차단 등 static enforcement |
 | `deployment-residency.md` | 배치 | 로컬 KR ISP primary deployment |
 | `pipeline-overview.md` | 개요 | Stage 0→6 파이프라인 전체 구조 |
 
-> **정책 계층 통합 (ADR-0013, 구현 완료 2026-06-13)**: per-ticker(`policy/profiles/`) · segment(`policy/segments|concepts|segment_profiles/`) · global(`policy/global/`, 구 `domains/screener/config/`) 전 tier 가 `governance/policy/` 산하로 이전됨 + `scope∈{global,segment,ticker}` tagged 단일 `policy-profile-v1` 스키마로 수렴. per-ticker→leaf segment 추상화는 *보류*(Q3). global cutoff *평가* 는 여전히 screener `RuleFactory` 소유(스토리지만 이동, 엔진 통합 아님).
+> **정책 계층 통합 + scope-미러 재구조화 (ADR-0013 → ADR-0014, 구현 완료 2026-06-14)**: 전 tier 가 `governance/policy/` 산하 + `scope∈{global,segment,ticker}` tagged 단일 `policy-profile-v1` 스키마로 수렴. ADR-0014 가 저장 레이아웃을 scope 축으로 재정렬: profile = `policy/profiles/<scope>/<key>/v<N>.yaml` (path↔scope 불변식), segment 멤버십=`policy/segments/`, concept=`policy/concepts/`, screener 조합=`policy/strategies/`, G13 floor=`policy/hard_guards.yaml`. 구 `segment_profiles/`·`global/` 는 해체됨. cutoff 어휘는 `policy/methods_manifest.yaml`(코드 SSoT 생성물)이 화이트리스트. per-ticker→leaf segment 추상화는 *보류*(Q3). global cutoff *평가* 는 여전히 screener `RuleFactory` 소유(스토리지만 이동, 엔진 통합 아님).
 
 ## Out of Scope
 

@@ -1,6 +1,7 @@
 """선택 속성(selection-attribute) namespace 화이트리스트 — selector 의 단일 어휘 권위.
 
-screener ``methods_manifest.yaml`` 의 유비: selector 의 rule-based leaf 가 참조할 수
+``governance/policy/methods_manifest.yaml`` 의 ``selection_attributes`` 섹션이 본 namespace
+의 투영이다 (ADR-0014, 코드 SSoT 생성물): selector 의 rule-based leaf 가 참조할 수
 있는 속성 이름을 *여기서만* 정의한다. 화이트리스트 밖 이름 = 환각 → ``SelectorError``.
 
 **5-a 결정**: 본 namespace 는 screener 의 깊은 재무 ``metric_path`` resolver 와 완전히

@@ -2,7 +2,7 @@
 
 ## 본 파일의 책임
 
-`governance/policy/global/hard_guards.yaml` 의 `guards[]` 는 어떤 strategy/profile 도 우회 못 하는 catastrophic floor. RuleFactory.build_strategy 가 항상 outer wrapper (`HardGuardWrapper`) 로 자동 wrap — strategy YAML 이 `guards.*` 영역을 직접 override 시도하면 `HardGuardViolationError`.
+`governance/policy/hard_guards.yaml` 의 `guards[]` 는 어떤 strategy/profile 도 우회 못 하는 catastrophic floor. RuleFactory.build_strategy 가 항상 outer wrapper (`HardGuardWrapper`) 로 자동 wrap — strategy YAML 이 `guards.*` 영역을 직접 override 시도하면 `HardGuardViolationError`.
 
 ## guards 항목 변경 절차
 

@@ -20,8 +20,9 @@ domains/screener/
   io/                      # dart_adapter + financial_cache + capital_signals + universe_loader + trail_writer
   audit/                   # citation + violation + invariants + log
   application/             # screen orchestrator (+ peer_builder stub)
-  config/                  # profiles + strategies + hard_guards + methods_manifest
   .guidelines/             # 도메인 로컬 컨벤션
+  # NOTE: 정책 config(profiles/strategies/hard_guards/methods_manifest)는 screener 내부가
+  #       아닌 governance/policy/ 거주 (ADR-0013/0014); _boundary.load_* 가 거기서 로드.
 ```
 
 ## 외부 연결점

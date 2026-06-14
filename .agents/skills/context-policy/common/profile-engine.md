@@ -66,7 +66,7 @@ layout: `governance/policy/profiles/<ticker_dir>/v<N>.yaml`.
 
 ## 정책 계층 통합 (ADR-0013, 구현 완료 2026-06-13)
 
-profile 은 3 tier — per-ticker(`governance/policy/profiles/`, 본 BC) · segment(`governance/policy/segments|concepts|segment_profiles/`, ADR-0012) · global(`governance/policy/global/`, 구 `domains/screener/config/`). ADR-0013 결과:
+profile 은 3 tier — per-ticker(`governance/policy/profiles/ticker/`, 본 BC) · segment(`governance/policy/profiles/segment/` + 멤버십 `policy/segments|concepts/`, ADR-0012) · global(`governance/policy/profiles/global/`). 조합/floor 는 `policy/strategies/` + `policy/hard_guards.yaml` (구 `domains/screener/config/`). ADR-0013→0014 결과:
 
 - **완료(Q2)**: 전 tier 가 `governance/policy/` 산하로 이전 + 세 tier 의 `required_enrichments + cutoff_rules` shape 가 `scope∈{global,segment,ticker}` tagged 단일 `policy-profile-v1` 스키마로 수렴. on-disk serde 단일 권위 = `domains/_shared/policy_profile/`. `EnrichCutoffProfile` 은 그 scope=ticker view, `PolicyContribution` 은 scope=segment merge-slice view. global profile YAML 은 `rule:` 키 대신 `cutoff_rules:` 키 사용(scope: global).
 - **보류(Q3)**: per-ticker 를 `selector=ticker` leaf segment 로 추상화하지 **않음**. per-ticker 는 identity-scoped 직접조회 tier 로 유지, `ProfileRegistry` 잔존. (합성 이득은 이미 `SegmentResolver.per_ticker_for` 주입으로 달성.)
