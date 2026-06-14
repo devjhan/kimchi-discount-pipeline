@@ -4,6 +4,8 @@
 `date: 2026-06-13`
 `refs: D-ARCH-1, D-ARCH-4, 0002, 0006, 0008, 0012, domains/_shared/profile_registry/, domains/_shared/segment_registry/, domains/screener/config/`
 
+> **Amended by ADR-0014 (2026-06-14)**: 본 ADR 의 *flat-merge* 저장 결과(`governance/policy/{segment_profiles,global}/`)는 ADR-0014 에서 schema 의 scope 축을 미러하는 트리(`profiles/{global,segment,ticker}/`, `strategies/`, `hard_guards.yaml`)로 재구조화됨 + 코드 SSoT manifest·strict validator·arch fitness 로 결정론 contract 추가. 아래 본문의 경로 표기는 ADR-0013 시점 기준 (현행은 ADR-0014 참조).
+
 ## Context
 
 정책(profile)이 **3 tier로 분산**되어 있다:

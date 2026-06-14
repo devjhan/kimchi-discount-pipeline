@@ -13,7 +13,7 @@ from domains._shared.segment_registry.errors import (
     SegmentSchemaError,
 )
 from domains._shared.segment_registry.registry import (
-    NamedProfileRegistry,
+    SegmentProfileRegistry,
     SegmentRegistry,
     ancestor_chain,
     detect_cycle,
@@ -115,7 +115,7 @@ def test_segment_registry(tmp_path: Path) -> None:
 
 @pytest.mark.unit
 def test_named_profile_registry_missing(tmp_path: Path) -> None:
-    reg = NamedProfileRegistry(root=tmp_path)
+    reg = SegmentProfileRegistry(root=tmp_path)
     assert reg.load_latest("nope") is None
     with pytest.raises(SegmentNotFoundError):
         reg.load_version("nope", 1)

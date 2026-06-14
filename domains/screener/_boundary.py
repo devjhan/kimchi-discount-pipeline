@@ -17,6 +17,7 @@ from infrastructure.vectorstore.store import SqliteVectorStore as _SqliteVectorS
 
 from domains._shared.policy_profile import serde as _policy_serde
 from domains._shared.ports.citation import CitationPort
+from domains._shared.segment_registry import _versioning
 
 KST = _utils.KST
 
@@ -51,8 +52,8 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
 
 
 def profiles_root() -> Path:
-    """``governance/policy/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
-    return _utils.profiles_dir()
+    """``governance/policy/profiles/ticker`` 절대경로 — ProfileRegistry(root=...) 주입용 (ADR-0014)."""
+    return _utils.ticker_profiles_dir()
 
 
 # ----------------------------------------------------------------------
@@ -72,9 +73,9 @@ def concepts_root() -> Path:
     return _utils.concepts_dir()
 
 
-def named_profiles_root() -> Path:
-    """``governance/policy/segment_profiles`` — NamedProfileRegistry(root=...) 주입용."""
-    return _utils.named_profiles_dir()
+def segment_profiles_root() -> Path:
+    """``governance/policy/profiles/segment`` — SegmentProfileRegistry(root=...) 주입용 (ADR-0014)."""
+    return _utils.segment_profiles_dir()
 
 
 def vector_store_path() -> Path:
@@ -169,25 +170,28 @@ def write_envelope(
 # ----------------------------------------------------------------------
 
 
-def _config_root() -> Path:
-    """global scope 정책 루트 — ADR-0013 Q2: ``governance/policy/global`` (구 screener/config).
+def _latest_version_path(root: Path, name: str) -> Path:
+    """``<root>/<name>/v<N>.yaml`` 최신 버전 경로 (ADR-0014 versioned global/strategy).
 
-    strategy / profile / hard_guards 의 *저장* 은 governance/ 로 이전됐으나 cutoff *평가*
-    는 여전히 screener RuleFactory 소유 (decision 3 — 스토리지 이동 ≠ 엔진 통합).
+    버전 디렉토리가 없거나 비면 ``v1.yaml`` 경로를 돌려준다(load_yaml_config 가 부재 시
+    SystemExit — fail-loud). _versioning 은 segment/concept registry 와 동일 규약.
     """
-    return _utils.global_policy_dir()
+    versions = _versioning.sorted_versions(root / _versioning.id_dir(name))
+    version = versions[-1] if versions else 1
+    return _versioning.version_path(root, name, version)
 
 
 def load_profile(name: str) -> dict[str, Any]:
-    """``governance/policy/global/profiles/{name}.yaml`` 로드 → RuleFactory 소비 shape.
+    """``governance/policy/profiles/global/{name}/v{N}.yaml`` 최신 버전 → RuleFactory 소비 shape.
 
-    ADR-0013 Q2: on-disk 는 통합 ``policy-profile-v1`` (scope=global, ``cutoff_rules:``).
-    RuleFactory 는 profile 의 rule 트리를 ``["rule"]`` 키에서 읽으므로(decision 3 —
-    cutoff *평가* 는 RuleFactory 소유), 본 어댑터가 통합 스키마를 RuleFactory 가 기대하는
-    ``{"name", "rule", "qualitative_lenses", "description"}`` dict 로 투영한다. 구
-    ``screener-profile-v1``(``rule:`` 키)도 ``policy_profile.serde`` legacy 게이트로 수용.
+    ADR-0014: global 정책도 versioned-dir(``profiles/global/<name>/v<N>.yaml``) 로 통일.
+    on-disk 는 통합 ``policy-profile-v1`` (scope=global, ``cutoff_rules:``). RuleFactory 는
+    profile 의 rule 트리를 ``["rule"]`` 키에서 읽으므로(decision 3 — cutoff *평가* 는
+    RuleFactory 소유), 본 어댑터가 통합 스키마를 RuleFactory 가 기대하는 ``{"name", "rule",
+    "qualitative_lenses", "description"}`` dict 로 투영한다. 구 ``screener-profile-v1``
+    (``rule:`` 키)도 ``policy_profile.serde`` legacy 게이트로 수용.
     """
-    raw = _utils.load_yaml_config(_config_root() / "profiles" / f"{name}.yaml")
+    raw = _utils.load_yaml_config(_latest_version_path(_utils.global_profiles_dir(), name))
     pp = _policy_serde.from_dict(raw)
     return {
         "name": pp.key,
@@ -198,23 +202,23 @@ def load_profile(name: str) -> dict[str, Any]:
 
 
 def load_strategy(name: str) -> dict[str, Any]:
-    """``governance/policy/global/strategies/{name}.yaml`` 로드. profile 조합 + constants."""
-    return _utils.load_yaml_config(_config_root() / "strategies" / f"{name}.yaml")
+    """``governance/policy/strategies/{name}/v{N}.yaml`` 최신 버전. profile 조합 + constants (ADR-0014)."""
+    return _utils.load_yaml_config(_latest_version_path(_utils.strategies_dir(), name))
 
 
 def load_hard_guards() -> dict[str, Any]:
-    """``governance/policy/global/hard_guards.yaml`` 로드. strategy-agnostic 잠금 영역."""
-    return _utils.load_yaml_config(_config_root() / "hard_guards.yaml")
+    """``governance/policy/hard_guards.yaml`` 로드. strategy-agnostic 잠금 영역 (ADR-0014 singleton)."""
+    return _utils.load_yaml_config(_utils.hard_guards_path())
 
 
 def profile_path(name: str) -> Path:
-    """profile YAML 의 실제 경로 — write_envelope 의 ``config_path`` 인자용."""
-    return _config_root() / "profiles" / f"{name}.yaml"
+    """global profile YAML 최신 버전 실제 경로 — write_envelope 의 ``config_path`` 인자용."""
+    return _latest_version_path(_utils.global_profiles_dir(), name)
 
 
 def strategy_path(name: str) -> Path:
-    """strategy YAML 의 실제 경로 — write_envelope 의 ``config_path`` 인자용."""
-    return _config_root() / "strategies" / f"{name}.yaml"
+    """strategy YAML 최신 버전 실제 경로 — write_envelope 의 ``config_path`` 인자용."""
+    return _latest_version_path(_utils.strategies_dir(), name)
 
 
 # ----------------------------------------------------------------------

@@ -116,3 +116,34 @@ def test_collect_thresholds_ignores_bool_threshold() -> None:
     # bool 은 int 서브타입이나 threshold 로 취급하지 않음.
     spec = {"type": "threshold", "name": "flag", "threshold": True}
     assert _collect_thresholds(spec) == {}
+
+
+@pytest.mark.unit
+def test_collect_thresholds_tracks_scoring_and_weighted_sum_pass_score() -> None:
+    """finding 7 — scoring/weighted_sum 의 pass_score 도 drift 추적 (사각지대 제거)."""
+    spec = {
+        "type": "weighted_sum",
+        "name": "ws",
+        "pass_score": 0.55,
+        "children": [
+            {"rule": {"type": "scoring", "name": "roic_score", "pass_score": 0.4}, "weight": 1.0},
+        ],
+    }
+    assert _collect_thresholds(spec) == {"ws": 0.55, "roic_score": 0.4}
+
+
+@pytest.mark.unit
+def test_scoring_pass_score_change_detected_as_drift() -> None:
+    prev = EnrichCutoffProfile(
+        ticker="KR:005930",
+        schema_version=SCHEMA_VERSION,
+        profile_version=1,
+        required_enrichments=("nav_discount",),
+        cutoff_rules={"type": "scoring", "name": "s", "metric_path": "annuals_avg.roic", "pass_score": 0.50},
+        provenance=Provenance(committed_at="t", committed_by="policy", trigger="manual"),
+    )
+    drift = compute_drift(
+        prev, prev.required_enrichments, {**prev.cutoff_rules, "pass_score": 0.75}
+    )
+    assert drift.changed_thresholds == {"s": (0.50, 0.75)}
+    assert drift.max_threshold_delta == pytest.approx(0.5)

@@ -42,6 +42,8 @@ coverage.xml
 governance/runtime-policy.local.yaml
 config/user/portfolio.yaml
 config/user/behavior.yaml
+config/user/manual_additions.yaml
+config/user/exclusions.yaml
 config/user/*.local.yaml
 config/signals/macro/breadth.yaml
 

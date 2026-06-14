@@ -53,7 +53,7 @@ def test_literal_list_from_spec_inline_items() -> None:
 
 @pytest.mark.unit
 def test_literal_list_from_spec_missing_items_and_ref_rejected() -> None:
-    with pytest.raises(ValueError, match="items / items_ref"):
+    with pytest.raises(ValueError, match="items / user_items_ref / items_ref"):
         LiteralListSource.from_spec({"type": "literal_list", "name": "manual"})
 
 

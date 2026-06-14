@@ -11,7 +11,7 @@ import pytest
 from domains._shared.adapters.vector_index_memory import InMemoryVectorIndex
 from domains._shared.segment_registry.concepts import ConceptRegistry
 from domains._shared.segment_registry.registry import (
-    NamedProfileRegistry,
+    SegmentProfileRegistry,
     SegmentRegistry,
 )
 from domains._shared.segment_registry.resolver import SegmentResolver
@@ -24,7 +24,7 @@ def test_example_governance_loads() -> None:
     c = concepts.load_latest("holdco_value_trap")
     assert c is not None and c.default_threshold == 0.78
 
-    named = NamedProfileRegistry(root=utils.named_profiles_dir())
+    named = SegmentProfileRegistry(root=utils.segment_profiles_dir())
     pc = named.load_latest("holdco_value_floor")
     assert pc is not None and pc.required_enrichments == ("nav_discount",)
     assert pc.cutoff_rules["type"] == "threshold"
@@ -39,7 +39,7 @@ def test_example_segment_resolves_end_to_end() -> None:
     segs = SegmentRegistry(root=utils.segments_dir())
     all_segments = segs.load_all_latest()
     concepts = ConceptRegistry(root=utils.concepts_dir())
-    named = NamedProfileRegistry(root=utils.named_profiles_dir())
+    named = SegmentProfileRegistry(root=utils.segment_profiles_dir())
 
     # stub 벡터 인덱스: KR:003550 를 concept 에 가깝게 + 대형주로 seed.
     idx = InMemoryVectorIndex()
@@ -69,7 +69,7 @@ def test_example_segment_resolves_end_to_end() -> None:
 def test_example_segment_no_match_returns_none() -> None:
     segs = SegmentRegistry(root=utils.segments_dir())
     concepts = ConceptRegistry(root=utils.concepts_dir())
-    named = NamedProfileRegistry(root=utils.named_profiles_dir())
+    named = SegmentProfileRegistry(root=utils.segment_profiles_dir())
     idx = InMemoryVectorIndex()  # 벡터 없음 → semantic UNKNOWN → 비매칭
 
     resolver = SegmentResolver(

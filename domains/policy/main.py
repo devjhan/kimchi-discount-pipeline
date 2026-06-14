@@ -31,11 +31,21 @@ from domains.policy.application.analyze import run_analysis
 from domains.policy.application.commit import commit_profile
 from domains.policy.application.intake import build_triggers
 from domains.policy.audit.log import ViolationLog
+from domains.policy.domain.cutoff_validate import CutoffContractError, make_strict_validator
 from domains.policy.domain.research_result import ResearchOutput
 from domains.policy.domain.trigger import Trigger
 from domains.policy.ports.llm import PolicyEngine
 
 STAGE_NAME = "policy-producer"
+
+
+def _strict_validator():
+    """manifest 기반 strict cutoff validator (composition root 주입; ADR-0014, findings 2/3).
+
+    policy 는 manifest 를 DATA 로만 읽는다 (bc-independent — screener 내부 import 없음).
+    commit_profile 의 기본은 shape-only 라 순수 도메인 테스트는 불변; 본 진입점만 strict.
+    """
+    return make_strict_validator(_boundary.methods_manifest())
 _DEFAULT_DRIFT_THRESHOLD = 0.5
 
 
@@ -125,10 +135,17 @@ def _commit_from_draft(path: str, clock: AsOfClock, *, drift_threshold: float) -
             writer=_boundary.write_profile_safely,
             audit_log=audit_log,
             drift_threshold=drift_threshold,
+            validate_rules=_strict_validator(),
             trigger=str(payload.get("trigger") or "skill-draft"),
         )
     except ProfileDriftError as exc:
         print(f"[{STAGE_NAME}] commit-draft blocked (drift): {exc}", file=sys.stderr)
+        return 2
+    except CutoffContractError as exc:
+        print(
+            f"[{STAGE_NAME}] commit-draft blocked (cutoff contract): {exc}",
+            file=sys.stderr,
+        )
         return 2
     print(
         f"[{STAGE_NAME}] committed {out.ticker} v{result.version} "
@@ -221,6 +238,7 @@ def main(argv: list[str] | None = None, *, engine: PolicyEngine | None = None) -
             writer=_boundary.write_profile_safely,
             audit_log=audit_log,
             drift_threshold=args.drift_threshold,
+            validate_rules=_strict_validator(),
             trigger=t.describe(),
         )
         print(

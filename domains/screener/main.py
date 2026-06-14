@@ -40,7 +40,7 @@ from domains._shared.profile_registry.schema import EnrichCutoffProfile
 from domains._shared.segment_registry.concepts import ConceptRegistry
 from domains._shared.segment_registry.errors import SegmentRegistryError
 from domains._shared.segment_registry.registry import (
-    NamedProfileRegistry,
+    SegmentProfileRegistry,
     SegmentRegistry,
 )
 from domains._shared.segment_registry.resolver import SegmentResolver
@@ -128,7 +128,7 @@ def _build_segment_resolver(
     try:
         seg_registry = SegmentRegistry(root=_boundary.segments_root())
         concept_registry = ConceptRegistry(root=_boundary.concepts_root())
-        named_registry = NamedProfileRegistry(root=_boundary.named_profiles_root())
+        named_registry = SegmentProfileRegistry(root=_boundary.segment_profiles_root())
         segments = seg_registry.load_all_latest()
         return SegmentResolver(
             segments=segments,

@@ -1,7 +1,7 @@
-"""SegmentRegistry / NamedProfileRegistry — versioned read (root 주입, G20).
+"""SegmentRegistry / SegmentProfileRegistry — versioned read (root 주입, G20).
 
 ProfileRegistry 와 동형 패턴: ``<root>/<id>/v<N>.yaml``, 신규 버전은 새 파일. root 는
-caller(consumer ``_boundary.segments_root()`` / ``named_profiles_root()``)가 주입.
+caller(consumer ``_boundary.segments_root()`` / ``segment_profiles_root()``)가 주입.
 
 계층(parent) 순환 검출은 단일 segment shape 검증(``__post_init__``)으로 불가하므로
 ``detect_cycle`` / ``ancestor_chain`` 헬퍼로 다수 segment 를 함께 본다.
@@ -69,7 +69,7 @@ class SegmentRegistry:
 
 
 @dataclass(frozen=True)
-class NamedProfileRegistry:
+class SegmentProfileRegistry:
     """segment 가 profile_ref 로 참조하는 named PolicyContribution 의 versioned read."""
 
     root: Path

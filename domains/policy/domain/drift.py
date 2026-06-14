@@ -55,19 +55,27 @@ def compute_drift(
 
 
 def _collect_thresholds(spec: Mapping[str, Any]) -> dict[str, float]:
-    """rule dict-tree 재귀 walk — threshold 노드의 {name: threshold} 수집.
+    """rule dict-tree 재귀 walk — 비교 임계 노드의 {name: value} 수집 (drift 추적 대상).
 
+    - ``threshold`` 노드: {name: threshold}.
+    - ``scoring`` / ``weighted_sum`` 노드: {name: pass_score} (finding 7 — 비-threshold
+      cutoff 노드도 drift 사각지대 없이 추적).
     weighted_sum children 의 ``{"rule": {...}, "weight": ...}`` 래핑도 처리
     (factory._collect_rule_names 동형).
     """
     out: dict[str, float] = {}
     if not isinstance(spec, Mapping):
         return out
-    if spec.get("type") == "threshold":
-        name = spec.get("name")
+    rtype = spec.get("type")
+    name = spec.get("name")
+    if rtype == "threshold":
         thr = spec.get("threshold")
         if isinstance(name, str) and isinstance(thr, (int, float)) and not isinstance(thr, bool):
             out[name] = float(thr)
+    elif rtype in ("scoring", "weighted_sum"):
+        ps = spec.get("pass_score")
+        if isinstance(name, str) and isinstance(ps, (int, float)) and not isinstance(ps, bool):
+            out[name] = float(ps)
     for key in ("children", "inner"):
         v = spec.get(key)
         if isinstance(v, list):

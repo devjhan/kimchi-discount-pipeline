@@ -15,10 +15,10 @@ description: "Stage 1 universe discovery source 목록. Run 5 시점: literal_li
 last_updated: "2026-05-17"
 
 sources:
-  # 사용자 명시 추가 종목 (config/manual_additions.yaml 의 items: list)
+  # 사용자 명시 추가 종목 (config/user/manual_additions.yaml 의 items: list — ADR-0015)
   - type: "literal_list"
     name: "manual_addition"
-    items_ref: "manual_additions.yaml"
+    user_items_ref: "manual_additions.yaml"
     source_category: "manual_addition"
 
   # 지주사 자회사 manual SSoT + DART 자동 파싱 audit

@@ -1,0 +1,24 @@
+# ============================================================
+# manual_additions.yaml — User Manual Universe Additions (config/user, ADR-0015)
+# ============================================================
+# 사용자/배포 override (gitignored live + 본 .example tracked). LiteralListSource
+# (sources.yaml 의 type=literal_list, user_items_ref) 가 본 파일을 graceful 로 읽음
+# (부재 시 빈 universe 추가 — G8/G11 Default No-Action).
+#
+# 사용법:
+#   cp config/user/manual_additions.yaml.example config/user/manual_additions.yaml
+#   그 후 items: 에 종목 추가.
+#
+# 이전: domains/universe/config/manual_additions.yaml (ADR-0015 로 config/user/ 이전 —
+#       universe 멤버십은 developer doctrine 도 mechanical wiring 도 아닌 사용자 결정).
+# ============================================================
+
+schema: "universe-manual-additions-v1"
+version: 1
+description: "사용자 명시 universe 추가 종목. 각 entry 는 str (ticker only) 또는 dict (ticker / name / reason)."
+last_updated: "2026-06-14"
+
+# entry 형식 예:
+#   - "KR:003550"
+#   - {ticker: "KR:003550", name: "(주)LG", reason: "지주사 NAV 할인 진입 후보"}
+items: []

@@ -1,0 +1,48 @@
+description: GENERATED from code SSoT (screener rules + segment_registry attributes).
+  Do not hand-edit — regenerate via 'python -m applications.gen_methods_manifest'.
+  cutoff_rules metric_path/op/type 화이트리스트 (ADR-0014).
+enrichment_metric_paths:
+- enrichments.nav_discount.discount_pct
+- enrichments.spread_zscore.catalyst_flag
+- enrichments.spread_zscore.z_score
+metric_paths:
+- annuals_avg.roic
+- fcf_positive_years
+- latest_annual.debt_to_equity
+- latest_annual.interest_coverage
+- signals.count
+- ttm.fcf_to_revenue
+rule_types:
+- and
+- not
+- or
+- profile_ref
+- scoring
+- signal_presence
+- threshold
+- weighted_sum
+schema: methods-manifest-v1
+selection_attributes:
+  avg_daily_value_krw: numeric
+  listing_market: categorical
+  market_cap_krw: numeric
+  nav_discount_pct: numeric
+  source_category: categorical
+  spread_zscore: numeric
+selector_ops:
+  categorical:
+  - eq
+  - ne
+  numeric:
+  - eq
+  - ge
+  - gt
+  - le
+  - lt
+  - ne
+threshold_ops:
+- eq
+- ge
+- gt
+- le
+- lt

@@ -1,0 +1,21 @@
+# ============================================================
+# exclusions.yaml — User Manual Universe Exclusions (config/user, ADR-0015)
+# ============================================================
+# 사용자/배포 override (gitignored live + 본 .example tracked). build_universe 가
+# fan-in discovery 후 본 파일의 ``tickers:`` set 으로 ticker 단위 제외.
+# _boundary.load_user_config("exclusions.yaml") 로 graceful 로드 (부재 → 제외 없음).
+#
+# 사용법:
+#   cp config/user/exclusions.yaml.example config/user/exclusions.yaml
+#   그 후 tickers: 에 제외 종목 추가.
+#
+# 이전: domains/universe/config/exclusions.yaml (ADR-0015 로 config/user/ 이전).
+# ============================================================
+
+schema: "universe-exclusions-v1"
+version: 1
+description: "사용자 명시 universe 제외 ticker. fan-in 후 ticker 단위 set membership filter."
+last_updated: "2026-06-14"
+
+# 예: tickers: ["KR:000999"]
+tickers: []

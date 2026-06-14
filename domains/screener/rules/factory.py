@@ -18,6 +18,13 @@ from domains.screener.rules.guards import HardGuardWrapper
 from domains.screener.rules.leaf import ScoringRule, SignalPresenceRule, ThresholdRule
 from domains.screener.rules.methods import SCORING_METHODS
 
+# RuleFactory._from_dict 가 dispatch 하는 유효 rule ``type`` 어휘의 SSoT.
+# methods_manifest.yaml 생성기 + sync arch test 가 본 상수를 읽는다 — 분기와 동기 유지
+# (새 type 분기 추가 시 본 상수도 갱신; test_screener_rules 가 분기 커버).
+RULE_TYPES: frozenset[str] = frozenset(
+    {"and", "or", "not", "weighted_sum", "profile_ref", "threshold", "scoring", "signal_presence"}
+)
+
 
 class RuleFactory:
     """strategy YAML 전체를 받아 Rule 트리 + HardGuardWrapper 로 감싸 반환."""

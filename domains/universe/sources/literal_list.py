@@ -6,7 +6,9 @@
 config (``config/sources.yaml`` 내 한 entry):
     - type: "literal_list"
       name: "manual_addition"
-      items_ref: "manual_additions.yaml"        # 외부 yaml 참조 (권장)
+      user_items_ref: "manual_additions.yaml"   # config/user/ 사용자 override (graceful; ADR-0015)
+      # 또는
+      items_ref: "subsidiaries_like.yaml"        # domains/universe/config/ BC-local reference
       # 또는
       items: [...]                              # inline (작은 list 한정)
       source_category: "manual_addition"        # default
@@ -35,13 +37,19 @@ class LiteralListSource(DiscoverySource):
     def from_spec(cls, spec: dict[str, Any]) -> "LiteralListSource":
         items = spec.get("items")
         if items is None:
+            # user_items_ref → config/user/ (사용자 override, graceful; ADR-0015).
+            # items_ref → domains/universe/config/ (BC-local reference data).
+            user_ref = spec.get("user_items_ref")
             ref = spec.get("items_ref")
-            if not ref:
+            if user_ref:
+                loaded = _boundary.load_user_config(user_ref)
+            elif ref:
+                loaded = _boundary.load_sub_config(ref)
+            else:
                 raise ValueError(
                     f"literal_list source '{spec.get('name')}': "
-                    "items / items_ref 둘 다 부재"
+                    "items / user_items_ref / items_ref 모두 부재"
                 )
-            loaded = _boundary.load_sub_config(ref)
             items = loaded.get("items") or []
         if not isinstance(items, list):
             raise ValueError(

@@ -16,6 +16,11 @@ from domains.screener.rules.base import Rule
 from domains.screener.rules.methods import apply_method
 from domains.screener.rules.resolver import resolve_metric
 
+# ThresholdRule 이 지원하는 비교 op 의 SSoT. selector(attributes.NUMERIC_OPS)와 달리
+# ``ne`` 는 미지원 — cutoff 는 floor/ceiling 의미라 != 가 무의미. methods_manifest.yaml
+# 생성기 + 정책 strict validator 가 본 상수를 읽어 op 화이트리스트로 쓴다.
+THRESHOLD_OPS: frozenset[str] = frozenset({"ge", "le", "gt", "lt", "eq"})
+
 
 @dataclass(frozen=True)
 class ThresholdRule(Rule):

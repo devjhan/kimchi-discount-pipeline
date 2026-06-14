@@ -69,8 +69,8 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
 
 
 def profiles_root() -> Path:
-    """``governance/policy/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
-    return _utils.profiles_dir()
+    """``governance/policy/profiles/ticker`` 절대경로 — ProfileRegistry(root=...) 주입용 (ADR-0014)."""
+    return _utils.ticker_profiles_dir()
 
 
 # ----------------------------------------------------------------------
@@ -88,9 +88,9 @@ def concepts_root() -> Path:
     return _utils.concepts_dir()
 
 
-def named_profiles_root() -> Path:
-    """``governance/policy/segment_profiles`` — NamedProfileRegistry(root=...) 주입용."""
-    return _utils.named_profiles_dir()
+def segment_profiles_root() -> Path:
+    """``governance/policy/profiles/segment`` — SegmentProfileRegistry(root=...) 주입용 (ADR-0014)."""
+    return _utils.segment_profiles_dir()
 
 
 def vector_store_path() -> Path:
@@ -279,12 +279,24 @@ def load_enrichers_config() -> dict[str, Any]:
 def load_sub_config(filename: str) -> dict[str, Any]:
     """``config/{filename}`` 로드 — items_ref / subsidiaries_map_ref 외부화 용.
 
-    ``filename`` 은 단순 basename (예: ``"manual_additions.yaml"``). path 분리자
-    포함 시 ValueError (config root 탈출 방지).
+    ``filename`` 은 단순 basename (예: ``"subsidiaries.yaml"``). path 분리자
+    포함 시 ValueError (config root 탈출 방지). BC-local *reference data* 전용
+    (subsidiaries / preferred_pairs). 사용자 결정(manual_additions/exclusions)은
+    ``load_user_config`` (config/user/) — ADR-0015.
     """
     if "/" in filename or ".." in filename:
         raise ValueError(f"load_sub_config: 단순 basename 만 허용 (got: {filename!r})")
     return _utils.load_yaml_config(_config_root() / filename)
+
+
+def load_user_config(filename: str) -> dict[str, Any]:
+    """``config/user/{filename}`` graceful load (미존재 → {}) — 사용자 universe 결정 (ADR-0015).
+
+    manual_additions / exclusions 는 developer doctrine(governance) 도 mechanical
+    wiring(BC config) 도 아닌 *사용자 override* 라 config/user/ 거주 (ADR-0002 ownership
+    axis). gitignored worktree 부재 시 graceful {} (G8). basename only.
+    """
+    return _utils.load_user_config_optional(filename)
 
 
 def config_path(filename: str) -> Path:

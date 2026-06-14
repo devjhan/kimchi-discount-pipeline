@@ -28,7 +28,7 @@ from domains._shared.profile_registry.registry import ProfileRegistry
 from domains._shared.segment_registry.concepts import ConceptRegistry
 from domains._shared.segment_registry.errors import SegmentRegistryError
 from domains._shared.segment_registry.registry import (
-    NamedProfileRegistry,
+    SegmentProfileRegistry,
     SegmentRegistry,
 )
 from domains._shared.segment_registry.resolver import SegmentResolver
@@ -76,7 +76,7 @@ def _build_segment_resolver(
     try:
         seg_registry = SegmentRegistry(root=_boundary.segments_root())
         concept_registry = ConceptRegistry(root=_boundary.concepts_root())
-        named_registry = NamedProfileRegistry(root=_boundary.named_profiles_root())
+        named_registry = SegmentProfileRegistry(root=_boundary.segment_profiles_root())
         per_ticker_registry = ProfileRegistry(root=_boundary.profiles_root())
         return SegmentResolver(
             segments=seg_registry.load_all_latest(),
@@ -194,7 +194,7 @@ def main(argv: list[str] | None = None) -> int:
     # ----- config 로드 -----
     sources_cfg = _boundary.load_sources_config()
     enrichers_cfg = _boundary.load_enrichers_config()
-    exclusions_cfg = _boundary.load_sub_config(_EXCLUSIONS_CONFIG_FILENAME)
+    exclusions_cfg = _boundary.load_user_config(_EXCLUSIONS_CONFIG_FILENAME)
     exclusion_tickers = exclusions_cfg.get("tickers") or []
     exclusions = frozenset(str(t) for t in exclusion_tickers)
 

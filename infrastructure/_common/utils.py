@@ -144,38 +144,61 @@ def external_signals_dir() -> Path:
     return _env_or("config/signals", "EXTERNAL_SIGNALS_DIR")
 
 
-def profiles_dir() -> Path:
-    # ADR-0013 Q2: per-ticker(scope=ticker) 정책은 governance/policy/profiles 로 통합.
-    return _env_or("governance/policy/profiles", "PROFILES_DIR")
+def policy_root_dir() -> Path:
+    """governance/policy — 전 정책 tier 의 단일 루트 (ADR-0014)."""
+    return _env_or("governance/policy", "POLICY_ROOT_DIR")
+
+
+def ticker_profiles_dir() -> Path:
+    """governance/policy/profiles/ticker — per-ticker(scope=ticker) 정책 (ADR-0014).
+
+    레이아웃이 schema 의 scope 축을 미러: profiles/<scope>/<key>/v<N>.yaml.
+    """
+    return _env_or("governance/policy/profiles/ticker", "TICKER_PROFILES_DIR")
+
+
+def segment_profiles_dir() -> Path:
+    """governance/policy/profiles/segment — scope=segment 정책 (segment 가 profile_ref 로 참조).
+
+    ADR-0014: 구 ``segment_profiles/`` 를 scope 미러 트리 ``profiles/segment/`` 로 이전.
+    """
+    return _env_or("governance/policy/profiles/segment", "SEGMENT_PROFILES_DIR")
+
+
+def global_profiles_dir() -> Path:
+    """governance/policy/profiles/global — scope=global(whole-universe) 정책 (ADR-0014).
+
+    구 ``global/profiles/<name>.yaml`` (flat) → ``profiles/global/<name>/v<N>.yaml`` (versioned).
+    cutoff *평가* 는 여전히 screener RuleFactory 소유 (스토리지 이동 ≠ 엔진 통합).
+    """
+    return _env_or("governance/policy/profiles/global", "GLOBAL_PROFILES_DIR")
 
 
 def segments_dir() -> Path:
-    """governance/policy/segments — segment 선언 SSoT (selector + profile_ref + merge)."""
-    # ADR-0013 Q2: 전 정책 tier 를 governance/policy/ 단일 루트로 통합.
+    """governance/policy/segments — segment 멤버십 선언 SSoT (selector + profile_ref + merge)."""
     return _env_or("governance/policy/segments", "SEGMENTS_DIR")
 
 
 def concepts_dir() -> Path:
     """governance/policy/concepts — semantic concept anchor 선언 SSoT (9-a/12-a)."""
-    # ADR-0013 Q2: 전 정책 tier 를 governance/policy/ 단일 루트로 통합.
     return _env_or("governance/policy/concepts", "CONCEPTS_DIR")
 
 
-def named_profiles_dir() -> Path:
-    """governance/policy/segment_profiles — segment 가 profile_ref 로 참조하는 named 정책."""
-    # ADR-0013 Q2: 전 정책 tier 를 governance/policy/ 단일 루트로 통합.
-    return _env_or("governance/policy/segment_profiles", "SEGMENT_PROFILES_DIR")
+def strategies_dir() -> Path:
+    """governance/policy/strategies — screener strategy(profile 조합 + constants) 루트 (ADR-0014).
 
-
-def global_policy_dir() -> Path:
-    """governance/policy/global — whole-universe(global) scope 정책 루트.
-
-    ADR-0013 Q2: screener 의 strategy / profile / hard_guards 를 엔진 내부
-    (domains/screener/config) 에서 governance/policy/global 로 이전. 하위 레이아웃:
-    ``strategies/<name>.yaml`` / ``profiles/<name>.yaml`` / ``hard_guards.yaml``.
-    cutoff *평가* 는 여전히 screener RuleFactory 소유 (스토리지 이동 ≠ 엔진 통합).
+    구 ``global/strategies/<name>.yaml`` (flat) → ``strategies/<name>/v<N>.yaml`` (versioned).
     """
-    return _env_or("governance/policy/global", "GLOBAL_POLICY_DIR")
+    return _env_or("governance/policy/strategies", "STRATEGIES_DIR")
+
+
+def hard_guards_path() -> Path:
+    """governance/policy/hard_guards.yaml — G13 catastrophic floor (singleton, flat).
+
+    구 ``global/hard_guards.yaml`` → top-level singleton. RuleFactory 가 outer wrapper 로 소비.
+    """
+    base = _env_or("governance/policy", "POLICY_ROOT_DIR")
+    return base / "hard_guards.yaml"
 
 
 def segment_vector_store_path() -> Path:
@@ -472,6 +495,26 @@ def load_user_behavior() -> dict[str, Any]:
             yf["enabled"] = v
             data["yahoo_fallback"] = yf
     return data
+
+
+def user_config_dir() -> Path:
+    """config/user — 사용자/배포 override 의 단일 위치 (ADR-0002 ownership axis / ADR-0015).
+
+    gitignored (live 파일) + ``.example`` (tracked template) 관례. portfolio.yaml /
+    behavior.yaml 와 동거. 사용자 결정(universe 수동 추가/제외 등)은 developer doctrine
+    (governance/) 도 mechanical wiring (domains/*/config/) 도 아닌 본 위치.
+    """
+    return REPO_ROOT / "config" / "user"
+
+
+def load_user_config_optional(filename: str) -> dict[str, Any]:
+    """``config/user/{filename}`` graceful load (미존재 → {} ; gitignored worktree 부재 안전).
+
+    ``filename`` 은 단순 basename (path 분리자 포함 시 ValueError — config root 탈출 방지).
+    """
+    if "/" in filename or ".." in filename:
+        raise ValueError(f"load_user_config_optional: 단순 basename 만 허용 (got: {filename!r})")
+    return _load_yaml_optional(user_config_dir() / filename)
 
 
 def load_breadth_signal() -> dict[str, Any]:

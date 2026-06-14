@@ -38,13 +38,23 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
 
 
 def profiles_root() -> Path:
-    """``governance/policy/profiles`` 절대경로 — ProfileRegistry(root=...) 주입용."""
-    return _utils.profiles_dir()
+    """``governance/policy/profiles/ticker`` 절대경로 — ProfileRegistry(root=...) 주입용 (ADR-0014)."""
+    return _utils.ticker_profiles_dir()
 
 
 def drafts_dir() -> Path:
     """``telemetry/policy_drafts`` — commit 전 후보 draft (gitignored, ephemeral)."""
     return _utils.policy_drafts_dir()
+
+
+def methods_manifest() -> dict[str, Any]:
+    """``governance/policy/methods_manifest.yaml`` 로드 — cutoff_rules 검증 화이트리스트 (ADR-0014).
+
+    policy 는 본 manifest 를 **DATA 로만** 소비한다 — screener 내부(RuleFactory/resolver)를
+    import 하지 않는다 (bc-independence 불변식 A). manifest 는 코드 SSoT 에서 생성되고
+    arch test 가 동기를 보장한다.
+    """
+    return _utils.load_yaml_config(_utils.policy_root_dir() / "methods_manifest.yaml")
 
 
 def now_kst() -> datetime:
