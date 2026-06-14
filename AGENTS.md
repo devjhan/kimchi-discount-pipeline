@@ -75,7 +75,8 @@
 | `$TRAIL_TODAY` | `operations/{KST 거래일}` |
 | `$AUDIT_DIR` | `telemetry/audit` |
 | `$POSITIONS_DIR` | `telemetry/positions` |
-| `$EXTERNAL_SIGNALS_DIR` | `config/signals` |
+| `$EXTERNAL_SIGNALS_DIR` | `config/signals` (macro breadth 등 사용자 signal 입력) |
+| `$EXTERNAL_SIGNAL_INTAKE_DIR` | `telemetry/external_signals` (ingest-external-signal per-ticker 산출) |
 | `$POLICY_DRAFTS_DIR` | `telemetry/policy_drafts` |
 | `$PROFILES_DIR` | `governance/policy/profiles` |
 | `$THRESHOLDS_PATH` | `governance/thresholds.yaml` |

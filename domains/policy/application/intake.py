@@ -1,6 +1,6 @@
 """intake — 이벤트(공시 / 외부신호) → Trigger tuple. 순수 변환 (LLM·I/O 없음).
 
-DART 공시 / ``config/signals/`` (ingest-external-signal SOP 산출) 의
+DART 공시 / ``telemetry/external_signals/`` (ingest-external-signal SOP 산출) 의
 raw 를 _boundary 가 dict 로 모아 본 함수에 전달. 빈 입력 = 빈 tuple (Default
 No-Action 정상).
 """

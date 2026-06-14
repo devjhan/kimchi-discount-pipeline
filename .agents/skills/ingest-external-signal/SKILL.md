@@ -1,6 +1,6 @@
 ---
 name: ingest-external-signal
-description: Investment 파이프라인의 외부 신호 (뉴스 / 트윗 / 블로그 / 리포트 / 사용자 prompt) ingest entry point. raw payload를 fact-only paraphrase + redaction 후 $EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq}.md 로 산출. thesis 즉시 변경 일체 금지 — 다음 cron run의 Stage 4 thesis-auditor가 fact-only로 인용. G10 (외부 신호 SOP) 의 단일 entry point.
+description: Investment 파이프라인의 외부 신호 (뉴스 / 트윗 / 블로그 / 리포트 / 사용자 prompt) ingest entry point. raw payload를 fact-only paraphrase + redaction 후 $EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq}.md (telemetry/external_signals) 로 산출. thesis 즉시 변경 일체 금지 — 다음 cron run의 Stage 4 thesis-auditor가 fact-only로 인용. G10 (외부 신호 SOP) 의 단일 entry point.
 ---
 
 # ingest-external-signal — External Signal Ingest
@@ -16,7 +16,7 @@ hard-guards.md G10 의 강제 메커니즘.
 
 산출:
 
-- `$EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq:03d}.md`
+- `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq:03d}.md` (= `telemetry/external_signals/...`)
 
 ## 선행 읽기
 
@@ -31,8 +31,12 @@ hard-guards.md G10 의 강제 메커니즘.
 1. 사용자 인자 검증 (ticker / summary / source / type 필수)
 2. raw payload (필요 시 사용자가 첨부) redaction — URL / 이메일 / 전화번호 mask
 3. fact-only paraphrase — opinion / 권고 wording 제거 (forbidden language §3)
-4. `$EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq:03d}.md` 작성 (frontmatter + Fact + Original-Redacted)
+4. `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq:03d}.md` 작성 (frontmatter + Fact + Original-Redacted)
 5. **thesis 직접 변경 금지** — 사용자에게 "다음 cron run 에서 Stage 4 가 fact-only 로 인용" 안내
+
+> 산출 후 검증 게이트: `python -m domains._shared.external_signal --validate <file>` 로
+> frontmatter/섹션/citation/파일명(schema A·B·C·D)을 확인할 수 있다. daily_pipeline 은
+> Stage 4 직전 `--validate-all` 로 intake 디렉토리 전체를 검증한다 (error 시 Stage 4 차단).
 
 ## Hard Guards
 

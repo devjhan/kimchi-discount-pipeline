@@ -27,6 +27,12 @@ agent toolchain 은 `.env*` 파일 직접 접근 차단 (env-guard hook); 단
 의 path helper 가 직접 계산한다 (중앙 topology alias SSoT 는 제거됨). 본 표는 사용자
 환경 설정 파일만 다룸.
 
+> **signals 분리 주의**: `config/signals/` 에는 *사용자 입력* breadth(`macro/breadth.yaml`,
+> 재생성 가능)만 거주한다. `/ingest-external-signal` 의 per-ticker 산출(agent 생성 ·
+> append-only 증거)은 `config/` 가 아니라 `telemetry/external_signals/{ticker}/` 로 분리됐다
+> (ADR-0008 분류축: 재생성 가능성+수명+소유 — audit/nav-history/policy_drafts 와 동류).
+> helper 도 `external_signals_dir()`(breadth) / `external_signal_intake_dir()`(ingest) 로 분리.
+
 ---
 
 ## 2. 변수 → 파일 / 위치 매핑

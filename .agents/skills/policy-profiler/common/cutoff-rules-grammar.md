@@ -46,7 +46,7 @@
 5. `governance/policy/methods_manifest.yaml` (cutoff_rules 어휘 — 코드 SSoT 생성물, ADR-0014; whitelist 실체는 `domains/screener/rules/resolver.py` / `factory.py` / `leaf.py` 코드)
 6. `domains/_shared/profile_registry/schema.py` (출력 shape)
 7. `_intake-{date}.json` (trigger + 현 profile)
-8. `$EXTERNAL_SIGNALS_DIR/{ticker_dir}/*.md` (evidence)
+8. `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker_dir}/*.md` (evidence)
 9. 본 SKILL.md
 
 > `ticker_dir` = ticker의 `:` → `_` 치환 (예: `KR:005930` → `KR_005930`)

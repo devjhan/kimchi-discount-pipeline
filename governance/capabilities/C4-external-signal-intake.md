@@ -15,7 +15,7 @@
 goal     외부 정보를 thesis 즉시변경 없이, 감사가능한 fact 로 보관
 trigger  명시적 /ingest-external-signal 명령 (cron 자동 ingest 아님)
 BC       skill investment-ingest-external-signal — fact-only paraphrase + redaction
-output   config/signals/{ticker}/{date}-{seq}.md
+output   telemetry/external_signals/{ticker}/{date}-{seq}.md
 downstream  다음 cron 의 Stage 4 thesis-auditor 가 fact-only 로 인용 (즉시 thesis 변경 0)
 ```
 

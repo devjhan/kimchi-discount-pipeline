@@ -61,6 +61,8 @@ telemetry/logs/
 telemetry/policy_drafts/
 # telemetry/audit (shadow-portfolio / trade-log / scheduler-state / violations / macro-breadth / subsidiaries)
 # · telemetry/positions · telemetry/nav-history (F-14: NAV 시계열 = 재생성-불가 증거)
+# · telemetry/external_signals (ingest-external-signal 산출 = agent 생성 비재생성 append-only
+#   증거; redaction(G21/G22) 후 저장이라 tracked 안전 — ADR-0008 분류축상 config 아닌 telemetry)
 # 는 추적 — gitignore 하지 않음 (audit trail / 상태 스냅샷)
 
 # .cache/ — DART corp index / financials 재생성 가능 캐시 (통째 ignore).

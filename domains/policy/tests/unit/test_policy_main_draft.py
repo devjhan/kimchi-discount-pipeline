@@ -93,3 +93,5 @@ def test_intake_emits_intake_artifact(iso: Path) -> None:
     payload = data.get("payload", data)
     assert payload["trigger"]["ticker"] == "KR:005930"
     assert payload["current_profile"] is None  # tmp profiles 비어있음
+    # evidence_dir_hint 는 telemetry/external_signals 로 이전 (config/signals 아님).
+    assert payload["evidence_dir_hint"] == "telemetry/external_signals/KR_005930/"

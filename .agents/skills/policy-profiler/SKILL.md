@@ -39,7 +39,7 @@ phase 3 (결정론)  python -m domains.policy.main --commit-draft <draft>    →
 ## 처리 흐름 (per ticker, 7-step)
 
 1. `_intake-{date}.json` read → trigger + current_profile
-2. `$EXTERNAL_SIGNALS_DIR/{ticker_dir}/*.md` evidence read
+2. `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker_dir}/*.md` evidence read
 3. `required_enrichments` 제안 / `cutoff_rules` 제안
 4. citations / `rationale_ko` 작성
 5. `_profile-draft-{date}.json` write (기존 파일 시 `.{N}.json` — G20)

@@ -8,7 +8,7 @@
 ## 절차
 
 1. `_intake-{date}.json` read → trigger + current_profile (null=신규, 있음=amendment)
-2. `$EXTERNAL_SIGNALS_DIR/{ticker_dir}/*.md` evidence read (fact-only, G10)
+2. `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker_dir}/*.md` evidence read (fact-only, G10)
 3. `required_enrichments` 제안 (universe enricher registry 존재 name만)
 4. `cutoff_rules` 제안 (methods_manifest 화이트리스트 metric_path만)
 5. citations: G7 형식 — evidence 없는 임계값 지어내기 금지

@@ -61,7 +61,8 @@ YYYY-MM-DD (KST 기준)
 | `$TRAIL_TODAY` | `operations/{오늘 KST 거래일}/.trails` |
 | `$AUDIT_DIR` | `telemetry/audit` |
 | `$POSITIONS_DIR` | `telemetry/positions` |
-| `$EXTERNAL_SIGNALS_DIR` | `config/signals` |
+| `$EXTERNAL_SIGNALS_DIR` | `config/signals` (macro breadth 등 사용자 signal 입력) |
+| `$EXTERNAL_SIGNAL_INTAKE_DIR` | `telemetry/external_signals` (ingest per-ticker 산출) |
 | `$DAILY_BRIEF_PATH` | `operations/{오늘 KST 거래일}/daily-brief.md` |
 | `$THRESHOLDS_PATH` | `governance/thresholds.yaml` |
 | `$AXIOMS_DIR` | `governance/AXIOMS` |
@@ -88,7 +89,7 @@ YYYY-MM-DD (KST 기준)
 | Position postmortem | `$POSITIONS_DIR/{ticker}/postmortem.md` |
 | Positions sync summary (KIS) | `$POSITIONS_DIR/_summary-{date}.json` |
 | Portfolio derived state | `$POSITIONS_DIR/_derived-{date}.json` |
-| External signal ingest | `$EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq}.md` |
+| External signal ingest | `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq}.md` |
 | Process audit (주간) | `$AUDIT_DIR/process-{YYYY-WW}.md` |
 | Outcome audit (분기) | `$AUDIT_DIR/outcome-{YYYY-Q}.md` |
 | Shadow portfolio state | `$AUDIT_DIR/shadow-portfolio-state.json` |

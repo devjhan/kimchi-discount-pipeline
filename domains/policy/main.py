@@ -80,7 +80,7 @@ def _profile_summary(profile: Any) -> dict[str, Any] | None:
 def _emit_intake(triggers: tuple[Trigger, ...], clock: AsOfClock) -> None:
     """phase 1 (결정론) — trigger + 현 profile 동봉 intake 산출. LLM·commit 없음 (G10).
 
-    ``investment-policy-profiler`` 스킬이 본 intake + ``config/signals/{ticker}/`` evidence
+    ``investment-policy-profiler`` 스킬이 본 intake + ``telemetry/external_signals/{ticker}/`` evidence
     (ingest-external-signal SOP 의 fact-only redacted 산출)를 읽어 _profile-draft 를 만든다.
     """
     registry = ProfileRegistry(root=_boundary.profiles_root())
@@ -88,7 +88,7 @@ def _emit_intake(triggers: tuple[Trigger, ...], clock: AsOfClock) -> None:
         intake = {
             "trigger": asdict(t),
             "current_profile": _profile_summary(registry.load_latest(t.ticker)),
-            "evidence_dir_hint": f"config/signals/{_ticker_dir(t.ticker)}/",
+            "evidence_dir_hint": f"telemetry/external_signals/{_ticker_dir(t.ticker)}/",
             "note": (
                 "investment-policy-profiler 스킬이 본 intake + evidence 로 _profile-draft "
                 "산출. drift/version/commit 은 'python -m domains.policy.main "

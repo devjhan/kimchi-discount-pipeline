@@ -108,7 +108,7 @@ state = Path(os.environ["AUDIT_DIR"]) / "state.json"
 ❌ 금지: 사용자 prompt 본문에 "뉴스 X 가 종목 Y 의 thesis 를 깬다" → 직접 `04-thesis-candidates.json` 수정.
 
 ✅ 올바름:
-1. `/ingest-external-signal` 으로 raw payload paraphrase + redact 후 `$EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq}.md` 저장
+1. `/ingest-external-signal` 으로 raw payload paraphrase + redact 후 `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq}.md` 저장
 2. 다음 cron run 의 Stage 4 가 fact-only 인용
 
 **Hook**: `inject_only` — bootstrap.md §1 (Source of Truth Hierarchy) 가 SessionStart 에 inject 됨.

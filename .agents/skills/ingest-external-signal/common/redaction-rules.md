@@ -73,7 +73,7 @@ ALLOW (paraphrased):
 schema: external-signal-v1
 ticker: KR:005930        # G2 (date-ticker namespace)
 source: "한국경제"        # 자유 string — citation 의 일부
-type: news                # analyst-note | news | twitter | blog | user-prompt | research-report
+type: news                # analyst-note | news | twitter | blog | user-prompt | research-report | filing
 observed_at: "2026-05-11T14:30:00+09:00"
 ingested_at: "2026-05-11T14:32:00+09:00"
 ingested_by: ingest-external-signal
@@ -90,8 +90,11 @@ ingested_by: ingest-external-signal
 ## 5. 산출 파일 명명 (G20)
 
 ```
-$EXTERNAL_SIGNALS_DIR/{ticker}/{date}-{seq:03d}.md
+$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq:03d}.md
 ```
+
+(= `telemetry/external_signals/{ticker}/{date}-{seq:03d}.md` — config/signals 아님.
+agent 생성 append-only 증거라 ADR-0008 분류축상 telemetry 거주.)
 
 - `{date}` — KST YYYY-MM-DD (observed_at 의 date 부분)
 - `{seq}` — 같은 ticker + 같은 date 의 N 번째 ingest (001 부터 증가, zero-padded 3자리)

@@ -22,7 +22,7 @@ brief 작성 완료 후 다음 7-step checklist로 자가 검증을 수행한다
    → Pipeline Health 섹션의 skipped sources list와 일치 확인
 
 5. external-signals raw payload 노출 안 했는가?
-   → $EXTERNAL_SIGNALS_DIR/ 산출물만 인용, raw content 노출 금지
+   → $EXTERNAL_SIGNAL_INTAKE_DIR/ 산출물만 인용, raw content 노출 금지
 
 6. secret env 노출 없는가?
    → DART_API_KEY / KIS_APP_SECRET / KIS_ACCOUNT_NUMBER / TELEGRAM_BOT_TOKEN
