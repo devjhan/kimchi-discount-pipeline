@@ -42,5 +42,6 @@ def test_segment_resolver_no_match_empty_enrichments(monkeypatch) -> None:
     )
     resolver = universe_main._build_segment_resolver()
     assert resolver is not None
-    res = resolver.resolve("KR:003550")
+    # KR:999999 — segment 미매칭 + per-ticker profile 부재 (KR:003550 은 실 profile 보유, ADR-0014 Phase5).
+    res = resolver.resolve("KR:999999")
     assert res.profile is None

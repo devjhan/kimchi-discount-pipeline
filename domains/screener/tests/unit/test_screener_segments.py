@@ -57,7 +57,8 @@ def test_build_segment_resolver_no_match_returns_none(monkeypatch) -> None:
         ProfileRegistry(root=_boundary.profiles_root()), warnings
     )
     assert resolver is not None
-    res = resolver.resolve("KR:003550")
+    # KR:999999 — segment 미매칭 + per-ticker profile 부재 (KR:003550 은 실 profile 보유, ADR-0014 Phase5).
+    res = resolver.resolve("KR:999999")
     assert res.profile is None
     assert res.matched_segment_ids == ()
 
