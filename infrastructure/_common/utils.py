@@ -70,7 +70,6 @@ SECRET_ENV_KEYS = frozenset(
         "KIS_ACCOUNT_NUMBER",
         "TELEGRAM_BOT_TOKEN",
         "TELEGRAM_CHAT_ID",
-        "ALPHA_VANTAGE_API_KEY",
         "FRED_API_KEY",
     }
 )
@@ -246,9 +245,7 @@ def load_yaml_config(path: Path | str = DEFAULT_THRESHOLDS) -> dict[str, Any]:
     try:
         import yaml  # type: ignore
     except ImportError as exc:
-        raise SystemExit(
-            "[ERROR] PyYAML이 필요합니다. 'pip install -e .' 후 재시도."
-        ) from exc
+        raise SystemExit("[ERROR] PyYAML이 필요합니다. 'pip install -e .' 후 재시도.") from exc
     with p.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
@@ -336,9 +333,7 @@ def _load_yaml_optional(path: Path) -> dict[str, Any]:
     try:
         import yaml  # type: ignore
     except ImportError as exc:
-        raise SystemExit(
-            "[ERROR] PyYAML 이 필요합니다. 'pip install -e .' 후 재시도."
-        ) from exc
+        raise SystemExit("[ERROR] PyYAML 이 필요합니다. 'pip install -e .' 후 재시도.") from exc
     with path.open("r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
     if not isinstance(data, dict):
@@ -728,9 +723,7 @@ def write_yaml_safely(out_path: Path, payload: Any) -> Path:
     try:
         import yaml  # type: ignore
     except ImportError as exc:
-        raise SystemExit(
-            "[ERROR] PyYAML이 필요합니다. 'pip install -e .' 후 재시도."
-        ) from exc
+        raise SystemExit("[ERROR] PyYAML이 필요합니다. 'pip install -e .' 후 재시도.") from exc
     out_path.parent.mkdir(parents=True, exist_ok=True)
     final_path = out_path
     if out_path.exists():
@@ -865,9 +858,7 @@ def safe_http_json(
     try:
         return json.loads(raw)
     except json.JSONDecodeError as exc:
-        raise FetchError(
-            f"JSON parse fail: {url} — first 200 chars: {raw[:200]!r}"
-        ) from exc
+        raise FetchError(f"JSON parse fail: {url} — first 200 chars: {raw[:200]!r}") from exc
 
 
 def safe_http_text(
@@ -933,9 +924,7 @@ def base_report_envelope(
 # ============================================================
 
 
-def paged_with_pause(
-    items: Iterable[Any], *, pause_seconds: float = 0.05
-) -> Iterable[Any]:
+def paged_with_pause(items: Iterable[Any], *, pause_seconds: float = 0.05) -> Iterable[Any]:
     """generator 사이 짧은 pause 삽입 (DART 등 rate-limit courtesy)."""
     for it in items:
         yield it
