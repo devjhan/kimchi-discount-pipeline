@@ -60,7 +60,7 @@ def _embed_items(
         )
         return 0, 0, True
     n_ticker = n_concept = 0
-    for (kind, key, text), vec in zip(items, result.vectors):
+    for (kind, key, text), vec in zip(items, result.vectors, strict=False):
         vector_index.upsert_vector(
             kind=kind,
             key=key,

@@ -1,6 +1,10 @@
-.PHONY: test test-unit test-integration test-arch test-cov install-dev clean
+.PHONY: test test-unit test-integration test-arch test-cov lint check install-dev clean
 
 PYTHON ?= python3
+
+# ADR-0014: ruff lint enforcement scope (점진 확대). 정책 계약 핵심 모듈 + 신규 생성기/arch test.
+RUFF_PATHS ?= domains/policy domains/_shared/policy_profile domains/_shared/profile_registry \
+	domains/_shared/segment_registry applications/gen_methods_manifest.py tests/architecture
 
 install-dev:
 	$(PYTHON) -m pip install -e ".[dev]"
@@ -17,6 +21,13 @@ test-integration:
 # 아키텍처 fitness functions (D-ARCH 불변식). `make test` 에도 자동 포함 (testpaths=tests/).
 test-arch:
 	$(PYTHON) -m pytest tests/architecture -ra
+
+# ADR-0014: 결정론적 Python lint (ruff). scope 는 RUFF_PATHS (점진 확대).
+lint:
+	$(PYTHON) -m ruff check $(RUFF_PATHS)
+
+# 결정론적 게이트 집합 — lint + 전체 테스트(arch 포함). CI / pre-merge 단일 진입점.
+check: lint test
 
 test-cov:
 	$(PYTHON) -m pytest --cov=domains --cov=infrastructure/_common --cov-report=term-missing

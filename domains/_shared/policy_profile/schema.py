@@ -12,7 +12,7 @@ shape 를 단일 dataclass 로 수렴한다. identity 는 ``key`` 로 일반화:
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Mapping
 
 # Provenance 는 profile_registry 의 단일 정의를 재사용 (순환 없음 — profile_registry.schema
