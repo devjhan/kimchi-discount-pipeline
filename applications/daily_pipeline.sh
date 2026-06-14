@@ -13,18 +13,18 @@
 #   bash applications/daily_pipeline.sh                    # 오늘 (KST), --phase all
 #   bash applications/daily_pipeline.sh --date 2026-05-08
 #   bash applications/daily_pipeline.sh --date 2026-05-08 --dry-run
-bash applications/daily_pipeline.sh --phase pre-stage4  # Stage 0~3
-bash applications/daily_pipeline.sh --phase post-stage4 # Stage 5~5d (Stage 4 LLM skill 후)
+#   bash applications/daily_pipeline.sh --phase pre-stage4  # Stage 0~3
+#   bash applications/daily_pipeline.sh --phase post-stage4 # Stage 5~5d (Stage 4 LLM skill 후)
 #
 # Stage 0 → 1 → 2 → 3 → 5 의 deterministic helper 만 실행한다.
-Stage 4 (thesis-auditor) 와 Stage 6 (brief-author) 는 LLM skill 이므로
-Zed Agent 안에서 별도로 invoke (`stage4-thesis-auditor` etc).
+# Stage 4 (thesis-auditor) 와 Stage 6 (brief-author) 는 LLM skill 이므로
+# Zed Agent 안에서 별도로 invoke (`stage4-thesis-auditor` etc).
 #
 # --phase 분리 이유:
 #   Stage 5 sizing 은 Stage 4 thesis-auditor 산출물 (`04-thesis-candidates.json`)
 #   을 입력으로 받는다. 그러나 Stage 4 는 LLM skill 이라 shell 에서 직접
-호출 불가 → 로컬 실행은 (1) pre-stage4 → (2) Stage 4 skill → (3)
-post-stage4 순으로 두 번 본 script 를 호출한다. 로컬 manual 실행은
+#   호출 불가 → 로컬 실행은 (1) pre-stage4 → (2) Stage 4 skill → (3)
+#   post-stage4 순으로 두 번 본 script 를 호출한다. 로컬 manual 실행은
 #   --phase all (default) 로 호환 — 단 Stage 5 는 Stage 4 없이 실행되므로
 #   thesis 검증 반영을 원하면 사용자가 Stage 4 skill 후 --phase post-stage4
 #   를 재호출.
@@ -194,6 +194,25 @@ refresh_cache() {
     || echo "[skip] $name (graceful degrade)" | tee -a "$LOG_FILE"
 }
 
+# External signal validation gate — Stage 4 (thesis-auditor) consume 전 차단.
+#   Stage 4 LLM skill 은 telemetry/external_signals 의 ingest 산출물을 fact-only
+#   인용한다. 깨진 frontmatter/섹션/citation(G7) 은 thesis 를 오염시키므로, 소비
+#   전에 schema(A·B·C·D)를 결정론 검증한다. error 발견 시 hard-block (exit) —
+#   다른 stage 의 graceful degrade 와 달리 본 게이트는 data-integrity gate 다.
+#   warning 은 통과. 산출물 없으면(빈 intake) graceful (exit 0).
+run_external_signal_gate() {
+  echo "" | tee -a "$LOG_FILE"
+  echo "--- Gate — External Signal Validation (Stage 4 consume 전) ---" | tee -a "$LOG_FILE"
+  if "$PYTHON_BIN" -m domains._shared.external_signal --validate-all 2>&1 | tee -a "$LOG_FILE"; then
+    echo "[OK]   External signal validation" | tee -a "$LOG_FILE"
+  else
+    local rc=${PIPESTATUS[0]}
+    echo "[BLOCK] External signal validation 실패 (exit=$rc) — Stage 4 차단." | tee -a "$LOG_FILE"
+    echo "        위 error 를 telemetry/external_signals 에서 수정 후 재실행하세요 (G7/G10 무결성)." | tee -a "$LOG_FILE"
+    exit "$rc"
+  fi
+}
+
 # Deterministic helpers — phase 분리.
 #   pre-stage4  : Stage 0~3 (Stage 4 LLM skill 의 input 준비)
 #   post-stage4 : Stage 5~5d (Stage 4 LLM skill 산출물 consume)
@@ -216,6 +235,9 @@ if [[ "$PHASE" == "all" || "$PHASE" == "pre-stage4" ]]; then
   # earnings-panic fetch / 3 catalyst-scan, 중간 JSON IPC) → 1 step. 2 fetch helper
   # 는 detector io 로 흡수되어 중간 산출물 (03-index-deletion / 03-earnings-panic) 제거.
   run_stage "Stage 3  — Catalyst Scan"         "domains.catalyst.main"
+  # External signal 검증 게이트 — pre-stage4 의 마지막. Stage 4 LLM skill 이
+  # ingest 산출물을 인용하기 직전에 schema 무결성을 차단 검사한다.
+  run_external_signal_gate
 fi
 
 # Stage 4 = LLM skill (invest-stage4-thesis-auditor) — 본 script 는 helper 만 자동화.
