@@ -387,7 +387,7 @@ def main(argv: list[str] | None = None) -> int:
         "trail_filename", "02-quality-filter.json"
     )
     filename = (
-        f"02-quality-filter.screener-dryrun.json" if args.dry_run else default_filename
+        "02-quality-filter.screener-dryrun.json" if args.dry_run else default_filename
     )
     out_path = write_quality_filter(
         clock,

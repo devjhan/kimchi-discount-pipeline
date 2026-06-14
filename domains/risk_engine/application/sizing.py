@@ -34,7 +34,7 @@ def configure(boundary: Any) -> None:
     g["_trail_dir"] = boundary.resolve_trail_dir
 
 
-from domains.risk_engine.domain.sizing import (
+from domains.risk_engine.domain.sizing import (  # noqa: E402
     SizeRecommendation,
     apply_portfolio_kelly_cap,
     size_one,
@@ -134,7 +134,7 @@ def _portfolio_context_from_yaml(*, date: str | None = None) -> tuple[dict[str, 
             )
         except (TypeError, ValueError):
             warnings.append(
-                f"derived current_drawdown_pct invalid; 0 fallback"
+                "derived current_drawdown_pct invalid; 0 fallback"
             )
 
     cash_raw = pf.get("current_cash_pct")
@@ -155,7 +155,7 @@ def _portfolio_context_from_yaml(*, date: str | None = None) -> tuple[dict[str, 
             )
         except (TypeError, ValueError):
             warnings.append(
-                f"derived current_cash_pct invalid; current cash 미반영"
+                "derived current_cash_pct invalid; current cash 미반영"
             )
 
     return (

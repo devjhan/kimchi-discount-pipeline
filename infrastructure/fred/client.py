@@ -13,7 +13,6 @@ Hard guards:
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Any
 
 from infrastructure._common.utils import FetchError, safe_http_json
 

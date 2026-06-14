@@ -17,7 +17,7 @@ from typing import Any, Mapping, Sequence
 def _cosine(a: Sequence[float], b: Sequence[float]) -> float | None:
     if not a or not b or len(a) != len(b):
         return None
-    dot = sum(x * y for x, y in zip(a, b))
+    dot = sum(x * y for x, y in zip(a, b, strict=False))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(y * y for y in b))
     if na == 0.0 or nb == 0.0:

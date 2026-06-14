@@ -35,7 +35,7 @@ def configure(boundary: Any) -> None:
     g["_positions_dir"] = boundary.resolve_positions_dir
 
 
-from domains.risk_engine.domain.portfolio_state import (
+from domains.risk_engine.domain.portfolio_state import (  # noqa: E402
     DEFAULT_LOOKBACK_DAYS,
     SCHEMA_VERSION,
     DerivedState,

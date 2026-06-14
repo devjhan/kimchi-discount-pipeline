@@ -38,7 +38,7 @@ def configure(boundary: Any) -> None:
     g["_trail_dir"] = boundary.resolve_trail_dir
 
 
-from domains.risk_engine.domain.event_trigger import (
+from domains.risk_engine.domain.event_trigger import (  # noqa: E402
     EventTriggerStatus,
     build_stage3_index as _build_stage3_index,
 )

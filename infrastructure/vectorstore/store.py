@@ -44,7 +44,7 @@ def _cosine(a: Sequence[float], b: Sequence[float]) -> float | None:
     """순수 Python 코사인 유사도. 빈/차원불일치/영벡터 → None (확장 fallback 과 동일 시맨틱)."""
     if not a or not b or len(a) != len(b):
         return None
-    dot = sum(x * y for x, y in zip(a, b))
+    dot = sum(x * y for x, y in zip(a, b, strict=False))
     na = math.sqrt(sum(x * x for x in a))
     nb = math.sqrt(sum(y * y for y in b))
     if na == 0.0 or nb == 0.0:

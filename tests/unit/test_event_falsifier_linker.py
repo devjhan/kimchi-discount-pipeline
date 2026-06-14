@@ -8,7 +8,6 @@ from pathlib import Path
 import pytest
 
 from domains.risk_engine.event_falsifier_linker import (
-    EventTriggerStatus,
     _build_stage3_index,
     evaluate_position,
     load_event_trigger_positions,

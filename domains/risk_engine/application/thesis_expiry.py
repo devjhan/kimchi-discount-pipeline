@@ -37,7 +37,7 @@ def configure(boundary: Any) -> None:
     g["_trail_dir"] = boundary.resolve_trail_dir
 
 
-from domains.risk_engine.domain.expiry import (
+from domains.risk_engine.domain.expiry import (  # noqa: E402
     DAYS_PER_MONTH,
     DEFAULT_TIERS,
     ExpiryRecord,
@@ -118,7 +118,7 @@ def compute_expiry(
     needs_user_decision = tier in ("expired", "overdue", "warn")
 
     if tier == "expired":
-        rationale = f"thesis 만료 도래 — 오늘 (T-0). 사용자 재평가 필수."
+        rationale = "thesis 만료 도래 — 오늘 (T-0). 사용자 재평가 필수."
     elif tier == "overdue":
         rationale = (
             f"thesis 만료 후 {abs(days_remaining)}일 경과 — 재평가 / 청산 / 연장 결정 필요"

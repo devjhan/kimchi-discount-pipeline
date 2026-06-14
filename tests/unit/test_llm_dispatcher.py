@@ -9,7 +9,6 @@ from __future__ import annotations
 import pytest
 
 from infrastructure.llm import REGISTRY
-from infrastructure.llm.adapter import LlmResult
 from infrastructure.llm.claude_cli import ClaudeCliAdapter
 from infrastructure.llm.deepseek import DeepSeekAdapter
 from infrastructure.llm.dispatcher import invoke

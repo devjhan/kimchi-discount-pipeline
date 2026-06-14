@@ -21,7 +21,6 @@ from typing import Callable
 from domains.screener.domain.verdict import RuleResult, ScreenVerdict
 from domains.screener.io import dart_adapter as _adapter
 from domains.screener.io.capital_signals_cache import (
-    filter_visible_signals,
     merge_signal_events,
 )
 from domains.screener.io.financial_cache import LiveFinancialCache

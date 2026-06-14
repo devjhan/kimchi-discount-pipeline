@@ -64,7 +64,7 @@ def _step(value: float, *, steps: list[float], scores: list[float]) -> float:
     if len(steps) != len(scores):
         raise ValueError("steps / scores 길이 불일치")
     result = 0.0
-    for s, sc in zip(steps, scores):
+    for s, sc in zip(steps, scores, strict=False):
         if value >= s:
             result = sc
     return result

@@ -39,7 +39,7 @@ def configure(boundary: Any) -> None:
     g["_trail_dir"] = boundary.resolve_trail_dir
 
 
-from domains.risk_engine.domain.proximity import (
+from domains.risk_engine.domain.proximity import (  # noqa: E402
     DEFAULT_PROXIMITY_BANDS,
     ProximityRecord,
     classify as _classify,
@@ -87,7 +87,6 @@ def measure_proximity(
     falsifier = thesis.get("falsifier") or {}
     category = falsifier.get("category") or "unknown"
     spec = falsifier.get("spec") or {}
-    citations: list[str] = []
 
     if category == "time_cap":
         horizon = thesis.get("time_horizon_months")

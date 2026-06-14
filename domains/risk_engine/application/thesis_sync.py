@@ -37,11 +37,10 @@ def configure(boundary: Any) -> None:
     g["_trail_dir"] = boundary.resolve_trail_dir
 
 
-from domains.risk_engine.domain.thesis_projection import (
+from domains.risk_engine.domain.thesis_projection import (  # noqa: E402
     collect_citations,
     project_edge_source,
     project_falsifier,
-    project_spec,
 )
 
 SCHEMA_VERSION = "investment-stage5a-thesis-sync-v1"

@@ -15,7 +15,7 @@ import pytest
 
 from domains._shared.time.clock import AsOfClock
 from domains.universe import _boundary
-from domains.universe.sources.base import DiscoveryContext, SourceResult
+from domains.universe.sources.base import DiscoveryContext
 from domains.universe.sources.dart_disclosure_filter import DartDisclosureFilter
 from domains.universe.sources.factory import build_source
 

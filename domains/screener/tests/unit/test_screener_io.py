@@ -23,7 +23,6 @@ from domains.screener.io.financial_cache import (
     LiveFinancialCache,
     policy_from_strategy,
 )
-from domains.screener.schemas import SCHEMA_FIN_CACHE_V4
 from domains._shared.time.clock import AsOfClock
 
 KST = timezone(timedelta(hours=9))

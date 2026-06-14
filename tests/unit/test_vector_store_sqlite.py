@@ -116,7 +116,7 @@ def test_sql_and_python_paths_agree(tmp_path: Path) -> None:
     for k in ("A", "B", "C"):
         assert sql_cos[k] == pytest.approx(py_cos[k], abs=1e-6)
     assert [k for k, _ in sql_topk] == [k for k, _ in py_topk]
-    for (k1, v1), (k2, v2) in zip(sql_topk, py_topk):
+    for (k1, v1), (k2, v2) in zip(sql_topk, py_topk, strict=False):
         assert k1 == k2
         assert v1 == pytest.approx(v2, abs=1e-6)
     s.close()

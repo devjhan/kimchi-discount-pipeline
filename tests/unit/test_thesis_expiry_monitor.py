@@ -13,9 +13,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta
-from pathlib import Path
 
-import pytest
 
 from domains.risk_engine import thesis_expiry_monitor as tem
 from infrastructure._common.utils import KST

@@ -21,12 +21,10 @@ from __future__ import annotations
 import argparse
 import sys
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
 import yaml
 
 from infrastructure._common.utils import (
-    REPO_ROOT,
     audit_dir,
     normalize_to_trading_day,
     positions_dir,

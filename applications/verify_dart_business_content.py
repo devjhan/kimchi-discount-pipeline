@@ -60,7 +60,7 @@ def _verify_one(api_key: str, stock: str) -> bool:
         print(f"  추출 실패: {exc}")
         return False
 
-    ok = bool(text) and "사업의 내용" not in text[:50]  # 마커 자체가 본문 머리에 안 남았는지
+    _ok = bool(text) and "사업의 내용" not in text[:50]  # 마커 자체가 본문 머리에 안 남았는지
     print(f"  추출 본문 길이={len(text)}자")
     print(f"  미리보기(앞 240자): {text[:240]!r}")
     print(f"  '<' 태그 잔존 여부: {'<' in text}")

@@ -9,7 +9,6 @@ import pytest
 
 from domains._shared.time.clock import AsOfClock
 from domains.universe.audit.citation import (
-    CITATION_RE,
     filter_valid_citations,
     is_valid_citation,
 )

@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import argparse
 import sys
-from pathlib import Path
 
 from infrastructure._common.utils import (
     audit_dir as _audit_dir,
