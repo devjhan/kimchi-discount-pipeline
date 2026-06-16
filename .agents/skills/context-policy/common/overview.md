@@ -36,7 +36,7 @@ class PolicyEngine(Protocol):
 phase 1 (결정론)  python -m domains.policy.main --ticker T --trigger ...
                   → _emit_intake: _intake-{date}.json
 phase 2 (LLM)     /policy-profiler T
-                  → _intake + config/signals evidence → _profile-draft-{date}.json
+                  → _intake + telemetry/external_signals evidence → _profile-draft-{date}.json
 phase 3 (결정론)  python -m domains.policy.main --commit-draft <draft>
                   → _commit_from_draft: validate_rules + decide_commit + G20
 ```
