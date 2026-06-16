@@ -70,7 +70,7 @@
 | 2 | quality gate (ROIC/debt/FCF) | `$TRAIL_TODAY/01-universe.json` + DART filings | `$TRAIL_TODAY/02-quality-filter.json` + `02-quality-lens.json` | path guard |
 | 3 | catalyst scan (corporate actions) | `$TRAIL_TODAY/02-*` + DART events | `$TRAIL_TODAY/03-catalyst-events.json` | path guard |
 | 4 | thesis discipline (skill) | `$TRAIL_TODAY/03-*` | `$TRAIL_TODAY/04-thesis-candidates.json` | falsifier + asymmetry validators |
-| 5 | sizing (Kelly + asymmetry) | `$TRAIL_TODAY/04-*` + `$THRESHOLDS_PATH` + `$POSITIONS_DIR/_derived-{date}.json` | `$TRAIL_TODAY/05-sizing-recommendation.json` | sample size gate |
+| 5 | sizing (Kelly + asymmetry) | `$TRAIL_TODAY/04-*` + `$THRESHOLDS_PATH` + `$POSITIONS_DIR/_account/derived-{date}.json` | `$TRAIL_TODAY/05-sizing-recommendation.json` | sample size gate |
 | 5a | thesis sync (결정론 파생) | `$TRAIL_TODAY/04-thesis-candidates.json` | `$POSITIONS_DIR/{ticker}/thesis.json` | G6 deterministic |
 | 5b | falsifier proximity (보유 포지션) | `$POSITIONS_DIR/{ticker}/thesis.json` | `$TRAIL_TODAY/05b-falsifier-proximity.json` + `$POSITIONS_DIR/{ticker}/drift-{date}.md` | G6 deterministic |
 | 5c | event falsifier linker | `$POSITIONS_DIR/{ticker}/thesis.json` + `$TRAIL_TODAY/03-*` | `$TRAIL_TODAY/event-trigger-status-{date}.json` | G6 deterministic |

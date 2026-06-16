@@ -35,7 +35,7 @@ description: Investment 파이프라인 `domains/macro/` BC 작업 시 domain co
 - `$TRAIL_TODAY/00-macro-regime.json` — 결정론 regime 분류 (schema `stage0-macro-regime-v1`)
 - `$TRAIL_TODAY/00-macro-regime-narrative.md` — LLM 보조 narrative (옵셔널, skill `stage0-regime-labeler` 산출)
 - `$EXTERNAL_SIGNALS_MACRO_BREADTH_PATH` — SPX breadth prefetch (Stage 0a)
-- `$AUDIT_DIR/macro-violations/{date}.jsonl` — violation log (append-only)
+- `$AUDIT_DIR/violations/macro/{date}.jsonl` — violation log (append-only)
 
 ## Out of Scope
 

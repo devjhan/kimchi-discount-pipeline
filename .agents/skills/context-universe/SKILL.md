@@ -33,7 +33,7 @@ description: Investment 파이프라인 `domains/universe/` BC 작업 시 domain
 ## 산출물
 
 - `$TRAIL_TODAY/01-universe.json` — universe 종목 리스트 + enrich 결과 (envelope schema `stage1-universe-v1`)
-- `$AUDIT_DIR/universe-violations/{date}.jsonl` — G6/G7/G14 위반 로그 (JSONL append-only)
+- `$AUDIT_DIR/violations/universe/{date}.jsonl` — G6/G7/G14 위반 로그 (JSONL append-only)
 - stdout handoff 1줄: `[stage1-universe] verdict=... items=N -> $TRAIL_TODAY/01-universe.json`
 
 ## Out of Scope

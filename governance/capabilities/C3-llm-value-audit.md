@@ -17,7 +17,7 @@ trigger  일별 결정론 NAV 갱신 + 분기 비교 (out-of-band 일정)
 engine   domains.audit_integrity.main  — 4-tier shadow portfolio (Index/Mechanical/
          LLM-Filtered/Random) paper-trade NAV 일별 갱신 (실제 broker 호출 0, G9)
 skill    investment-audit-outcome  — 분기 누적 비교 (read-only, stat_tests 소비)
-output   telemetry/audit/shadow-portfolio-state.json (재생성-불가 증거, append-only)
+output   telemetry/audit/shadow-portfolio/state.json (재생성-불가 증거, append-only)
          + telemetry/audit/outcome-{YYYY-Q}.md
 trigger  self-disable: tier_2 < tier_1 4분기 연속
 ```

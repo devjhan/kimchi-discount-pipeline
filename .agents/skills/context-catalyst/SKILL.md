@@ -34,7 +34,7 @@ description: Investment 파이프라인 `domains/catalyst/` BC 작업 시 domain
 
 - `$TRAIL_TODAY/03-catalyst-events.json` — trigger 감지된 catalyst event 리스트 (envelope schema)
 - stdout handoff 1줄: `[stage3] verdict=... items=N -> $TRAIL_TODAY/03-catalyst-events.json`
-- `$AUDIT_DIR/catalyst-violations/{date}.jsonl` — violation log (JSONL append-only)
+- `$AUDIT_DIR/violations/catalyst/{date}.jsonl` — violation log (JSONL append-only)
 
 ## Out of Scope
 

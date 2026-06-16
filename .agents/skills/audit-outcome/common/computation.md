@@ -41,7 +41,7 @@ from domains.audit_integrity.stat_tests import (
     quarterly_returns, welch_t_test, evaluate_self_disable_trigger,
 )
 import os
-state = Path(os.environ["AUDIT_DIR"]) / "shadow-portfolio-state.json"
+state = Path(os.environ["AUDIT_DIR"]) / "shadow-portfolio/state.json"
 a = quarterly_returns(state, "tier_2_llm_filtered")
 b = quarterly_returns(state, "tier_1_mechanical")
 print(json.dumps({"welch": welch_t_test(a, b)}, ensure_ascii=False, indent=2))
@@ -55,6 +55,6 @@ citation 형식 (본문에 인용 시):
 
 | 경로 | 내용 |
 |---|---|
-| `$AUDIT_DIR/shadow-portfolio-state.json` | 현재 4-tier 누적 NAV / trade count / win rate |
-| `$AUDIT_DIR/trade-log-{tier}.csv` (tier 4종) | 각 tier의 closed trade history |
+| `$AUDIT_DIR/shadow-portfolio/state.json` | 현재 4-tier 누적 NAV / trade count / win rate |
+| `$AUDIT_DIR/shadow-portfolio/trade-log-{tier}.csv` (tier 4종) | 각 tier의 closed trade history |
 | 직전 4 분기 `$AUDIT_DIR/outcome-{YYYY-Q}.md` (.json 보조 파일) | self-disable trigger 4-quarter consecutive 검사 |

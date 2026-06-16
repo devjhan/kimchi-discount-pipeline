@@ -40,7 +40,7 @@ description: Investment 파이프라인 `domains/risk_engine/` BC 작업 시 dom
 - `$TRAIL_TODAY/05b-falsifier-proximity.json` + `drift-{date}.md` — falsifier 근접도
 - `$TRAIL_TODAY/event-trigger-status-{date}.json` — event trigger 평가
 - `$TRAIL_TODAY/05d-thesis-expiry.json` + `expiry-{date}.md` — thesis 만기
-- `$POSITIONS_DIR/_summary-{date}.json` + `_derived-{date}.json` — 계좌 sync/파생
+- `$POSITIONS_DIR/_account/summary-{date}.json` + `_account/derived-{date}.json` — 계좌 sync/파생
 
 ## Out of Scope
 

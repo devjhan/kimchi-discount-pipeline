@@ -29,15 +29,15 @@ description: Investment 파이프라인 `domains/audit_integrity/` BC 작업 시
 
 ## 전형적 실패 패턴
 
-- Audit-report 덮어쓰기: `shadow-portfolio-state.json` 을 G20 suffix 없이 overwrite → append-only 위반 (`init_shadow_state --force` 만 예외)
+- Audit-report 덮어쓰기: `shadow-portfolio/state.json` 을 G20 suffix 없이 overwrite → append-only 위반 (`init_shadow_state --force` 만 예외)
 - Sample size 미충족 alpha 주장: N<10 인데 "LLM filter outperforms" 같은 주장 → G19 위반 (통계적 정직성)
 - Secret 값 audit 본문에 노출: `outcome-{YYYY-Q}.md` / `process-{YYYY-WW}.md` 에 API key 등 raw 값 등장 → D-SEC-1 위반
 - "Audit" 명명 혼동: `audit_integrity` (outcome 감사) vs per-BC `<bc>/audit/` (in-stage 검증) vs `_shared/audit/` (kernel 원시) — 3중 의미 구분
 
 ## 산출물
 
-- `$AUDIT_DIR/shadow-portfolio-state.json` — 4-tier NAV state (cross-day 누적, 재생성 불가)
-- `$AUDIT_DIR/trade-log-{tier}.csv` — tier 별 진입/청산 기록 (4개 파일)
+- `$AUDIT_DIR/shadow-portfolio/state.json` — 4-tier NAV state (cross-day 누적, 재생성 불가)
+- `$AUDIT_DIR/shadow-portfolio/trade-log-{tier}.csv` — tier 별 진입/청산 기록 (4개 파일)
 - (read-only outcome skill 산출): `$AUDIT_DIR/outcome-{YYYY-Q}.md` / `$AUDIT_DIR/disable-trigger.json` / `$AUDIT_DIR/process-{YYYY-WW}.md`
 
 ## Out of Scope

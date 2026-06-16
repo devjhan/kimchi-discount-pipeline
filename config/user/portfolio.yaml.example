@@ -29,12 +29,12 @@ total_capital_krw: null
 # ------------------------------------------------------------
 # override 전용 — positions_sync + portfolio_state_derive 가 자동 derive
 # ------------------------------------------------------------
-# 본 두 필드는 $POSITIONS_DIR/_derived-{date}.json 에서 자동 derive 된다.
+# 본 두 필드는 $POSITIONS_DIR/_account/derived-{date}.json 에서 자동 derive 된다.
 # 본 파일에 값을 명시하면 derived 값보다 우선 (사용자 manual override).
 #
 # 우선순위 (sizing.py):
 #   1) portfolio.yaml 명시값 (null 이 아닐 때)
-#   2) $POSITIONS_DIR/_derived-{date}.json
+#   2) $POSITIONS_DIR/_account/derived-{date}.json
 #   3) 0 fallback
 #
 # null 유지가 권장. KIS read-only 활성 + 보유 포지션 존재 시 자동 채워짐.

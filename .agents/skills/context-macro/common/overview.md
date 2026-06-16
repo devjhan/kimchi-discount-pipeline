@@ -46,9 +46,9 @@ domains/macro/
 | 입력 (breadth) | `$EXTERNAL_SIGNALS_MACRO_BREADTH_PATH` (Stage 0a 산출) | `_boundary.load_breadth_signal()` |
 | 입력 (SPX 종목) | Wikipedia S&P 500 (HTML, stdlib) | `spx_constituents_refresh.fetch_constituents()` |
 | 출력 (Stage 0) | `$TRAIL_TODAY/00-macro-regime.json` (schema `investment-stage0-macro-regime-v1`) | `_boundary.resolve_trail_dir` |
-| 출력 (Stage 0a) | `$EXTERNAL_SIGNALS_MACRO_BREADTH_PATH` (yaml) + `$AUDIT_DIR/macro-breadth-{date}.json` | `_boundary.write_output_safely` |
+| 출력 (Stage 0a) | `$EXTERNAL_SIGNALS_MACRO_BREADTH_PATH` (yaml) + `$AUDIT_DIR/breadth/macro-breadth-{date}.json` | `_boundary.write_output_safely` |
 | 출력 (SPX cache) | `infrastructure/_common/_spx_constituents.json` | `_boundary.resolve_path("infra_common")` |
-| 출력 (audit) | `$AUDIT_DIR/macro-violations/{date}.jsonl` | append-only |
+| 출력 (audit) | `$AUDIT_DIR/violations/macro/{date}.jsonl` | append-only |
 
 ## DDD 규약
 

@@ -48,7 +48,7 @@
 | D-Q-2 | 빈 산출물도 envelope 5필드 채워 write (`write_output_safely` G20 보존) |
 | D-Q-3 | 모든 도메인 helper 는 pytest 가능 (`tests/unit/test_{module}.py` 1개 이상) |
 | D-Q-4 | 로깅: `print(stdout)` handoff / `print(stderr)` 경고 — `logging` 모듈 금지 |
-| D-Q-5 | `$AUDIT_DIR` 에 `_hook_audit.log` / `cron-logs/` / `shadow-portfolio-state.json` 분리 |
+| D-Q-5 | `telemetry/` retention class(PERMANENT/STATE/SNAPSHOT/BINARY/EPHEMERAL) 분리 + registry SSoT — `/context-telemetry` |
 | D-Q-6 | `emit_summary_line` 표준 — `[stageN] verdict=... key=value -> path` |
 | D-SEC-1 | secret-like literal 본문 매립 금지 (regex prefix-bound guard) |
 | D-SEC-2 | `$ENV_PATH` 직접 Read/Bash/Write/Edit 차단 (`pre_env_guard.sh`) |

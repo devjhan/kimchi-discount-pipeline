@@ -69,8 +69,8 @@ exit 0 = success. exit 2 = `KisAutoTradeBlocked` fail-loud (G9c, 절대 graceful
 | stage | 출력 | schema |
 |---|---|---|
 | 5 sizing | `operations/{date}/05-sizing-recommendation.json` | `investment-stage5-sizing-v1` |
-| positions_sync | `telemetry/positions/_summary-{date}.json` | `investment-positions-sync-v1` |
-| portfolio_state_derive | `telemetry/positions/_derived-{date}.json` | `investment-portfolio-derived-v1` |
+| positions_sync | `telemetry/positions/_account/summary-{date}.json` | `investment-positions-sync-v1` |
+| portfolio_state_derive | `telemetry/positions/_account/derived-{date}.json` | `investment-portfolio-derived-v1` |
 | 5a thesis_sync | `operations/{date}/05a-thesis-sync.json` | `investment-stage5a-thesis-sync-v1` |
 | 5b falsifier_proximity | `operations/{date}/05b-falsifier-proximity.json` | `investment-stage5b-falsifier-proximity-v1` |
 | 5c event_falsifier_linker | `operations/{date}/event-trigger-status-{date}.json` | `investment-stage5c-event-falsifier-linker-v1` |

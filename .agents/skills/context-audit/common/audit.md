@@ -2,7 +2,7 @@
 
 ## ViolationLog (`audit/log.py`)
 
-`ViolationLog` — `_SharedViolationLog` subclass (`bc_name="audit_integrity"`). JSONL: `$AUDIT_DIR/audit_integrity-violations/{date}.jsonl`.
+`ViolationLog` — `_SharedViolationLog` subclass (`bc_name="audit_integrity"`). JSONL: `$AUDIT_DIR/violations/audit_integrity/{date}.jsonl`.
 
 ### parity-only 주의
 

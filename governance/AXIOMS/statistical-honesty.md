@@ -107,7 +107,7 @@ annual:    "full review + self-disable check"
 | `~/.agents/skills/stage6-brief-author/SKILL.md` | brief 산출 직전 final redact pass — forbidden wording substring 검사 |
 | `~/.agents/skills/audit-process/SKILL.md` | 주간 룰 위반 횟수 집계 |
 | `~/.agents/skills/audit-outcome/SKILL.md` | 분기 4-tier 비교 → tier_2 vs tier_1 outperform check |
-| `domains/audit_integrity/main.py` | 4-tier paper trade state 일별 결정론 갱신 ($AUDIT_DIR/shadow-portfolio-state.json) — F-6 으로 구 LLM 스킬 회수 |
+| `domains/audit_integrity/main.py` | 4-tier paper trade state 일별 결정론 갱신 ($AUDIT_DIR/shadow-portfolio/state.json) — F-6 으로 구 LLM 스킬 회수 |
 | `domains/audit_integrity/init_shadow_state.py` | shadow state 초기화 (`python -m domains.audit_integrity.init_shadow_state`, initial_capital_krw=1억) |
 
 ---

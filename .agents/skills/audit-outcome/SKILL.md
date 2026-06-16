@@ -35,7 +35,7 @@ description: Investment 파이프라인 분기 outcome audit. 4-tier shadow port
 
 ## 처리 흐름
 
-1. `$AUDIT_DIR/shadow-portfolio-state.json` read → 분기 판단 (Mode A/B/C)
+1. `$AUDIT_DIR/shadow-portfolio/state.json` read → 분기 판단 (Mode A/B/C)
 2. Mode A: 각 tier 분기 수익률 계산, tier 비교, sample_gate 적용, self-disable check
 3. 통계 계산은 모두 `domains.audit_integrity.stat_tests` helper 인용 (G6)
 

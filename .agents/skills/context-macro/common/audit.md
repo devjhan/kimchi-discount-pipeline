@@ -11,7 +11,7 @@
 
 ## JSONL 로그
 
-`$AUDIT_DIR/macro-violations/{YYYY-MM-DD}.jsonl` — append-only. universe / screener 와 동일 패턴.
+`$AUDIT_DIR/violations/macro/{YYYY-MM-DD}.jsonl` — append-only. universe / screener 와 동일 패턴.
 
 ## ViolationLog 구조
 

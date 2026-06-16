@@ -51,11 +51,23 @@ agent toolchain 은 `.env*` 파일 직접 접근 차단 (env-guard hook); 단
 | `NOTIFY_CHANNELS` | brief notify dispatcher | CSV — `slack,gmail` 형식 |
 | `NOTIFY_SLACK_CHANNEL` | Slack adapter | 발송 채널 ID |
 | `NOTIFY_EMAIL_TO` / `NOTIFY_EMAIL_FROM` | Gmail adapter | 수신 / 발신 주소 |
+| `DEEPSEEK_API_KEY` | llm dispatcher (옵셔널) | DeepSeek chat |
+| `EMBEDDING_API_KEY` | segment 벡터 인덱스 (`segment_index_main`) | semantic 세그먼트 멤버십 전용. 부재 시 semantic leaf UNKNOWN(비매칭) graceful (ADR-0012). 발급: platform.openai.com |
+| `EMBEDDING_BASE_URL` | 위와 함께 (옵셔널) | 기본 `https://api.openai.com/v1`. OpenAI-호환 게이트웨이 시 override |
+| `EMBEDDING_MODEL` | 위와 함께 (옵셔널) | 기본 `text-embedding-3-small` (OpenAI 계통) |
 
 `KIS_ACCOUNT_NUMBER` 는 G9b read-only 정책 활성 시 6종 endpoint
 (주식잔고조회 / 실현손익 / 일별체결 / 매수가능 / 매도가능수량 / 계좌자산) 호출에
 사용된다. 매매/주문 endpoint 는 코드 부재 + Bash deny + policy whitelist 의 3중
 차단으로 절대 호출되지 않는다 (G9a/G9c).
+
+`EMBEDDING_*` 는 segment-scoped profile 의 **semantic 분류**(concept anchor cosine)에만
+쓰인다 (ADR-0012). 벡터 인덱스는 `python -m domains.universe.segment_index_main` 가
+`telemetry/segments/vectors.sqlite` 에 적재한다. 벡터 가속은 `pip install -e '.[semantic]'`
+(sqlite-vec) — 미설치 시 stdlib `sqlite3` + brute-force cosine 로 정확 degrade (KR 특수상황
+규모 충분). 키 부재/오프라인 시 semantic leaf 는 UNKNOWN(비매칭) graceful, rule-based
+선택 속성(scalar)은 계속 동작. 회사 공개 공시 텍스트가 제3자 임베딩 API 로 전송됨
+(ADR-0012 10-a 사용자 결정) — 키 값 노출 금지 (G21).
 
 ### `governance/runtime-policy.yaml` + `.local.yaml`
 
@@ -87,7 +99,7 @@ Stage 5 sizing helper (`sizing.py`) 의 G12 boundary 결정.
 
 `current_drawdown_pct` / `current_cash_pct` 자동화 우선순위 (`sizing.py`):
 1. portfolio.yaml 명시값 (사용자 override)
-2. `$POSITIONS_DIR/_derived-{date}.json` (`portfolio_state_derive` 산출)
+2. `$POSITIONS_DIR/_account/derived-{date}.json` (`portfolio_state_derive` 산출)
 3. 0 fallback (둘 다 미가용)
 
 ### `config/user/behavior.yaml`
@@ -125,11 +137,17 @@ Stage 5 sizing helper (`sizing.py`) 의 G12 boundary 결정.
 | portfolio_state_derive             | — | — | — | — | — | — | — |
 | breadth_fetch (Stage 0a)           | — | — | — | — | — | — | — |
 | ingest-external-signal (skill)     | — | — | — | — | — | — | — |
+| segment_index_main (벡터 build)    | — | — | — | — | ✓¹ | — | — |
 | `daily_pipeline.sh` USER_ACK gate  | ✓ | — | — | — | — | — | — |
 
 `USER_ACK gate` 가 fail (3 flag 어느 하나 false) 면 helper 자체는 모두
 실행되지만 사이즈 권고 보류 + warning 노출. 첫 활성화는 사용자가
 `runtime-policy.local.yaml` 작성 후 3 flag true 변경.
+
+¹ `segment_index_main` 의 `DART_API_KEY` 는 `DartTickerTextSource`(사업의 내용 본문)
+용이며 `--texts-file` 수기 큐레이션으로 대체 가능. 추가로 semantic 벡터화에는
+`EMBEDDING_API_KEY`(위 `.env` 표) 가 필요하다 — 부재 시 scalar 만 적재하고 semantic
+멤버십은 UNKNOWN 으로 graceful degrade.
 
 ---
 

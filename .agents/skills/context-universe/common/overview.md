@@ -40,7 +40,7 @@ domains/universe/
 | 입력 (env) | `DART_API_KEY`, `KIS_APP_KEY` 등 | `.env` via `_boundary.load_env()` |
 | 입력 (date) | KST `AsOfClock` | `domains/_shared/time/clock.py` |
 | 출력 | `$TRAIL_TODAY/01-universe.json` (envelope `investment-stage1-universe-v1`) | `_boundary.resolve_path("trail_today")` |
-| 출력 (audit log) | `$AUDIT_DIR/universe-violations/{date}.jsonl` | JSONL append |
+| 출력 (audit log) | `$AUDIT_DIR/violations/universe/{date}.jsonl` | JSONL append |
 | 출력 (handoff) | stdout 1줄 stage handoff summary | `_boundary.emit_summary` |
 
 ## DDD 규약

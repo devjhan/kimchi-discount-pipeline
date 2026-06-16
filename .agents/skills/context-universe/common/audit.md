@@ -34,7 +34,7 @@ class ViolationLog:
 
 ## JSONL 로그 위치
 
-`$AUDIT_DIR/universe-violations/{YYYY-MM-DD}.jsonl` — append-only
+`$AUDIT_DIR/violations/universe/{YYYY-MM-DD}.jsonl` — append-only
 
 ## Severity 정책
 

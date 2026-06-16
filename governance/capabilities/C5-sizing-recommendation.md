@@ -16,7 +16,7 @@ goal     각 후보에 "얼마나" 를 생존 우선 제약 하에서 권고
 trigger  Stage 4 thesis candidates 존재 (04-thesis-candidates.json)
 stage    Stage 5 sizing — fractional Kelly(1/4~1/2) + asymmetry budget + regime cash band
 input    config/user/portfolio.yaml (total_capital_krw — 필수) +
-         telemetry/positions/_derived-{date}.json (drawdown/cash% 자동 파생)
+         telemetry/positions/_account/derived-{date}.json (drawdown/cash% 자동 파생)
 output   operations/{date}/05-sizing-recommendation.json
 guard    context 없으면 omit (G12) · 단일 종목 25% cap · Σ Kelly ≤ 0.5 · drawdown -15% 시 절반
 ```

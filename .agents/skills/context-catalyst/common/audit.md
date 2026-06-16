@@ -7,7 +7,7 @@
 
 ## Code-defined invariant (main.py 미연결 — 의도된 behavior-preserving)
 
-- **G7 citation 형식** (`audit/invariants.py:validate_g7_citations`) — 각 event 의 `source_citation` + `metadata["additional_citations"]` 를 G7 정규식 검사. **현재 main.py 가 호출 안 함** — healthy run 은 `catalyst-violations` 파일을 생성하지 않음 (구 catalyst_scan 과 behavior-preserving).
+- **G7 citation 형식** (`audit/invariants.py:validate_g7_citations`) — 각 event 의 `source_citation` + `metadata["additional_citations"]` 를 G7 정규식 검사. **현재 main.py 가 호출 안 함** — healthy run 은 `violations/catalyst` 파일을 생성하지 않음 (구 catalyst_scan 과 behavior-preserving).
 
 > universe 와의 차이: universe 는 실제 호출, catalyst 는 함수 보유하되 미연결.
 
@@ -27,7 +27,7 @@ class ViolationLog:
 
 ## JSONL 로그 위치
 
-`$AUDIT_DIR/catalyst-violations/{YYYY-MM-DD}.jsonl` — append-only. 현재는 config_build 실패 시에만 생성.
+`$AUDIT_DIR/violations/catalyst/{YYYY-MM-DD}.jsonl` — append-only. 현재는 config_build 실패 시에만 생성.
 
 ## 적용 G-guard
 

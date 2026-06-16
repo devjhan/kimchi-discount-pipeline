@@ -20,7 +20,7 @@ pure / I/O 0 — 가격은 `price_for` callback 으로 주입. dispatch 순서: 
 
 ## Paper-trade record (trade log)
 
-`ClosedTrade` — `tier`(CSV routing) / `trade_id` / `ticker` / `entry_date` / `entry_price_krw` / `exit_date` / `exit_price_krw` / `return_pct` / `reason` (enum: `falsifier_triggered|30_day_holding_max|rebalance|catalyst_inactive`). `io/trade_log.append_closed_trades(trades)` → `$AUDIT_DIR/trade-log-{tier_key}.csv`.
+`ClosedTrade` — `tier`(CSV routing) / `trade_id` / `ticker` / `entry_date` / `entry_price_krw` / `exit_date` / `exit_price_krw` / `return_pct` / `reason` (enum: `falsifier_triggered|30_day_holding_max|rebalance|catalyst_inactive`). `io/trade_log.append_closed_trades(trades)` → `$AUDIT_DIR/shadow-portfolio/trade-log-{tier_key}.csv`.
 
 ## NAV / return tracking
 

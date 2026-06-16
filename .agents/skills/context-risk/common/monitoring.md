@@ -18,11 +18,11 @@ thesis_path(ticker) -> Path
 
 ## positions_sync (계좌 read-only 동기화)
 
-`sync_account(*, date, env, account: KisAccountPort) -> AccountSummary` — KIS read 6 endpoint 호출. policy disabled 또는 KIS env 부재 시 graceful skip. `KisAutoTradeBlocked` 는 re-raise (exit 2). 산출: `_summary-{date}.json` + per-ticker `balance-{date}.json`.
+`sync_account(*, date, env, account: KisAccountPort) -> AccountSummary` — KIS read 6 endpoint 호출. policy disabled 또는 KIS env 부재 시 graceful skip. `KisAutoTradeBlocked` 는 re-raise (exit 2). 산출: `_account/summary-{date}.json` + per-ticker `balance-{date}.json`.
 
 ## portfolio_state_derive (파생 상태)
 
-`derive_state(*, positions_dir, date, lookback_days=365) -> DerivedState` — `_summary-{date}.json` scan → peak / current → `compute_drawdown_pct` / `compute_cash_pct`. 산출 `_derived-{date}.json` 이 sizing drawdown brake 를 먹임.
+`derive_state(*, positions_dir, date, lookback_days=365) -> DerivedState` — `_account/summary-{date}.json` scan → peak / current → `compute_drawdown_pct` / `compute_cash_pct`. 산출 `_account/derived-{date}.json` 이 sizing drawdown brake 를 먹임.
 
 ## 5a thesis_sync (projection)
 

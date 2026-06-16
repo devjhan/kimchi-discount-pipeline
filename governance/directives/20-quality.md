@@ -94,21 +94,31 @@ logger.info("...")   # logging 모듈 사용 — 본 시스템 표준 아님
 
 ---
 
-## D-Q-5 — 관측성: `$AUDIT_DIR` 에 audit/log/state 분리
+## D-Q-5 — 관측성: `telemetry/` retention class 분리 + registry SSoT
 
-**근거**: `_hook_audit.log` (hook telemetry) / `cron-logs/run-{date}.log` (cron stdout/stderr) / `shadow-portfolio-state.json` (cross-day state) 가 서로 다른 lifecycle. 한 파일에 섞으면 retention 정책 충돌.
+**근거**: telemetry 산출물은 lifecycle(수명·재생성 가능성)이 서로 다르다 — append-only 증거 /
+living state / point-in-time 스냅샷 / 실행 로그를 한 곳에 섞으면 retention 정책이 충돌한다.
+ADR-0008 을 5 보존 클래스(PERMANENT/STATE/SNAPSHOT/BINARY/EPHEMERAL)로 세분하고, 산출물 종류는
+`infrastructure/_common/telemetry_registry.py` `REGISTRY` 에 선언한다 (SSoT). 상세는
+`/context-telemetry` 스킬.
 
-✅ 표준 layout (모두 `$AUDIT_DIR` 하위)
+✅ 표준 layout (concern/생산자 별 subdir; 경로는 `$AUDIT_DIR` = `telemetry/audit`)
 ```
-_hook_audit.log               # 모든 hook 의 ALLOW/BLOCK/WARN append
-cron-logs/run-{date}.log      # cron orchestrator stdout/stderr
-shadow-portfolio-state.json   # cross-day paper trade state
-trade-log-{tier}.csv          # 4-tier shadow portfolio 진입/청산 기록
-process-{YYYY-WW}.md          # 주간 process audit 산출
-outcome-{YYYY-Q}.md           # 분기 outcome audit 산출
+audit/shadow-portfolio/state.json          # 4-tier paper trade state          [STATE]
+audit/shadow-portfolio/trade-log-{tier}.csv # tier별 진입/청산 (append)          [PERMANENT]
+audit/scheduler-state/scheduler-state-{date}.json  # launchd/cron drift          [SNAPSHOT]
+audit/violations/{bc}/{date}.jsonl         # BC별 룰 위반 (append)              [PERMANENT]
+audit/breadth/macro-breadth-{date}.json    # SPX breadth 스냅샷                  [PERMANENT]
+audit/subsidiaries/subsidiaries-audit-{date}.json  # 자회사 audit               [PERMANENT]
+audit/process-{YYYY-WW}.md                 # 주간 process audit (skill 산출)
+audit/outcome-{YYYY-Q}.md                  # 분기 outcome audit (skill 산출)
 ```
+> 실행 로그(`cron/run-{date}.log`)는 `telemetry/logs/` (EPHEMERAL, gitignore) — `$AUDIT_DIR` 아님.
+> 구 hook telemetry(`_hook_audit.log`)는 ADR-0010 으로 hook 파기와 함께 제거됨.
 
-**Hook**: `inject_only` — 새 audit type 추가 시 본 directive 참조.
+**재발 방지**: 신 산출물 종류는 `REGISTRY` 등록 강제 — 미등록 파일은 retention GC 가 ORPHAN 으로
+보고, arch 테스트 `test_live_telemetry_has_no_orphans` 가 드리프트를 red 로 만든다.
+정리: `make telemetry-gc` (dry-run) / `make telemetry-gc-apply`.
 
 ---
 

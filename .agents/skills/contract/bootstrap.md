@@ -87,13 +87,13 @@ YYYY-MM-DD (KST 기준)
 | Position drift (일별) | `$POSITIONS_DIR/{ticker}/drift-{date}.md` |
 | Position expiry (일별 5d) | `$POSITIONS_DIR/{ticker}/expiry-{date}.md` |
 | Position postmortem | `$POSITIONS_DIR/{ticker}/postmortem.md` |
-| Positions sync summary (KIS) | `$POSITIONS_DIR/_summary-{date}.json` |
-| Portfolio derived state | `$POSITIONS_DIR/_derived-{date}.json` |
+| Positions sync summary (KIS) | `$POSITIONS_DIR/_account/summary-{date}.json` |
+| Portfolio derived state | `$POSITIONS_DIR/_account/derived-{date}.json` |
 | External signal ingest | `$EXTERNAL_SIGNAL_INTAKE_DIR/{ticker}/{date}-{seq}.md` |
 | Process audit (주간) | `$AUDIT_DIR/process-{YYYY-WW}.md` |
 | Outcome audit (분기) | `$AUDIT_DIR/outcome-{YYYY-Q}.md` |
-| Shadow portfolio state | `$AUDIT_DIR/shadow-portfolio-state.json` |
-| Trade log (4 tier) | `$AUDIT_DIR/trade-log-{tier}.csv` |
+| Shadow portfolio state | `$AUDIT_DIR/shadow-portfolio/state.json` |
+| Trade log (4 tier) | `$AUDIT_DIR/shadow-portfolio/trade-log-{tier}.csv` |
 | Self-disable trigger | `$AUDIT_DIR/disable-trigger.json` |
 
 ### Storage Hard Rules

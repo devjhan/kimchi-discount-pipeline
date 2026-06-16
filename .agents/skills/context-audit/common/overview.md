@@ -42,7 +42,7 @@ domains/audit_integrity/
 | 입력 (Yahoo) | KIS fallback | `_boundary.yahoo_fetch_daily_ohlcv` (게이트 `resolve_allow_yahoo_fallback`) |
 | 입력 (config) | `thresholds.yaml.statistics` | `_boundary.load_thresholds` |
 | 입력 (universe/verdicts) | `$TRAIL_TODAY/01-universe.json` / `02-quality-filter.json` | `_boundary.resolve_trail_dir` |
-| 입출력 (state) | `$AUDIT_DIR/shadow-portfolio-state.json` | `_boundary.write_output_safely` (G20) |
+| 입출력 (state) | `$AUDIT_DIR/shadow-portfolio/state.json` | `_boundary.write_output_safely` (G20) |
 
 ## CLI
 
@@ -51,9 +51,9 @@ domains/audit_integrity/
 
 ## 산출물
 
-- `$AUDIT_DIR/shadow-portfolio-state.json` — accumulator
-- `$AUDIT_DIR/trade-log-{tier}.csv` — tier 별 closed trade
-- `$AUDIT_DIR/audit_integrity-violations/{date}.jsonl` — violation log
+- `$AUDIT_DIR/shadow-portfolio/state.json` — accumulator
+- `$AUDIT_DIR/shadow-portfolio/trade-log-{tier}.csv` — tier 별 closed trade
+- `$AUDIT_DIR/violations/audit_integrity/{date}.jsonl` — violation log
 - (read-only outcome skill): `$AUDIT_DIR/outcome-{YYYY-Q}.md` / `$AUDIT_DIR/disable-trigger.json`
 
 ## init_shadow_state.py 특수 역할

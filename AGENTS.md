@@ -17,6 +17,7 @@
 | `domains/risk_engine/` (Stage 5) 코드 | `/context-risk` |
 | `domains/policy/` (Enrich-Cutoff) 코드 | `/context-policy` |
 | `domains/audit_integrity/` 코드 | `/context-audit` |
+| `telemetry/` 산출물 읽기/쓰기/정리 · 보존(retention) 정책 | `/context-telemetry` |
 | Stage 2 정성 lens 평가 | `/stage2-quality-lens` |
 | Stage 4 thesis 작성/검증 | `/stage4-thesis-auditor` |
 | Stage 6 daily brief 합성 | `/stage6-brief-author` |
@@ -92,7 +93,7 @@
 | `domains/` | 기계적 실행 — BC별 Python (macro, universe, screener, catalyst, risk_engine, policy, audit_integrity) |
 | `infrastructure/` | 외부 I/O (DART, KIS, Yahoo, FRED, notify, scheduling, _common/utils.py) |
 | `operations/` | 일별 파이프라인 산출물 (`{YYYY-MM-DD}/`) |
-| `telemetry/` | cross-day 감사·관측 (audit, positions, nav-history, logs, policy_drafts) |
+| `telemetry/` | cross-day 감사·관측 증거 (audit, positions, nav-history, external_signals, segments, logs, policy_drafts) — 산출물 종류·역할·보존 정책은 `/context-telemetry` |
 | `config/` | 사용자 입력 (user/, signals/) |
 | `applications/` | 실행 진입점 (run_daily_local.sh, daily_pipeline.sh) |
 | `.agents/skills/` | Zed project-local skills |
