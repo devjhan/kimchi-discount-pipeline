@@ -44,6 +44,14 @@ class VectorIndexPort(Protocol):
         """ticker 벡터 vs concept anchor 벡터 코사인. 둘 중 하나라도 부재 → None."""
         ...
 
+    def get_vector(self, kind: str, key: str) -> "list[float] | None":
+        """저장된 벡터 (kind, key) 반환. 부재 → None.
+
+        seed-centroid 산식 검증 / calibration 분포 측정 / 디버깅용 (멤버십 판정 경로는
+        cosine/top_k 사용). 구현은 저장 포맷에서 float 리스트로 복원해 반환한다.
+        """
+        ...
+
     def top_k(self, concept: str, k: int) -> list[tuple[str, float]]:
         """concept anchor 에 가장 가까운 ticker top-k [(ticker, cosine), ...] 내림차순."""
         ...

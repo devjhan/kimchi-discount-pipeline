@@ -68,6 +68,10 @@ class InMemoryVectorIndex:
             return None
         return _cosine(tv["vector"], cv["vector"])
 
+    def get_vector(self, kind: str, key: str) -> list[float] | None:
+        rec = self._vectors.get((kind, key))
+        return list(rec["vector"]) if rec else None
+
     def top_k(self, concept: str, k: int) -> list[tuple[str, float]]:
         cv = self._vectors.get(("concept", concept))
         if cv is None or k < 1:

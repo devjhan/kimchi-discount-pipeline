@@ -22,7 +22,10 @@ from infrastructure._common import utils
 def test_example_governance_loads() -> None:
     concepts = ConceptRegistry(root=utils.concepts_dir())
     c = concepts.load_latest("holdco_value_trap")
-    assert c is not None and c.default_threshold == 0.78
+    # v2: seed-centroid concept (multi-seed). 멤버십 임계는 segment selector(holdco_value_large)
+    # 가 carry 하므로 concept.default_threshold 는 null (Task 6 calibration).
+    assert c is not None and c.concept_id == "holdco_value_trap"
+    assert len(c.seed_tickers) >= 2  # multi-seed centroid
 
     named = SegmentProfileRegistry(root=utils.segment_profiles_dir())
     pc = named.load_latest("holdco_value_floor")

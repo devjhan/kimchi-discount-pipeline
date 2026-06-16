@@ -132,16 +132,24 @@ def embedding_has_key(env: dict[str, str]) -> bool:
     return _embedding.has_embedding_key(env)
 
 
+# 임베딩 입력 cap (chars) — text-embedding-3-* per-input 8191 토큰 한계 회피 (G8 graceful 보강).
+_EMBED_TEXT_MAX_CHARS = 2000
+
+
 def ticker_text_source(env: dict[str, str], *, lookback_days: int = 460) -> Any | None:
-    """DART 사업보고서 "사업의 내용" 기반 TickerTextSource (14-b production source).
+    """DART 사업보고서 MD&A(이사의 경영진단) 기반 TickerTextSource (Task 6 production source).
 
-    벡터 인덱스 build(Task 9)의 per-ticker 임베딩 텍스트 출처. corp_index(stock_code→
-    corp_code) 와 최신 사업보고서 검색 날짜창(기본 ~15개월)을 바인딩한 fetch 를
-    ``DartTickerTextSource`` 에 주입한다. DART 키 부재 / corp_index 로드 실패 → ``None``
-    (build 는 수기 source 만 사용 — graceful). 본 source 는 종목별 fetch 실패 시 '' 반환.
+    벡터 인덱스 build 의 per-ticker 임베딩 텍스트 출처. corp_index(stock_code→corp_code) 와
+    최신 사업보고서 검색 날짜창(기본 ~15개월)을 바인딩한 fetch 를 ``DartTickerTextSource`` 에
+    주입한다. DART 키 부재 / corp_index 로드 실패 → ``None`` (build 는 수기 source 만 사용 —
+    graceful). 본 source 는 종목별 fetch 실패 시 '' 반환.
 
-    NOTE: DART document.xml 본문 추출은 best-effort (인코딩·포맷 비정형) — 운영 투입 전
-    실제 보고서로 검증 필요(infrastructure.dart.extract_business_content_from_document).
+    텍스트 우선순위 (핸드오프 §4 2-a / §11): **MD&A(이사의 경영진단 및 분석의견)** 1차 —
+    경영진의 추세·전망 서술이라 지주/운영 코호트 분리 신호가 강하다. MD&A 부재/추출 실패
+    (보고서 미제출/비정형) → **'사업의 내용'** fallback (운영 사실이라도 빈 텍스트보다 낫다).
+
+    NOTE: DART document.xml 본문 추출은 best-effort (인코딩·포맷 비정형) — 운영 투입 전 실제
+    보고서로 검증 필요(라이브 하네스 applications.verify_dart_business_content --section mda).
     """
     if not _dart.has_dart_key(env):
         return None
@@ -158,13 +166,26 @@ def ticker_text_source(env: dict[str, str], *, lookback_days: int = 460) -> Any 
     bgn_de, end_de = bgn.isoformat(), end.isoformat()
 
     def _fetch(corp_code: str) -> str:
-        return _dart.fetch_business_content(
-            api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
-        )
+        # MD&A 1차 — 코호트 분리 신호 강함 (Task 6 §4 2-a). 부재/추출 실패 시 사업의 내용
+        # fallback (§11 기본 정책). 둘 다 실패하면 DartTickerTextSource 가 '' 로 degrade.
+        try:
+            return _dart.fetch_mda(
+                api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
+            )
+        except _dart.DartUnavailable:
+            return _dart.fetch_business_content(
+                api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
+            )
 
     from domains._shared.adapters.ticker_text import DartTickerTextSource
 
-    return DartTickerTextSource(fetch=_fetch, corp_index=corp_index)
+    # 임베딩 입력 길이 cap — text-embedding-3-* 의 per-input 한계는 8191 토큰.
+    # 한국어 MD&A 본문(~20000자)은 이를 크게 초과해 OpenAI 가 400 을 반환하므로, 의미 신호가
+    # 가장 강한 머리말만 임베딩한다. 2000자는 최악 토큰밀도에서도 한계 이내(여유 마진) +
+    # 코호트 분류에 충분한 경영진단 개요 신호.
+    return DartTickerTextSource(
+        fetch=_fetch, corp_index=corp_index, max_chars=_EMBED_TEXT_MAX_CHARS
+    )
 
 
 def now_kst() -> datetime:
