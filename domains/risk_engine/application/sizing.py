@@ -78,7 +78,7 @@ def _portfolio_context_from_yaml(*, date: str | None = None) -> tuple[dict[str, 
 
     우선순위:
         1. portfolio.yaml override (사용자 명시값, drawdown/cash 각각)
-        2. _derived-{date}.json (자동 derive — positions_sync 후 portfolio_state_derive 산출)
+        2. _account/derived-{date}.json (자동 derive — positions_sync 후 portfolio_state_derive 산출)
         3. 0 fallback (drawdown), None (cash — band 검사 skip)
 
     total_capital_krw 는 사용자 manual 입력만 (자동 derive 안 함). 미입력 시 G12 boundary.
@@ -130,7 +130,7 @@ def _portfolio_context_from_yaml(*, date: str | None = None) -> tuple[dict[str, 
             drawdown = float(derived["current_drawdown_pct"])
             warnings.append(
                 f"drawdown derived from positions_sync — {drawdown:.4f} "
-                f"(source: _derived-{date}.json)"
+                f"(source: _account/derived-{date}.json)"
             )
         except (TypeError, ValueError):
             warnings.append(
@@ -151,7 +151,7 @@ def _portfolio_context_from_yaml(*, date: str | None = None) -> tuple[dict[str, 
             current_cash_pct = float(derived["current_cash_pct"])
             warnings.append(
                 f"cash% derived from positions_sync — {current_cash_pct:.4f} "
-                f"(source: _derived-{date}.json)"
+                f"(source: _account/derived-{date}.json)"
             )
         except (TypeError, ValueError):
             warnings.append(

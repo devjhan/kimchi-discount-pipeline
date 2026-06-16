@@ -4,8 +4,8 @@
 로직은 두 layer 로 분리:
 - ``domain/portfolio_state.py``      — 순수 (DerivedState value object /
                                        compute_drawdown_pct / compute_cash_pct). IO 0.
-- ``application/portfolio_state.py`` — orchestration + IO (_summary scan / citation /
-                                       _derived-{date}.json write).
+- ``application/portfolio_state.py`` — orchestration + IO (_account/summary scan / citation /
+                                       _account/derived-{date}.json write).
 
 본 모듈은 ``python -m domains.risk_engine.portfolio_state_derive`` 진입점 + 공개 심볼
 re-export. G6 (결정론) · G9 (read-only) · G20 (덮어쓰기 금지).

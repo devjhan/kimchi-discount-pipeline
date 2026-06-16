@@ -1,8 +1,9 @@
 """Portfolio drawdown / cash% derive — orchestration + IO.
 
 F-8: 순수 산식 + value object (`domain/portfolio_state.py`) 위의 application layer.
-positions_sync 의 `_summary-{date}.json` 누적분 scan / citation 조립 / `_derived-{date}.json`
-write. top-level `risk_engine/portfolio_state_derive.py` 는 thin CLI delegator.
+positions_sync 의 `_account/summary-{date}.json` 누적분 scan / citation 조립 /
+`_account/derived-{date}.json` write. top-level `risk_engine/portfolio_state_derive.py`
+는 thin CLI delegator.
 
 Hard guards: G7 (citation) · G8 (summary 0개 → skip_reason) · G9 (read-only) · G20.
 """
@@ -47,7 +48,7 @@ STAGE_NAME = "portfolio-state-derive"
 
 
 def _summary_file(positions_dir: Path, date: str) -> Path:
-    return positions_dir / f"_summary-{date}.json"
+    return positions_dir / "_account" / f"summary-{date}.json"
 
 
 def _load_summary(p: Path) -> dict[str, Any] | None:
@@ -64,7 +65,7 @@ def _load_summary(p: Path) -> dict[str, Any] | None:
 def _enumerate_summary_dates(
     positions_dir: Path, end_date: str, lookback_days: int
 ) -> list[tuple[str, Path]]:
-    """end_date 기준 과거 lookback_days 일치 _summary-YYYY-MM-DD.json 들을 enumerate.
+    """end_date 기준 과거 lookback_days 일치 _account/summary-YYYY-MM-DD.json 들을 enumerate.
 
     파일 미존재 일자는 skip — 모든 거래일에 sync 실행이 안 됐을 수 있음.
     """
@@ -220,7 +221,7 @@ def main() -> int:
     )
     envelope["payload"] = asdict(state)
 
-    out_path = positions_dir / f"_derived-{date}.json"
+    out_path = positions_dir / "_account" / f"derived-{date}.json"
     final = write_output_safely(out_path, envelope)
 
     emit_summary_line(

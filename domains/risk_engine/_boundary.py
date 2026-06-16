@@ -50,6 +50,15 @@ def resolve_positions_dir() -> Path:
     return _utils.positions_dir()
 
 
+def resolve_account_dir() -> Path:
+    """``telemetry/positions/_account`` 절대경로 — account-level 산출물(summary→derived) 루트.
+
+    per-ticker ``{ticker}/`` 디렉토리와 분리된 계좌 단위 산출물 그룹 ($POSITIONS_ACCOUNT_DIR
+    env 우선, 미설정 시 positions_dir()/_account).
+    """
+    return _utils.positions_account_dir()
+
+
 def resolve_trail_dir(date: str | None = None) -> Path:
     """오늘(또는 지정 일자)의 trail 디렉토리 절대경로 ($TRAIL_TODAY env 우선)."""
     return _utils.trail_dir(date)
@@ -108,13 +117,13 @@ def commit_thesis(thesis: Any) -> Path:
 def load_derived_state(
     date: str, *, positions_dir: Path | None = None
 ) -> dict[str, Any] | None:
-    """``_derived-{date}.json`` payload read (sizing fallback).
+    """``_account/derived-{date}.json`` payload read (sizing fallback).
 
     sizing → portfolio_state_derive 모듈 순환 의존을 끊기 위해 read 를 본 게이트에 둠.
     파일 미존재 / parse 실패 → None (caller graceful).
     """
     root = positions_dir if positions_dir is not None else resolve_positions_dir()
-    p = root / f"_derived-{date}.json"
+    p = root / "_account" / f"derived-{date}.json"
     if not p.exists():
         return None
     try:

@@ -21,8 +21,9 @@ from domains.risk_engine import portfolio_state_derive as psd
 
 
 def _write_summary(positions_dir: Path, date: str, payload: dict) -> Path:
-    """positions_sync 가 쓰는 envelope 형식으로 _summary-{date}.json 작성."""
-    p = positions_dir / f"_summary-{date}.json"
+    """positions_sync 가 쓰는 envelope 형식으로 _account/summary-{date}.json 작성."""
+    p = positions_dir / "_account" / f"summary-{date}.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
     envelope = {
         "schema": "investment-positions-sync-v1",
         "date": date,
@@ -81,7 +82,8 @@ def test_corrupt_summary_graceful(isolated_workspace):
         pdir, "2026-05-11", {"total_assets_krw": 100_000_000, "cash_krw": 10_000_000}
     )
     # corrupt yesterday
-    bad = pdir / "_summary-2026-05-10.json"
+    bad = pdir / "_account" / "summary-2026-05-10.json"
+    bad.parent.mkdir(parents=True, exist_ok=True)
     bad.write_text("{ not json", encoding="utf-8")
 
     state = psd.derive_state(positions_dir=pdir, date="2026-05-11", lookback_days=5)
@@ -102,7 +104,9 @@ def test_load_derived_returns_payload(isolated_workspace, tmp_path):
         "schema": "investment-portfolio-derived-v1",
         "payload": derived_payload,
     }
-    (pdir / "_derived-2026-05-11.json").write_text(
+    dp = pdir / "_account" / "derived-2026-05-11.json"
+    dp.parent.mkdir(parents=True, exist_ok=True)
+    dp.write_text(
         json.dumps(envelope), encoding="utf-8"
     )
     out = psd.load_derived(pdir, "2026-05-11")

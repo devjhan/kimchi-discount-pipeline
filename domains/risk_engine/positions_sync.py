@@ -6,7 +6,7 @@ domains/risk_engine/positions_sync.py — KIS 계좌 read-only sync.
 보유 종목 / 평가 / 매수가능 / 매도가능 / 실현 PnL / 일별 체결 / 총자산을 조회하고
 다음 산출물을 생성:
 
-    $POSITIONS_DIR/_summary-{date}.json
+    $POSITIONS_DIR/_account/summary-{date}.json
     $POSITIONS_DIR/{ticker}/balance-{date}.json    (보유 종목별)
 
 본 helper 는 G9b/G9c 정책 (`kis.read_only_account.enabled` whitelist) 위에서만
@@ -48,6 +48,7 @@ from domains.risk_engine._boundary import (
     load_env_file,
     normalize_to_trading_day,
     now_iso_kst,
+    resolve_account_dir as _account_dir,
     resolve_positions_dir as _positions_dir,
     secret_safe_log,
     write_output_safely,
@@ -305,12 +306,17 @@ def sync_account(
 
 
 def write_artifacts(summary: AccountSummary, env: dict[str, str]) -> list[Path]:
-    """summary + per-ticker snapshot 파일 작성. G20 .{N}.json suffix."""
+    """summary + per-ticker snapshot 파일 작성. G20 .{N}.json suffix.
+
+    account-level summary 는 ``_account/summary-{date}.json`` (derived 계보와 동거),
+    per-ticker balance 는 ``{ticker}/balance-{date}.json``.
+    """
     positions_dir = _positions_dir()
+    account_dir = _account_dir()
     written: list[Path] = []
 
-    # 1) summary
-    summary_path = positions_dir / f"_summary-{summary.date}.json"
+    # 1) summary (account-level)
+    summary_path = account_dir / f"summary-{summary.date}.json"
     envelope = base_report_envelope(
         schema=SCHEMA_VERSION,
         date=summary.date,

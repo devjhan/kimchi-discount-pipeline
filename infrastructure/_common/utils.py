@@ -128,8 +128,32 @@ def audit_dir() -> Path:
     return _env_or("telemetry/audit", "AUDIT_DIR")
 
 
+def telemetry_dir() -> Path:
+    """telemetry/ — cross-day 감사·관측 증거 루트 (audit / positions / nav-history /
+    external_signals / segments / logs / policy_drafts 의 부모).
+
+    retention GC / telemetry artifact registry 의 스캔 루트. $TELEMETRY_DIR override
+    (테스트 격리 seam). 하위 subdir helper(audit_dir / positions_dir 등)는 각자의
+    env override 를 별도 보유 — 본 helper 는 GC 가 트리 전체를 훑을 때의 단일 진입점.
+    """
+    return _env_or("telemetry", "TELEMETRY_DIR")
+
+
 def positions_dir() -> Path:
     return _env_or("telemetry/positions", "POSITIONS_DIR")
+
+
+def positions_account_dir() -> Path:
+    """telemetry/positions/_account — account-level 산출물(summary→derived 계보) 루트.
+
+    per-ticker ``{KR_xxxxxx}/`` 디렉토리와 분리된 *계좌 단위* 산출물 그룹. KIS sync 스냅샷
+    (``summary-{date}.json``) → 그로부터 파생된 portfolio state (``derived-{date}.json``)
+    의 계보가 한 디렉토리에 동거한다 (leading ``_`` 로 ticker dir 과 정렬·식별 구분).
+    $POSITIONS_ACCOUNT_DIR 가 set 이면 우선, 아니면 positions_dir()/_account 로 파생
+    (→ $POSITIONS_DIR override 가 자동 전파, 테스트 격리 seam 보존).
+    """
+    env = os.environ.get("POSITIONS_ACCOUNT_DIR")
+    return Path(env) if env else (positions_dir() / "_account")
 
 
 def nav_history_dir() -> Path:
