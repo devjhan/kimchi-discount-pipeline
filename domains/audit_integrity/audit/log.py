@@ -1,6 +1,6 @@
 """Violation log — ``domains/_shared/audit/log.ViolationLog`` 의 thin subclass shim.
 
-``bc_name="audit_integrity"`` baked-in. 기록 위치: ``$AUDIT_DIR/audit_integrity-violations/{date}.jsonl``.
+``bc_name="audit_integrity"`` baked-in. 기록 위치: ``$AUDIT_DIR/violations/audit_integrity/{date}.jsonl``.
 """
 from __future__ import annotations
 
