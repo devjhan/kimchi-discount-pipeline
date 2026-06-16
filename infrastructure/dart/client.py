@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable, Sequence
 
 from infrastructure._common.utils import FetchError, safe_http_json
 
@@ -494,6 +494,24 @@ _NEXT_SECTION_MARKERS = (
     "임원 및 직원",
     "이사의 경영진단",
 )
+
+# "IV. 이사의 경영진단 및 분석의견"(MD&A) — semantic 임베딩 텍스트 source (Task 6 / ADR-0012).
+# 운영 사실(사업의 내용)보다 경영진의 추세·전망 서술이라 지주/운영 코호트 분리 신호가 강하다
+# (핸드오프 §4 결정 2-a). 짧은 형태 "이사의 경영진단" 이 긴 제목의 부분문자열이라 둘 다 포착.
+_MDA_MARKER = "이사의 경영진단"
+# MD&A 다음에 통상 등장하는 정기보고서 섹션 제목 — 본문 절단 경계 휴리스틱
+# (서식 순서: IV. 이사의 경영진단 → V. 회계감사인의 감사의견 → VI. 이사회 → … → XI. 그 밖에).
+_MDA_NEXT_SECTION_MARKERS = (
+    "회계감사인의 감사의견",
+    "감사인의 감사의견",
+    "이사회 등 회사의 기관",
+    "주주에 관한 사항",
+    "임원 및 직원",
+    "계열회사",
+    "대주주",
+    "그 밖에 투자자 보호",
+    "그 밖에 필요한 사항",
+)
 _TAG_RE = None  # lazy compile (regex 모듈 import 회피)
 
 
@@ -579,30 +597,32 @@ def _is_cross_reference(text: str, after: int) -> bool:
     return "참조" in window or "참고" in window
 
 
-def _segment_from(text: str, start: int, *, max_chars: int) -> str:
-    """``start`` 부터 다음 정기보고서 섹션 제목(또는 ``max_chars``)까지 본문 segment."""
+def _segment_section(
+    text: str, start: int, *, marker: str, next_markers: Sequence[str], max_chars: int
+) -> str:
+    """``start`` 부터 다음 정기보고서 섹션 제목(``next_markers``) 또는 ``max_chars`` 까지 본문."""
     segment = text[start:]
     cut = len(segment)
-    for marker in _NEXT_SECTION_MARKERS:
-        idx = segment.find(marker, len(_BUSINESS_CONTENT_MARKER))
+    for m in next_markers:
+        idx = segment.find(m, len(marker))
         if 0 <= idx < cut:
             cut = idx
     return segment[:cut].strip()[:max_chars]
 
 
-def _select_business_content_start(text: str, *, max_chars: int) -> int:
-    """'사업의 내용' 실제 섹션 시작 위치. 목차(맨 앞) + 상호참조 회피 (라이브 검증 발견).
+def _select_section_start(
+    text: str, *, marker: str, next_markers: Sequence[str], max_chars: int
+) -> int:
+    """섹션 ``marker`` 의 실제 본문 시작 위치. 목차(맨 앞)+상호참조 회피 (라이브 검증 휴리스틱).
 
-    DART 실제 보고서에서 '사업의 내용' 은 (1) 목차, (2) 실제 섹션 제목, (3) 후속 섹션의
-    상호참조("앞의 '사업의 내용'을 참조") 로 여러 번 등장한다. 단순 ``rfind`` (마지막 등장)
-    은 보통 상호참조라 본문 대신 참조 문구를 잡는다(라이브 검증: LG 003550 → 43자 참조 문구,
-    삼성전자 005930 → 참조 문구 중간부터 시작).
+    DART 실제 보고서에서 섹션 제목은 (1) 목차, (2) 실제 섹션 제목, (3) 후속 섹션의 상호참조
+    ("앞의 '…'을 참조") 로 여러 번 등장한다. 단순 ``rfind`` 는 보통 상호참조라 본문 대신
+    참조 문구를 잡는다('사업의 내용' 라이브 검증: LG 003550 / 삼성전자 005930).
 
     선택 규칙: (1) 상호참조 신호가 없는 등장만 후보로, (2) 그 중 다음 섹션 경계까지 *본문이
-    가장 긴* 등장을 채택한다. 실제 섹션은 목차 항목(다음 섹션 제목이 곧장 뒤따라 짧음)이나
+    가장 긴* 등장을 채택. 실제 섹션은 목차 항목(다음 섹션 제목이 곧장 뒤따라 짧음)이나
     참조 문구보다 길다. 동률이면 더 앞선 위치. 비-참조 등장이 없으면 전체에서 최장 채택.
     """
-    marker = _BUSINESS_CONTENT_MARKER
     mlen = len(marker)
     occurrences: list[int] = []
     i = text.find(marker)
@@ -612,20 +632,27 @@ def _select_business_content_start(text: str, *, max_chars: int) -> int:
     if not occurrences:
         return -1
     pool = [p for p in occurrences if not _is_cross_reference(text, p + mlen)] or occurrences
-    return max(pool, key=lambda p: (len(_segment_from(text, p, max_chars=max_chars)), -p))
+    return max(
+        pool,
+        key=lambda p: (
+            len(
+                _segment_section(
+                    text, p, marker=marker, next_markers=next_markers, max_chars=max_chars
+                )
+            ),
+            -p,
+        ),
+    )
 
 
-def extract_business_content_from_document(
-    zip_bytes: bytes, *, max_chars: int = 20000
+def _extract_section_from_document(
+    zip_bytes: bytes, *, marker: str, next_markers: Sequence[str], max_chars: int
 ) -> str:
-    """document.xml ZIP → '사업의 내용' 본문 텍스트 (best-effort, truncated).
+    """document.xml ZIP → 섹션(``marker``) 본문 텍스트 (best-effort, truncated).
 
-    휴리스틱: 상호참조/목차가 아닌 실제 '사업의 내용' 섹션(``_select_business_content_start``)
-    부터 다음 정기보고서 섹션 제목 또는 ``max_chars`` 까지 추출. 마커 부재 → '' (G8 — 날조
-    금지, caller 가 빈 텍스트를 skip).
-
-    NOTE: DART 원문 XML 포맷은 비정형·인코딩 다양 → 본 추출은 best-effort 다. 운영 투입
-    전 실제 보고서로 검증 필요(라이브 endpoint 미검증).
+    휴리스틱: 상호참조/목차가 아닌 실제 섹션(``_select_section_start``)부터 다음 정기보고서
+    섹션 제목 또는 ``max_chars`` 까지 추출. 마커 부재 → '' (G8 — 날조 금지, caller 가 빈
+    텍스트를 skip).
     """
     try:
         with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
@@ -641,11 +668,73 @@ def extract_business_content_from_document(
     text = _strip_tags_to_text(markup)
     if not text:
         return ""
-    # 실제 섹션 시작 위치 — 목차(맨 앞)·상호참조("'사업의 내용'을 참조")를 회피 (라이브 검증).
-    start = _select_business_content_start(text, max_chars=max_chars)
+    start = _select_section_start(
+        text, marker=marker, next_markers=next_markers, max_chars=max_chars
+    )
     if start < 0:
         return ""
-    return _segment_from(text, start, max_chars=max_chars)
+    return _segment_section(
+        text, start, marker=marker, next_markers=next_markers, max_chars=max_chars
+    )
+
+
+def extract_business_content_from_document(
+    zip_bytes: bytes, *, max_chars: int = 20000
+) -> str:
+    """document.xml ZIP → '사업의 내용' 본문 텍스트 (best-effort, truncated).
+
+    마커 부재 → '' (G8). NOTE: DART 원문 XML 포맷은 비정형·인코딩 다양 → best-effort.
+    운영 투입 전 실제 보고서로 검증(라이브 하네스 applications.verify_dart_business_content).
+    """
+    return _extract_section_from_document(
+        zip_bytes,
+        marker=_BUSINESS_CONTENT_MARKER,
+        next_markers=_NEXT_SECTION_MARKERS,
+        max_chars=max_chars,
+    )
+
+
+def extract_mda_from_document(zip_bytes: bytes, *, max_chars: int = 20000) -> str:
+    """document.xml ZIP → 'IV. 이사의 경영진단 및 분석의견'(MD&A) 본문 텍스트 (best-effort).
+
+    semantic 코호트 분류(지주 vs 운영)의 임베딩 텍스트 source (Task 6 / 핸드오프 §4 2-a).
+    마커 부재 → '' (G8 — caller 가 빈 텍스트를 skip 하거나 사업의 내용으로 fallback).
+    """
+    return _extract_section_from_document(
+        zip_bytes,
+        marker=_MDA_MARKER,
+        next_markers=_MDA_NEXT_SECTION_MARKERS,
+        max_chars=max_chars,
+    )
+
+
+def _fetch_section(
+    api_key: str,
+    *,
+    corp_code: str,
+    bgn_de: str,
+    end_de: str,
+    extractor: Callable[..., str],
+    label: str,
+    max_chars: int,
+    timeout: float,
+) -> str:
+    """corp 최신 사업보고서를 1회 받아 ``extractor`` 로 섹션 본문 추출 (공통 경로).
+
+    Raises:
+        DartUnavailable: key 부재 / 보고서 부재 / fetch 실패 / 섹션 추출 실패.
+        → caller(TickerTextSource adapter)가 '' 로 graceful degrade.
+    """
+    rcept_no = find_latest_annual_report_rcept_no(
+        api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
+    )
+    if not rcept_no:
+        raise DartUnavailable(f"사업보고서 부재: corp_code={corp_code}")
+    zip_bytes = _download_document_zip(api_key, rcept_no, timeout=timeout)
+    text = extractor(zip_bytes, max_chars=max_chars)
+    if not text:
+        raise DartUnavailable(f"{label} 추출 실패: rcept_no={rcept_no}")
+    return text
 
 
 def fetch_business_content(
@@ -661,15 +750,43 @@ def fetch_business_content(
 
     Raises:
         DartUnavailable: key 부재 / 보고서 부재 / fetch 실패 / 본문 추출 실패.
-        → caller(TickerTextSource adapter)가 '' 로 graceful degrade.
     """
-    rcept_no = find_latest_annual_report_rcept_no(
-        api_key, corp_code=corp_code, bgn_de=bgn_de, end_de=end_de
+    return _fetch_section(
+        api_key,
+        corp_code=corp_code,
+        bgn_de=bgn_de,
+        end_de=end_de,
+        extractor=extract_business_content_from_document,
+        label="'사업의 내용'",
+        max_chars=max_chars,
+        timeout=timeout,
     )
-    if not rcept_no:
-        raise DartUnavailable(f"사업보고서 부재: corp_code={corp_code}")
-    zip_bytes = _download_document_zip(api_key, rcept_no, timeout=timeout)
-    text = extract_business_content_from_document(zip_bytes, max_chars=max_chars)
-    if not text:
-        raise DartUnavailable(f"'사업의 내용' 추출 실패: rcept_no={rcept_no}")
-    return text
+
+
+def fetch_mda(
+    api_key: str,
+    *,
+    corp_code: str,
+    bgn_de: str,
+    end_de: str,
+    max_chars: int = 20000,
+    timeout: float = 30.0,
+) -> str:
+    """corp 최신 사업보고서의 'IV. 이사의 경영진단 및 분석의견'(MD&A) 본문 텍스트.
+
+    semantic 코호트 분류의 1차 임베딩 텍스트 source (Task 6). 부재 시 caller 가 사업의 내용
+    으로 fallback (핸드오프 §11 기본 정책).
+
+    Raises:
+        DartUnavailable: key 부재 / 보고서 부재 / fetch 실패 / MD&A 추출 실패.
+    """
+    return _fetch_section(
+        api_key,
+        corp_code=corp_code,
+        bgn_de=bgn_de,
+        end_de=end_de,
+        extractor=extract_mda_from_document,
+        label="'이사의 경영진단 및 분석의견'",
+        max_chars=max_chars,
+        timeout=timeout,
+    )
