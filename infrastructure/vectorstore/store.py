@@ -169,6 +169,11 @@ class SqliteVectorStore:
         row = cur.fetchone()
         return (row[0], row[1]) if row else None
 
+    def get_vector(self, kind: str, key: str) -> list[float] | None:
+        """저장된 벡터 (kind, key) → float 리스트. 부재 → None (centroid 검증/calibration 용)."""
+        row = self._vector_row(kind, key)
+        return _unpack(row[0]) if row else None
+
     def cosine(self, ticker: str, concept: str) -> float | None:
         """ticker 벡터 vs concept anchor 벡터 코사인 유사도. 둘 중 하나라도 부재/차원불일치 → None."""
         tv = self._vector_row("ticker", ticker)
