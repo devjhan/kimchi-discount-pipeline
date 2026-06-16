@@ -185,7 +185,7 @@ def test_violation_log_writes_jsonl_and_tracks_blocking(
     assert log.has_blocking is True
 
     # JSONL 2 entries
-    log_path = tmp_path / "universe-violations" / "2026-05-17.jsonl"
+    log_path = tmp_path / "violations" / "universe" / "2026-05-17.jsonl"
     assert log_path.exists()
     lines = log_path.read_text(encoding="utf-8").strip().split("\n")
     assert len(lines) == 2

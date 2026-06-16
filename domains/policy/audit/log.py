@@ -2,7 +2,7 @@
 
 ``bc_name="policy"`` baked-in + policy ``_boundary`` 경유 audit_dir 해석으로
 기존 positional 시그니처 (``ViolationLog(clock)``) 와 conftest monkeypatch seam
-(``_boundary.resolve_path``) 을 보존. 기록 위치: ``$AUDIT_DIR/policy-violations/{date}.jsonl``.
+(``_boundary.resolve_path``) 을 보존. 기록 위치: ``$AUDIT_DIR/violations/policy/{date}.jsonl``.
 """
 from __future__ import annotations
 

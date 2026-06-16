@@ -4,10 +4,10 @@ usage:
     python -m domains.audit_integrity.main --date 2026-05-17
     python -m domains.audit_integrity.main --allow-yahoo-fallback
 
-state (``$AUDIT_DIR/shadow-portfolio-state.json``) 부재 시 Mode B — init 안내 후 exit 2.
+state (``$AUDIT_DIR/shadow-portfolio/state.json``) 부재 시 Mode B — init 안내 후 exit 2.
 모든 가격 source 미가용 시 Mode C — snapshot 미저장 + warning. paper trade only (G9).
 
-산출: shadow-portfolio-state.json (atomic in-place update) + trade-log-{tier}.csv (append).
+산출: shadow-portfolio/state.json (atomic in-place update) + shadow-portfolio/trade-log-{tier}.csv (append).
 분기 비교 / self-disable 는 investment-audit-outcome 스킬 (stat_tests 소비) 책임 — 본 엔진은
 결정론 state 만 갱신.
 """
@@ -64,7 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     state = state_store.load_state()
     if state is None:
         print(
-            "[ERROR] shadow-portfolio-state.json 부재 (Mode B). 먼저 init:\n"
+            "[ERROR] shadow-portfolio/state.json 부재 (Mode B). 먼저 init:\n"
             "        python -m domains.audit_integrity.init_shadow_state",
             file=sys.stderr,
         )

@@ -3,7 +3,7 @@
 각 CatalystEvent 의 ``source_citation`` (+ metadata 의 additional_citations) 이 G7
 형식인지 검사. 본 helper 는 재사용 가능한 순수 함수로, main 의 runtime invariant
 wiring 에서 소비할 수 있다 (구 catalyst_scan 은 violation log 를 쓰지 않았으므로
-정상 run 에서 catalyst-violations 파일은 생성되지 않는다 — behavior-preserving).
+정상 run 에서 violations/catalyst 파일은 생성되지 않는다 — behavior-preserving).
 """
 from __future__ import annotations
 

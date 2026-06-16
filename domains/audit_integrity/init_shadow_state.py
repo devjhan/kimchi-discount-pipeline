@@ -58,10 +58,10 @@ def main() -> int:
 
     config = load_yaml_config(args.config)
     date = normalize_to_trading_day(args.date)
-    out_path = _audit_dir() / "shadow-portfolio-state.json"
+    out_path = _audit_dir() / "shadow-portfolio" / "state.json"
     if out_path.exists() and not args.force:
         print(
-            f"[ERROR] shadow-portfolio-state.json already exists: {out_path}\n"
+            f"[ERROR] shadow-portfolio/state.json already exists: {out_path}\n"
             "        --force 사용 시 새 .{N}.json suffix로 별도 보존됨 (기존 file 보존, 덮어쓰지 않음).",
             file=sys.stderr,
         )

@@ -1,7 +1,7 @@
 """Violation log — ``domains/_shared/audit/log.ViolationLog`` 의 thin subclass shim.
 
 ``bc_name="catalyst"`` baked-in + catalyst ``_boundary`` 경유 audit_dir 해석.
-기록 위치: ``$AUDIT_DIR/catalyst-violations/{date}.jsonl``.
+기록 위치: ``$AUDIT_DIR/violations/catalyst/{date}.jsonl``.
 """
 from __future__ import annotations
 

@@ -34,8 +34,10 @@ def resolve_path(alias: str, *, date: str | None = None) -> Path:
         return _utils.audit_dir()
     if alias == "trail_today":
         return _utils.trail_dir(date)
+    if alias == "shadow_dir":
+        return _utils.audit_dir() / "shadow-portfolio"
     if alias == "shadow_state":
-        return _utils.audit_dir() / "shadow-portfolio-state.json"
+        return _utils.audit_dir() / "shadow-portfolio" / "state.json"
     if alias == "kis_token":
         return _utils.repo_path("secrets", ".kis_token.json")
     raise KeyError(f"audit_integrity._boundary.resolve_path: unknown alias {alias!r}")

@@ -1,6 +1,6 @@
 """Shadow portfolio state store — load + atomic in-place update.
 
-state 파일 (``$AUDIT_DIR/shadow-portfolio-state.json``) 은 *append-update* 되는 living
+state 파일 (``$AUDIT_DIR/shadow-portfolio/state.json``) 은 *append-update* 되는 living
 accumulator (일별 immutable trail 산출물과 다름). 따라서 G20 ``.{N}.json`` suffix 가
 아니라 같은 파일을 atomic replace (tmp write → os.replace) 로 갱신한다. daily_snapshots /
 quarterly_history 는 누적만 되고 과거 history 를 잃지 않는다 (append-only spirit).

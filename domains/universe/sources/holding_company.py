@@ -11,7 +11,7 @@ enrichment chain 활성화.
 1. subsidiaries_map 비어있으면 entries=() + warning (할 게 없음)
 2. parent ticker 마다 UniverseEntry 생성 (DART 의존 없음 — subsidiaries.yaml 만 필요)
 3. DART_API_KEY 가 있으면 best-effort audit log 생성 (사업보고서 파싱 + manual SSoT merge)
-   ``$AUDIT_DIR/subsidiaries-audit-{date}.json``. audit 실패는 entries 에 영향 없음.
+   ``$AUDIT_DIR/subsidiaries/subsidiaries-audit-{date}.json``. audit 실패는 entries 에 영향 없음.
 
 config:
     - type: "holding_company"
@@ -181,7 +181,9 @@ class HoldingCompanySource(DiscoverySource):
                 }
             )
 
-        audit_path = audit_dir / f"subsidiaries-audit-{date_str}.json"
+        subsidiaries_dir = audit_dir / "subsidiaries"
+        subsidiaries_dir.mkdir(parents=True, exist_ok=True)
+        audit_path = subsidiaries_dir / f"subsidiaries-audit-{date_str}.json"
         _boundary.write_output_safely(audit_path, audit_payload)
         warnings.append(
             f"{self.name}: subsidiaries audit log {audit_path.name} "

@@ -43,6 +43,17 @@ def _init_state_dict():
     }
 
 
+def _state_file(audit: Path) -> Path:
+    return audit / "shadow-portfolio" / "state.json"
+
+
+def _write_state(audit: Path, data: dict) -> Path:
+    p = _state_file(audit)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(data), encoding="utf-8")
+    return p
+
+
 @pytest.fixture
 def env_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     audit = tmp_path / "audit"
@@ -84,14 +95,12 @@ def test_main_mode_b_missing_state_exits_2(env_dirs):
 
 def test_main_daily_update_writes_state_and_trades(env_dirs):
     audit, trail = env_dirs
-    (audit / "shadow-portfolio-state.json").write_text(
-        json.dumps(_init_state_dict()), encoding="utf-8"
-    )
+    _write_state(audit, _init_state_dict())
     _write_trail(trail)
 
     assert main_mod.main(["--date", DATE]) == 0
 
-    state = json.loads((audit / "shadow-portfolio-state.json").read_text(encoding="utf-8"))
+    state = json.loads(_state_file(audit).read_text(encoding="utf-8"))
     tiers = state["tiers"]
     # tier_1: KR:000001 진입
     assert [h["ticker"] for h in tiers["tier_1_mechanical"]["current_holdings"]] == ["KR:000001"]
@@ -103,7 +112,7 @@ def test_main_daily_update_writes_state_and_trades(env_dirs):
     assert DATE in state["daily_snapshots"]
 
     # trade-log: tier_3 청산 CSV 기록
-    csv3 = audit / "trade-log-tier_3_random.csv"
+    csv3 = audit / "shadow-portfolio" / "trade-log-tier_3_random.csv"
     assert csv3.exists()
     body = csv3.read_text(encoding="utf-8").strip().splitlines()
     assert body[0].startswith("trade_id,ticker")
@@ -112,13 +121,11 @@ def test_main_daily_update_writes_state_and_trades(env_dirs):
 
 def test_main_mode_c_no_prices_skips_save(env_dirs, monkeypatch):
     audit, trail = env_dirs
-    (audit / "shadow-portfolio-state.json").write_text(
-        json.dumps(_init_state_dict()), encoding="utf-8"
-    )
+    _write_state(audit, _init_state_dict())
     _write_trail(trail)
     # 모든 가격 미가용 → citations 0 → Mode C (snapshot 미저장)
     monkeypatch.setattr(PriceSource, "price_for", lambda self, t: (None, None))
-    before = (audit / "shadow-portfolio-state.json").read_text(encoding="utf-8")
+    before = _state_file(audit).read_text(encoding="utf-8")
     assert main_mod.main(["--date", DATE]) == 0
-    after = (audit / "shadow-portfolio-state.json").read_text(encoding="utf-8")
+    after = _state_file(audit).read_text(encoding="utf-8")
     assert before == after  # state 보존 (snapshot 미저장)

@@ -191,10 +191,11 @@ def main(argv: list[str] | None = None) -> int:
     result = compute_breadth(tickers=tickers)
     out_path = write_breadth_yaml(result, no_overwrite=args.no_overwrite)
 
-    # audit envelope — telemetry/audit/macro-breadth-{date}.json
+    # audit envelope — telemetry/audit/breadth/macro-breadth-{date}.json
     audit_dir = _boundary.resolve_path("operations_audit")
-    audit_dir.mkdir(parents=True, exist_ok=True)
-    audit_path = audit_dir / f"macro-breadth-{date}.json"
+    breadth_dir = audit_dir / "breadth"
+    breadth_dir.mkdir(parents=True, exist_ok=True)
+    audit_path = breadth_dir / f"macro-breadth-{date}.json"
     envelope = _boundary.base_report_envelope(
         schema=SCHEMA_VERSION,
         date=date,

@@ -213,14 +213,14 @@ def quarterly_returns(
     state_path: Path, tier: str, n_quarters: int | None = None
 ) -> list[float]:
     """
-    shadow-portfolio-state.json 의 tiers[tier].quarterly_history list[float] 를 반환.
+    shadow-portfolio/state.json 의 tiers[tier].quarterly_history list[float] 를 반환.
 
     quarterly_history schema (domains.audit_integrity.main 결정론 엔진이 갱신):
         [{"quarter": "2026-Q1", "return_pct": 0.034}, ...]
         또는 plain [0.034, -0.012, ...] (legacy)
 
     Args:
-        state_path: $AUDIT_DIR/shadow-portfolio-state.json
+        state_path: $AUDIT_DIR/shadow-portfolio/state.json
         tier: 'tier_0_passive_index' | 'tier_1_mechanical' | 'tier_2_llm_filtered' | 'tier_3_random'
         n_quarters: 마지막 N개 분기만 반환 (None 이면 전체)
 

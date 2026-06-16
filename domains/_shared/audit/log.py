@@ -1,8 +1,9 @@
 """Violation log — append-only JSONL (BC ``bc_name`` 파라미터화, SSoT).
 
 screener / universe / policy / macro 가 복붙해 온 ``ViolationLog`` 의 단일 구현.
-유일한 BC 간 차이였던 디렉토리 이름 (``{bc}-violations``) 을 ``bc_name`` 생성자
-인자로 추출했다. ``$AUDIT_DIR/{bc_name}-violations/{date}.jsonl`` 에 기록.
+BC 간 차이였던 디렉토리 이름을 ``bc_name`` 생성자 인자로 추출했다 (concern 별
+subdir 그룹화, ADR-0008 retention class). ``$AUDIT_DIR/violations/{bc_name}/{date}.jsonl``
+에 기록.
 
 각 BC 의 ``audit/log.py`` 는 본 클래스를 ``bc_name`` baked-in 한 thin subclass 로
 감싸 기존 positional 시그니처 ``ViolationLog(clock)`` 와 그 BC 의 ``_boundary``
@@ -27,7 +28,7 @@ class ViolationLog:
     """BC 파라미터화 일별 JSONL append-only log.
 
     Args:
-        bc_name: 디렉토리 prefix (예: ``"screener"`` → ``screener-violations/``).
+        bc_name: violations subdir 이름 (예: ``"screener"`` → ``violations/screener/``).
         clock: 기록 일자 결정 (``trading_date``).
         audit_dir: ``$AUDIT_DIR`` 해석 override. ``Path`` 또는 ``() -> Path``
             callable (BC ``_boundary.resolve_path("operations_audit")`` 주입용 —
@@ -65,7 +66,8 @@ class ViolationLog:
     def _log_path(self) -> Path:
         return (
             self._resolve_audit_dir()
-            / f"{self._bc_name}-violations"
+            / "violations"
+            / self._bc_name
             / f"{self._clock.trading_date.isoformat()}.jsonl"
         )
 

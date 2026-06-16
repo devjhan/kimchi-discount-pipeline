@@ -77,11 +77,11 @@ def _violation(severity: str = "warning") -> GuardViolation:
 
 @pytest.mark.unit
 def test_violation_log_path_uses_bc_name(tmp_path: Path) -> None:
-    """``{bc_name}-violations/{date}.jsonl`` 디렉토리 prefix 가 bc_name 으로 결정."""
+    """``violations/{bc_name}/{date}.jsonl`` subdir 가 bc_name 으로 결정."""
     clock = AsOfClock.at_market_close(date(2026, 5, 17))
     log = ViolationLog("catalyst", clock, audit_dir=tmp_path)
     log.record(_violation())
-    expected = tmp_path / "catalyst-violations" / "2026-05-17.jsonl"
+    expected = tmp_path / "violations" / "catalyst" / "2026-05-17.jsonl"
     assert expected.exists()
 
 
@@ -91,7 +91,7 @@ def test_violation_log_accepts_callable_audit_dir(tmp_path: Path) -> None:
     clock = AsOfClock.at_market_close(date(2026, 5, 17))
     log = ViolationLog("screener", clock, audit_dir=lambda: tmp_path)
     log.record(_violation())
-    assert (tmp_path / "screener-violations" / "2026-05-17.jsonl").exists()
+    assert (tmp_path / "violations" / "screener" / "2026-05-17.jsonl").exists()
 
 
 @pytest.mark.unit
@@ -114,7 +114,7 @@ def test_violation_log_writes_jsonl_and_tracks_blocking(tmp_path: Path) -> None:
     )
     assert log.has_blocking is True
 
-    log_path = tmp_path / "universe-violations" / "2026-05-17.jsonl"
+    log_path = tmp_path / "violations" / "universe" / "2026-05-17.jsonl"
     lines = log_path.read_text(encoding="utf-8").strip().split("\n")
     assert len(lines) == 2
     first = json.loads(lines[0])
@@ -135,4 +135,4 @@ def test_violation_log_default_audit_dir_falls_back_to_utils(
     clock = AsOfClock.at_market_close(date(2026, 5, 17))
     log = ViolationLog("macro", clock)  # no audit_dir injected
     log.record(_violation())
-    assert (tmp_path / "macro-violations" / "2026-05-17.jsonl").exists()
+    assert (tmp_path / "violations" / "macro" / "2026-05-17.jsonl").exists()
