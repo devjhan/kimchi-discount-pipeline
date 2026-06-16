@@ -86,6 +86,70 @@ def test_screener_time_package_removed() -> None:
         importlib.import_module("domains.screener.time.calendar")
 
 
+@pytest.mark.unit
+def test_ticker_text_source_none_without_dart_key() -> None:
+    """DART 키 부재 → None (build 는 수기 source 만, graceful)."""
+    from domains.universe import _boundary
+
+    assert _boundary.ticker_text_source({}) is None
+
+
+@pytest.mark.unit
+def test_ticker_text_source_prefers_mda_then_business_fallback(monkeypatch) -> None:
+    """Task 6: ticker_text_source 의 fetch 는 MD&A 1차, 부재 시 사업의 내용 fallback.
+
+    네트워크 0 — corp_index 로드 + 두 fetch 를 stub. MD&A 성공 종목은 MD&A 텍스트,
+    MD&A 가 DartUnavailable 인 종목은 사업의 내용 텍스트를 반환해야 한다.
+    """
+    from domains.universe import _boundary
+
+    monkeypatch.setattr(
+        _boundary._dart,
+        "load_or_fetch_corp_code_index",
+        lambda *a, **k: {"003550": "00120021", "000270": "00106641"},
+    )
+
+    def _fake_mda(api_key, *, corp_code, bgn_de, end_de, **kw):
+        if corp_code == "00120021":
+            return "MD&A 경영진단 본문 (지주)"
+        raise _boundary._dart.DartUnavailable("MD&A 부재")
+
+    def _fake_business(api_key, *, corp_code, bgn_de, end_de, **kw):
+        return "사업의 내용 본문 (fallback)"
+
+    monkeypatch.setattr(_boundary._dart, "fetch_mda", _fake_mda)
+    monkeypatch.setattr(_boundary._dart, "fetch_business_content", _fake_business)
+
+    src = _boundary.ticker_text_source({"DART_API_KEY": "x"})
+    assert src is not None
+    # MD&A 성공 → MD&A 텍스트.
+    assert "MD&A 경영진단 본문" in src.text_for("KR:003550")
+    # MD&A DartUnavailable → 사업의 내용 fallback.
+    assert "사업의 내용 본문" in src.text_for("KR:000270")
+
+
+@pytest.mark.unit
+def test_ticker_text_source_graceful_when_both_fail(monkeypatch) -> None:
+    """MD&A·사업의 내용 둘 다 실패 → '' (DartTickerTextSource 가 raise 안 함, G8)."""
+    from domains.universe import _boundary
+
+    monkeypatch.setattr(
+        _boundary._dart,
+        "load_or_fetch_corp_code_index",
+        lambda *a, **k: {"999999": "00000000"},
+    )
+
+    def _boom(api_key, *, corp_code, bgn_de, end_de, **kw):
+        raise _boundary._dart.DartUnavailable("보고서 부재")
+
+    monkeypatch.setattr(_boundary._dart, "fetch_mda", _boom)
+    monkeypatch.setattr(_boundary._dart, "fetch_business_content", _boom)
+
+    src = _boundary.ticker_text_source({"DART_API_KEY": "x"})
+    assert src is not None
+    assert src.text_for("KR:999999") == ""
+
+
 def _repo_root() -> Path:
     """본 테스트 파일 위치에서 repo root 추론 (tests/unit/test_*.py 기준)."""
     return Path(__file__).resolve().parent.parent.parent
