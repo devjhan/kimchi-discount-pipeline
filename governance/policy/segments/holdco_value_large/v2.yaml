@@ -1,0 +1,38 @@
+schema: segment-def-v1
+version: 2
+description: "대형 지주사 가치주 부분집합 — semantic(seed-centroid top_k + cosine floor) + rule(대형주) 동급 합성. 임계는 2026-06-15 curated universe(11종, text-embedding-3-large, MD&A) 실측 calibration."
+segment_id: holdco_value_large
+parent: null
+priority: 0
+profile_ref: holdco_value_floor
+selector:
+  type: and
+  children:
+    # semantic leaf 1 — top_k (1차 후보 게이트, 3-c). concept = seed-centroid(holdco_value_trap v2).
+    # 2026-06-15 실측: top 4 = 지주 seed(LG/SK/삼성물산/GS). top_k=6 은 curated 후보 수 기준 여유.
+    - type: semantic_similarity
+      concept: holdco_value_trap
+      top_k: 6
+    # semantic leaf 2 — cosine floor (절대 품질 게이트, 3-d). 실측 분리:
+    #   HOLDCO min 0.8107 vs OPER max 0.7813 (margin +0.0295) → floor 0.796 = 중간값(±0.0147 대칭).
+    #   분리 마진이 좁으므로(0.03) 사용자 재조정 가능. 임의 하향 금지(G8) — 실측 중간값 채택.
+    - type: semantic_similarity
+      concept: holdco_value_trap
+      op: ge
+      threshold: 0.796
+    # rule-based leaf — 대형주(선택 속성 namespace, screener metric_path 와 분리). market_cap_krw
+    # scalar 는 segment_index_main 이 universe(KIS) 에서 materialize.
+    - type: threshold
+      attribute: market_cap_krw
+      op: ge
+      threshold: 300000000000          # 3000억 KRW
+merge:
+  required_enrichments: union          # segment + per-ticker enrich 합집합
+  cutoff_rules: and                    # cutoff 는 AND 결합 (둘 다 통과)
+provenance:
+  committed_at: "2026-06-16T00:30:00+09:00"
+  committed_by: manual
+  trigger: "Task 6 semantic calibration (text-embedding-3-large + MD&A + seed-centroid)"
+  citations:
+    - "EMBED@2026-06-15=holdco_value_trap:HOLDCO[0.8107..0.8417] vs OPER[0.6893..0.7813] margin +0.0295"
+  rationale_ko: "지주사 NAV 할인 가치주 중 대형주 부분집합. semantic 멤버십을 seed-centroid(LG/SK/GS/삼성물산 MD&A) 대비 top_k(6)+cosine floor(0.796) 병용으로 판정. 실측 분리 마진 +0.0295 — 좁으므로 사용자 재조정 여지. 통계/아웃퍼폼 주장 없음(철학 #5/G8)."

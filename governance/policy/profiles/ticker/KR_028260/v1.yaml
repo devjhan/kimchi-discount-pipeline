@@ -1,0 +1,44 @@
+schema: policy-profile-v1
+version: 1
+description: 삼성물산은 삼성그룹 사실상 지주로 자회사·관계사 지분(삼성전자 등) 가치 비중이 크고 다각화 영업(건설/상사/패션/리조트)이
+  병존하는 NAV 할인 종목이다(사업보고서 2025.12, DART@2026-03-12=rcept_no:20260312000856). 자사주 소각(DART@2026-01-28=rcept_no:20260128800545)·현금배당(DART@2026-01-28=rcept_no:20260128800588)
+  등 주주환원 촉매가 활성화되어 NAV 할인 축소 thesis의 D/B-type edge가 작동한다. holdco_value_trap seed-centroid
+  대비 semantic cosine 0.8359로 holdco_value_large 코호트 멤버다(EMBED@2026-06-15). 단, 다각화
+  영업 병존으로 순수 holdco(LG/SK/GS) 대비 NAV 할인 구조가 상이하므로 대형 holdco 보수 floor(NAV 할인 50%+)를
+  그대로 적용해 보수적으로만 진입하며(드물게 발동 = Default No-Action), 자본배분 신호(자사주 소각/배당/자사주 매입 중 1+)
+  동반을 필수 조건으로 한다. 정량 NAV 할인%는 nav_discount enricher가 런타임에 산출한다.
+scope: ticker
+key: KR:028260
+required_enrichments:
+- nav_discount
+cutoff_rules:
+  type: and
+  name: kr028260_holdco_value_cutoff
+  children:
+  - type: threshold
+    name: nav_discount_floor
+    metric_path: enrichments.nav_discount.discount_pct
+    op: ge
+    threshold: 0.5
+  - type: signal_presence
+    name: capital_allocation
+    required_any_of:
+    - treasury_share_cancellation
+    - dividend_payment
+    - treasury_share_purchase
+provenance:
+  committed_at: '2026-06-16T11:52:37+09:00'
+  committed_by: policy
+  trigger: skill-draft
+  citations:
+  - DART@2026-01-28=rcept_no:20260128800545
+  - DART@2026-01-28=rcept_no:20260128800588
+  - DART@2026-03-12=rcept_no:20260312000856
+  rationale_ko: 삼성물산은 삼성그룹 사실상 지주로 자회사·관계사 지분(삼성전자 등) 가치 비중이 크고 다각화 영업(건설/상사/패션/리조트)이
+    병존하는 NAV 할인 종목이다(사업보고서 2025.12, DART@2026-03-12=rcept_no:20260312000856). 자사주
+    소각(DART@2026-01-28=rcept_no:20260128800545)·현금배당(DART@2026-01-28=rcept_no:20260128800588)
+    등 주주환원 촉매가 활성화되어 NAV 할인 축소 thesis의 D/B-type edge가 작동한다. holdco_value_trap seed-centroid
+    대비 semantic cosine 0.8359로 holdco_value_large 코호트 멤버다(EMBED@2026-06-15). 단, 다각화
+    영업 병존으로 순수 holdco(LG/SK/GS) 대비 NAV 할인 구조가 상이하므로 대형 holdco 보수 floor(NAV 할인 50%+)를
+    그대로 적용해 보수적으로만 진입하며(드물게 발동 = Default No-Action), 자본배분 신호(자사주 소각/배당/자사주 매입 중 1+)
+    동반을 필수 조건으로 한다. 정량 NAV 할인%는 nav_discount enricher가 런타임에 산출한다.

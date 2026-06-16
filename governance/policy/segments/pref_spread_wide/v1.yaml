@@ -1,0 +1,23 @@
+schema: segment-def-v1
+version: 1
+description: "우선주 괴리 확대 부분집합 — rule-based(scalar spread_zscore) 단일 selector. 임베딩 무의존 (semantic leaf 없음) → 키 부재에도 동작."
+segment_id: pref_spread_wide
+parent: null
+priority: 0
+profile_ref: pref_spread_floor
+selector:
+  # rule-based leaf 단독 — 선택 속성 namespace (screener metric_path 와 분리, ADR-0012 5-a).
+  # spread_zscore scalar 는 segment_index_main 이 universe enrichment 에서 materialize.
+  type: threshold
+  attribute: spread_zscore
+  op: ge
+  threshold: 2.0
+merge:
+  required_enrichments: union          # segment + per-ticker enrich 합집합
+  cutoff_rules: and                    # cutoff 는 AND 결합 (둘 다 통과)
+provenance:
+  committed_at: "2026-06-15T00:30:00+09:00"
+  committed_by: manual
+  trigger: manual
+  citations: []
+  rationale_ko: "우선주 괴리율 z-score +2σ 이상 부분집합 (rule-based 예시 — semantic 무의존). 임계는 시작값, 사용자 재조정 가능."

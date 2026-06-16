@@ -1,0 +1,43 @@
+schema: policy-profile-v1
+version: 1
+description: SK(주)는 SK그룹 지주회사로 자산 대부분이 상장·비상장 자회사 지분인 NAV 할인 가치주다(사업보고서 2025.12, DART@2026-03-18=rcept_no:20260318001157).
+  자사주 소각(DART@2026-03-10=rcept_no:20260310801475)·기업가치제고계획(고배당기업 재공시, DART@2026-03-27=rcept_no:20260327802307)
+  등 주주환원 촉매가 활성화되어 NAV 할인 축소 thesis의 D/B-type edge(구조+이벤트)가 작동한다. holdco_value_trap
+  seed-centroid 대비 semantic cosine 0.8404로 holdco_value_large 코호트 멤버다(EMBED@2026-06-15).
+  대형 holdco 보수 floor로 NAV 할인 50%+ 구간에서만, 자본배분 신호(자사주 소각/배당/자사주 매입 중 1+) 동반을 필수 조건으로
+  진입하며, 정량 NAV 할인%는 nav_discount enricher가 런타임에 산출한다. LG(주) v1 worked-example과 동일
+  코호트 패턴.
+scope: ticker
+key: KR:034730
+required_enrichments:
+- nav_discount
+cutoff_rules:
+  type: and
+  name: kr034730_holdco_value_cutoff
+  children:
+  - type: threshold
+    name: nav_discount_floor
+    metric_path: enrichments.nav_discount.discount_pct
+    op: ge
+    threshold: 0.5
+  - type: signal_presence
+    name: capital_allocation
+    required_any_of:
+    - treasury_share_cancellation
+    - dividend_payment
+    - treasury_share_purchase
+provenance:
+  committed_at: '2026-06-16T11:52:37+09:00'
+  committed_by: policy
+  trigger: skill-draft
+  citations:
+  - DART@2026-03-10=rcept_no:20260310801475
+  - DART@2026-03-27=rcept_no:20260327802307
+  - DART@2026-03-18=rcept_no:20260318001157
+  rationale_ko: SK(주)는 SK그룹 지주회사로 자산 대부분이 상장·비상장 자회사 지분인 NAV 할인 가치주다(사업보고서 2025.12,
+    DART@2026-03-18=rcept_no:20260318001157). 자사주 소각(DART@2026-03-10=rcept_no:20260310801475)·기업가치제고계획(고배당기업
+    재공시, DART@2026-03-27=rcept_no:20260327802307) 등 주주환원 촉매가 활성화되어 NAV 할인 축소 thesis의
+    D/B-type edge(구조+이벤트)가 작동한다. holdco_value_trap seed-centroid 대비 semantic cosine
+    0.8404로 holdco_value_large 코호트 멤버다(EMBED@2026-06-15). 대형 holdco 보수 floor로 NAV
+    할인 50%+ 구간에서만, 자본배분 신호(자사주 소각/배당/자사주 매입 중 1+) 동반을 필수 조건으로 진입하며, 정량 NAV 할인%는 nav_discount
+    enricher가 런타임에 산출한다. LG(주) v1 worked-example과 동일 코호트 패턴.

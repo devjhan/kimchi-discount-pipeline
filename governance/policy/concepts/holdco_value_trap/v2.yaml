@@ -1,0 +1,25 @@
+schema: segment-concept-v1
+version: 2
+description: "지주사 NAV 할인 가치주 — seed-centroid concept anchor (multi-seed, MD&A 임베딩)"
+concept_id: holdco_value_trap
+# anchor_text 는 사람용 의도 기록 — v2 부터 concept 벡터는 seed_tickers 의 임베딩 centroid
+# (build_segment_index 에서 seed_tickers 보유 시 anchor_text 미임베딩, §4 1-a). ticker 벡터와
+# 동일 장르(MD&A)라 직접 cosine 비교가 의미를 가진다(v1 의 추상 테제 ↔ 운영 사실 장르 불일치 해소).
+anchor_text: |
+  지주회사 구조로, 보유한 상장/비상장 자회사 지분가치의 합계(순자산가치, NAV) 대비
+  시가총액이 큰 폭으로 할인되어 거래되는 종목. 자산의 대부분이 자회사 지분이며,
+  배당 확대·자사주 소각·인적분할 등 주주환원/지배구조 촉매로 할인 축소가 기대되는
+  한국 특수상황(special situation) 투자 대상.
+# 대표 지주회사 multi-seed — concept 벡터 = 이들 MD&A 임베딩의 centroid.
+# (운영사 기아 000270 / 아모레 090430 은 음성 대조군 — seed 아님, calibration 분리 측정용.)
+seed_tickers:
+  - KR:003550   # (주)LG — 그룹 지주회사
+  - KR:034730   # SK(주) — 그룹 지주회사
+  - KR:078930   # GS(주) — 그룹 지주회사
+  - KR:028260   # 삼성물산 — 삼성그룹 사실상 지주(다각화 사업 병존)
+default_op: ge
+# default_threshold / default_top_k 는 declarative 기본값 — 실제 멤버십 임계는 segment selector
+# (holdco_value_large)가 carry 한다(calibration 실측으로 확정, Task F). 여기서는 미지정(null)으로
+# 두어 임의 수치 날조를 피한다(G8). selector leaf 가 명시한 threshold/top_k 가 권위.
+default_threshold: null
+default_top_k: null

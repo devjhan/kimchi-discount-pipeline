@@ -1,0 +1,19 @@
+schema: policy-profile-v1
+version: 1
+description: "우선주 괴리 확대 부분집합 enrich-cutoff 정책 (rule-based segment profile_ref 대상). 임베딩 무의존 — scalar selector 전용."
+scope: segment
+key: pref_spread_floor
+required_enrichments:
+  - spread_zscore
+cutoff_rules:
+  type: threshold
+  name: pref_spread_floor
+  metric_path: enrichments.spread_zscore.z_score
+  op: ge
+  threshold: 2.0
+provenance:
+  committed_at: "2026-06-15T00:30:00+09:00"
+  committed_by: manual
+  trigger: manual
+  citations: []
+  rationale_ko: "우선주-보통주 괴리가 자체 이력 대비 +2σ 이상 벌어진 구간만 진입(평균회귀 D-type). z_score 2.0 은 시작 임계 — 사용자 재조정 가능. 통계/아웃퍼폼 주장 없음(철학 #5/G8)."
