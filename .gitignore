@@ -59,11 +59,26 @@ operations/
 telemetry/logs/
 # telemetry/policy_drafts — commit 전 ephemeral policy draft (gitignore)
 telemetry/policy_drafts/
-# telemetry/audit (shadow-portfolio / trade-log / scheduler-state / violations / macro-breadth / subsidiaries)
-# · telemetry/positions · telemetry/nav-history (F-14: NAV 시계열 = 재생성-불가 증거)
+# telemetry/audit (shadow-portfolio/{state.json,trade-log} / scheduler-state/ / violations/{bc}/
+#   / breadth/ / subsidiaries/)  ·  telemetry/positions (_account/{summary,derived} + {ticker}/)
+# · telemetry/nav-history (F-14: NAV 시계열 = 재생성-불가 증거)
 # · telemetry/external_signals (ingest-external-signal 산출 = agent 생성 비재생성 append-only
 #   증거; redaction(G21/G22) 후 저장이라 tracked 안전 — ADR-0008 분류축상 config 아닌 telemetry)
-# 는 추적 — gitignore 하지 않음 (audit trail / 상태 스냅샷)
+# · telemetry/segments/vectors.sqlite (모델버전 의존 재생성-불가 증거, ADR-0008)
+# 는 추적 — gitignore 하지 않음 (audit trail / 상태 스냅샷 / retention class PERMANENT·STATE·SNAPSHOT·BINARY)
+
+# telemetry G20 충돌 재실행본(.{N}) untrack — 디스크엔 남되 git 추적 안 함.
+# retention GC(`make telemetry-gc-apply`)가 최신본을 canonical 로 정규화하므로 충돌본은 transient.
+# 날짜본(`-YYYY-MM-DD.ext`)은 dot-digit 패턴이 아니라 비매칭 (예: `summary-2026-06-05.json` 추적됨,
+# `summary-2026-06-05.1.json` 무시됨). logs/·policy_drafts/ 는 위에서 디렉토리째 ignore.
+telemetry/**/*.[0-9].json
+telemetry/**/*.[0-9][0-9].json
+telemetry/**/*.[0-9].jsonl
+telemetry/**/*.[0-9][0-9].jsonl
+telemetry/**/*.[0-9].md
+telemetry/**/*.[0-9][0-9].md
+telemetry/**/*.[0-9].csv
+telemetry/**/*.[0-9][0-9].csv
 
 # .cache/ — DART corp index / financials 재생성 가능 캐시 (통째 ignore).
 # F-15: top-level cache/ → 숨김 .cache/ (XDG 관례; 파일 단위 dotfile 산포 제거).

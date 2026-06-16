@@ -1,4 +1,4 @@
-.PHONY: test test-unit test-integration test-arch test-cov lint check install-dev clean
+.PHONY: test test-unit test-integration test-arch test-cov lint check install-dev clean telemetry-gc telemetry-gc-apply
 
 PYTHON ?= python3
 
@@ -35,3 +35,12 @@ test-cov:
 clean:
 	rm -rf .pytest_cache .coverage htmlcov
 	find . -type d -name __pycache__ -prune -exec rm -rf {} +
+
+# telemetry retention GC — registry(SSoT) 기반 stale/legacy/충돌본 정리.
+# telemetry-gc       : dry-run (변경 없음, 계획만 출력).
+# telemetry-gc-apply : 실제 삭제/정규화 수행 (PERMANENT/STATE/BINARY 증거 불변).
+telemetry-gc:
+	$(PYTHON) -m applications.telemetry_gc
+
+telemetry-gc-apply:
+	$(PYTHON) -m applications.telemetry_gc --apply
