@@ -51,7 +51,7 @@ agent toolchain 은 `.env*` 파일 직접 접근 차단 (env-guard hook); 단
 | `NOTIFY_CHANNELS` | brief notify dispatcher | CSV — `slack,gmail` 형식 |
 | `NOTIFY_SLACK_CHANNEL` | Slack adapter | 발송 채널 ID |
 | `NOTIFY_EMAIL_TO` / `NOTIFY_EMAIL_FROM` | Gmail adapter | 수신 / 발신 주소 |
-| `DEEPSEEK_API_KEY` | llm dispatcher (옵셔널) | DeepSeek chat |
+| `DEEPSEEK_API_KEY` | llm dispatcher (Stage 4/6, ADR-0016) | Claude Code DeepSeek 백엔드 auth — adapter 가 `ANTHROPIC_AUTH_TOKEN` 으로 주입(`ANTHROPIC_API_KEY` 제거 → Anthropic $0). 발급: platform.deepseek.com |
 | `EMBEDDING_API_KEY` | segment 벡터 인덱스 (`segment_index_main`) | semantic 세그먼트 멤버십 전용. 부재 시 semantic leaf UNKNOWN(비매칭) graceful (ADR-0012). 발급: platform.openai.com |
 | `EMBEDDING_BASE_URL` | 위와 함께 (옵셔널) | 기본 `https://api.openai.com/v1`. OpenAI-호환 게이트웨이 시 override |
 | `EMBEDDING_MODEL` | 위와 함께 (옵셔널) | 기본 `text-embedding-3-small` (OpenAI 계통) |

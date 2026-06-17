@@ -1,5 +1,10 @@
 # ADR-0027: Claude Code → Zed Agent 마이그레이션
 
+> **Amended by ADR-0016 (2026-06-17)**: 본 ADR 이 채택했던 single-turn DeepSeek
+> dispatch(`infrastructure/llm/deepseek.py`)는 회수됐다. agentic Stage 4/6 은
+> `claude` harness + DeepSeek Anthropic-호환 백엔드(vendor `claude-cli-deepseek`)로
+> 구동하며, `.claude/skills`·`CLAUDE.md` 심볼릭 브릿지가 다시 도입됐다. 상세는 ADR-0016.
+
 | 속성 | 값 |
 |---|---|
 | **ADR ID** | 0027 |

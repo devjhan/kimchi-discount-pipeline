@@ -97,6 +97,7 @@
 | `config/` | 사용자 입력 (user/, signals/) |
 | `applications/` | 실행 진입점 (run_daily_local.sh, daily_pipeline.sh) |
 | `.agents/skills/` | Zed project-local skills |
+| `.claude/skills`→`.agents/skills`, `CLAUDE.md`→`AGENTS.md` | Claude Code harness 브릿지 (심볼릭, git 커밋된 인프라 — ADR-0016). `claude` CLI 가 `CLAUDE.md`/`.claude/skills` 만 인식하므로 SSoT(`AGENTS.md`/`.agents/skills`)로 redirect. headless 호출은 슬래시/Agent SDK 대신 explicit-path 지시문 프롬프트(`run_daily_local.sh`). |
 
 ---
 
