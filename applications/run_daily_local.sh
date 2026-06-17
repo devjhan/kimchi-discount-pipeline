@@ -41,6 +41,9 @@ cd "$REPO_ROOT"
 
 export REPO_ROOT
 export TZ="${TZ:-Asia/Seoul}"
+# LLM vendor (ADR-0016): 기본 claude-cli-deepseek (claude harness + DeepSeek 백엔드, Anthropic $0).
+# rollback: LLM_VENDOR=claude-cli (순수 Anthropic) 로 호출 전 override 가능.
+export LLM_VENDOR="${LLM_VENDOR:-claude-cli-deepseek}"
 
 # CLI flag
 DATE_OVERRIDE=""
@@ -118,9 +121,10 @@ bash "$REPO_ROOT/applications/daily_pipeline.sh" --date "$DATE_KST" --phase pre-
   echo "[run_daily_local] WARN: pre-stage4 non-zero exit (계속)" >&2
 
 # 2. Stage 4 LLM (thesis-auditor) — infrastructure/llm dispatcher 경유 (F-13)
+#    슬래시 커맨드 대신 explicit-path 지시문 (Claude Code 스킬은 /로 직접 호출 불가; ADR-0016).
 echo "[run_daily_local] === 2. Stage 4 thesis-auditor ==="
 "$PY" -m infrastructure.llm.dispatcher \
-  --prompt "/stage4-thesis-auditor $DATE_KST" \
+  --prompt ".agents/skills/stage4-thesis-auditor/SKILL.md 를 읽고 거래일 $DATE_KST 로 끝까지 실행. 선행 읽기(common/·mode-*)와 핵심 불변식 준수, $TRAIL_TODAY/04-thesis-candidates.json 산출." \
   --allowed-tools "Bash,Read,Write,Edit,Glob,Grep" \
   >> "$(phase_log stage4)" 2>&1 || \
   echo "[run_daily_local] WARN: Stage 4 non-zero exit" >&2
@@ -132,9 +136,10 @@ bash "$REPO_ROOT/applications/daily_pipeline.sh" --date "$DATE_KST" --phase post
   echo "[run_daily_local] WARN: post-stage4 non-zero exit" >&2
 
 # 4. Stage 6 LLM (brief-author) — infrastructure/llm dispatcher 경유 (F-13)
+#    슬래시 커맨드 대신 explicit-path 지시문 (ADR-0016).
 echo "[run_daily_local] === 4. Stage 6 brief-author ==="
 "$PY" -m infrastructure.llm.dispatcher \
-  --prompt "/stage6-brief-author $DATE_KST" \
+  --prompt ".agents/skills/stage6-brief-author/SKILL.md 를 읽고 거래일 $DATE_KST 로 끝까지 실행. operations/$DATE_KST/daily-brief.md 산출, 새 fact/숫자 추가 금지(formatting only)." \
   --allowed-tools "Bash,Read,Write,Edit,Glob,Grep" \
   >> "$(phase_log stage6)" 2>&1 || \
   echo "[run_daily_local] WARN: Stage 6 non-zero exit" >&2
