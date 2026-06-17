@@ -26,7 +26,7 @@ except ImportError:  # noqa: F841 — graceful skip at runtime, not import time
 
 
 # 모델 ID — DeepSeek 권장 모델 (최신 stable).
-_DEFAULT_MODEL = "deepseek-chat"
+_DEFAULT_MODEL = "deepseek-v4-pro"
 
 
 class DeepSeekAdapter(LlmAdapter):
