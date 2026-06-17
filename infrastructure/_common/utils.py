@@ -71,6 +71,7 @@ SECRET_ENV_KEYS = frozenset(
         "TELEGRAM_BOT_TOKEN",
         "TELEGRAM_CHAT_ID",
         "FRED_API_KEY",
+        "DEEPSEEK_API_KEY",
     }
 )
 

@@ -21,6 +21,16 @@ class ClaudeCliAdapter(LlmAdapter):
         # binary 명시 안 하면 PATH 에서 해석 (bash `command -v claude` 와 동치).
         self._binary = binary or shutil.which("claude")
 
+    def _subprocess_env(self) -> dict[str, str] | None:
+        """``claude`` 서브프로세스에 넘길 환경.
+
+        기본 ``None`` → 부모 프로세스 env 그대로 상속 (기존 동작 불변).
+        backend redirect 가 필요한 subclass (예: DeepSeek Anthropic-호환) 가
+        override 해 ANTHROPIC_* 등을 주입한다 (vendor 종속을 bounded adapter 에
+        가둠 — D-CORE-7).
+        """
+        return None
+
     def invoke(
         self,
         prompt: str,
@@ -44,7 +54,8 @@ class ClaudeCliAdapter(LlmAdapter):
         try:
             # stdout/stderr inherit → caller (run_daily_local.sh) 의 `>> phase_log 2>&1`
             # redirect 가 claude agentic loop 출력을 그대로 캡처.
-            proc = subprocess.run(cmd)  # noqa: S603 — bounded internal cmd
+            # env=None 이면 부모 env 상속 (기본); subclass 가 backend redirect 주입.
+            proc = subprocess.run(cmd, env=self._subprocess_env())  # noqa: S603 — bounded internal cmd
         except Exception as exc:  # noqa: BLE001 — spawn 실패 graceful
             return LlmResult(
                 vendor=self.name, status="error", cmd=cmd, error=str(exc)
