@@ -7,7 +7,7 @@ domains/risk_engine/positions_sync.py — KIS 계좌 read-only sync.
 다음 산출물을 생성:
 
     $POSITIONS_DIR/_account/summary-{date}.json
-    $POSITIONS_DIR/{ticker}/balance-{date}.json    (보유 종목별)
+    $POSITIONS_DIR/{KR_xxxxxx}/balance-{date}.json    (보유 종목별)
 
 본 helper 는 G9b/G9c 정책 (`kis.read_only_account.enabled` whitelist) 위에서만
 동작 — runtime-policy.local.yaml 의 enabled=false (default) 환경에서는 graceful
@@ -119,7 +119,10 @@ def _build_per_ticker(
     ts: str,
 ) -> PerTickerSnapshot:
     """KIS output1 row 1건 → PerTickerSnapshot. 모든 숫자에 G7 citation."""
-    ticker = str(raw_holding.get("pdno") or "").strip()
+    code = str(raw_holding.get("pdno") or "").strip()
+    # 도메인 canonical 티커 형식 KR:NNNNNN (catalyst/screener/thesis 와 일치).
+    # 디렉토리는 write_artifacts 에서 KR_NNNNNN 으로 sanitize (registry ^KR_\d+$).
+    ticker = f"KR:{code}" if code else ""
     name = str(raw_holding.get("prdt_name") or "").strip()
     qty = _to_int(raw_holding.get("hldg_qty"))
     avg_price = _to_float(raw_holding.get("pchs_avg_pric"))
@@ -309,7 +312,7 @@ def write_artifacts(summary: AccountSummary, env: dict[str, str]) -> list[Path]:
     """summary + per-ticker snapshot 파일 작성. G20 .{N}.json suffix.
 
     account-level summary 는 ``_account/summary-{date}.json`` (derived 계보와 동거),
-    per-ticker balance 는 ``{ticker}/balance-{date}.json``.
+    per-ticker balance 는 ``{KR_xxxxxx}/balance-{date}.json`` (콜론 sanitize).
     """
     positions_dir = _positions_dir()
     account_dir = _account_dir()
@@ -331,7 +334,9 @@ def write_artifacts(summary: AccountSummary, env: dict[str, str]) -> list[Path]:
         ticker = snap.get("ticker") or ""
         if not ticker:
             continue
-        per_path = positions_dir / ticker / f"balance-{summary.date}.json"
+        # 콜론 sanitize: 'KR:005930' → 'KR_005930' (registry id_validator ^KR_\d+$).
+        scope_dir = ticker.replace(":", "_").replace("/", "_")
+        per_path = positions_dir / scope_dir / f"balance-{summary.date}.json"
         per_envelope = base_report_envelope(
             schema=SCHEMA_VERSION + "-perticker",
             date=summary.date,

@@ -73,7 +73,7 @@ def test_sync_account_summary_from_kis_reads() -> None:
     assert summary.realized_pnl_period == 50000.0
     assert summary.holdings_count == 1
     h = summary.holdings[0]
-    assert h["ticker"] == "005930"
+    assert h["ticker"] == "KR:005930"
     assert h["quantity"] == 10
     assert h["avg_price"] == 70000.0
     assert h["current_price"] == 80000.0
@@ -107,3 +107,22 @@ def test_fake_satisfies_port_and_surface_is_read_only() -> None:
         "fetch_realized_pnl",
         "fetch_sellable_qty",
     }
+
+
+@pytest.mark.unit
+def test_write_artifacts_uses_kr_prefixed_dir(
+    tmp_path: Any, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """per-ticker balance 디렉토리는 KR_NNNNNN (registry ^KR_\\d+$ 정합 — bare 6-digit orphan 방지)."""
+    pos_dir = tmp_path / "positions"
+    acct_dir = pos_dir / "_account"
+    monkeypatch.setattr(positions_sync, "_positions_dir", lambda: pos_dir)
+    monkeypatch.setattr(positions_sync, "_account_dir", lambda: acct_dir)
+
+    summary = sync_account(date="2026-05-15", env=_ENV, account=_FakeKisAccount())
+    written = positions_sync.write_artifacts(summary, _ENV)
+
+    rels = {p.relative_to(pos_dir).as_posix() for p in written}
+    assert "KR_005930/balance-2026-05-15.json" in rels
+    assert (pos_dir / "KR_005930").is_dir()
+    assert not (pos_dir / "005930").exists()
