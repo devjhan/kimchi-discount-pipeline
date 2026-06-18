@@ -23,6 +23,7 @@ from infrastructure.notify.adapter import (
     NotifierAdapter,
 )
 from infrastructure.notify.discord import DiscordAdapter
+from infrastructure.notify.email import EmailAdapter
 from infrastructure.notify.gmail import GmailAdapter
 from infrastructure.notify.kakao import KakaoAdapter
 from infrastructure.notify.slack import SlackAdapter
@@ -32,6 +33,7 @@ from infrastructure.notify.webhook import WebhookAdapter
 REGISTRY: dict[str, type[NotifierAdapter]] = {
     SlackAdapter.name: SlackAdapter,
     GmailAdapter.name: GmailAdapter,
+    EmailAdapter.name: EmailAdapter,
     TelegramAdapter.name: TelegramAdapter,
     KakaoAdapter.name: KakaoAdapter,
     DiscordAdapter.name: DiscordAdapter,
@@ -45,6 +47,7 @@ __all__ = [
     "NotifierAdapter",
     "SlackAdapter",
     "GmailAdapter",
+    "EmailAdapter",
     "TelegramAdapter",
     "KakaoAdapter",
     "DiscordAdapter",

@@ -29,3 +29,26 @@ def test_secret_safe_log_noop_when_key_absent() -> None:
     env = {"DEEPSEEK_API_KEY": ""}
     msg = "no secret here"
     assert secret_safe_log(msg, env) == "no secret here"
+
+
+def test_notify_secrets_in_secret_env_keys() -> None:
+    # ADR-0017 — email(SMTP) / telegram 로컬 직접 발송 secret 은 redaction 대상.
+    assert "SMTP_PASSWORD" in SECRET_ENV_KEYS
+    assert "TELEGRAM_BOT_TOKEN" in SECRET_ENV_KEYS
+    assert "TELEGRAM_CHAT_ID" in SECRET_ENV_KEYS
+
+
+def test_secret_safe_log_redacts_smtp_password() -> None:
+    env = {"SMTP_PASSWORD": "app-pw-secret-xyz"}
+    msg = "smtp auth failed for app-pw-secret-xyz"
+    redacted = secret_safe_log(msg, env)
+    assert "app-pw-secret-xyz" not in redacted
+    assert "<SMTP_PASSWORD_REDACTED>" in redacted
+
+
+def test_secret_safe_log_redacts_telegram_token() -> None:
+    env = {"TELEGRAM_BOT_TOKEN": "123:ABCsecrettoken"}
+    msg = "POST https://api.telegram.org/bot123:ABCsecrettoken/sendMessage failed"
+    redacted = secret_safe_log(msg, env)
+    assert "123:ABCsecrettoken" not in redacted
+    assert "<TELEGRAM_BOT_TOKEN_REDACTED>" in redacted

@@ -43,7 +43,7 @@ def _merged_env(base: dict[str, str] | None) -> dict[str, str]:
 def _resolve_channels(channels: list[str] | None, env: dict[str, str]) -> list[str]:
     if channels:
         return channels
-    raw = (env.get("NOTIFY_CHANNELS") or "slack").strip()
+    raw = (env.get("NOTIFY_CHANNELS") or "email,telegram").strip()
     return [c.strip() for c in raw.split(",") if c.strip()]
 
 
