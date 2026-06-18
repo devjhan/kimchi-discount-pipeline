@@ -1,11 +1,11 @@
 # ============================================================
-# operations/_user_context/portfolio.yaml.example  (template)
+# config/user/portfolio.yaml.example  (template)
 # ============================================================
 # 사용자 자본 / 위험 허용 — Stage 5 sizing helper 의 G12 boundary read.
 #
 # 사용 방법:
-#   cp operations/_user_context/portfolio.yaml.example \
-#      operations/_user_context/portfolio.yaml
+#   cp config/user/portfolio.yaml.example \
+#      config/user/portfolio.yaml
 #   # → portfolio.yaml 안에 실제 값 입력. portfolio.yaml 은 gitignore.
 #
 # 미존재 또는 total_capital_krw=null 시 stage5_sizing 이 사이즈 권고

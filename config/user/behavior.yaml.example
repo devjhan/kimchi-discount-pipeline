@@ -1,10 +1,10 @@
 # ============================================================
-# operations/_user_context/behavior.yaml.example  (template)
+# config/user/behavior.yaml.example  (template)
 # ============================================================
 # 사용자 환경별 runtime behavior switches — secret 아님.
 # 사용 방법:
-#   cp operations/_user_context/behavior.yaml.example \
-#      operations/_user_context/behavior.yaml
+#   cp config/user/behavior.yaml.example \
+#      config/user/behavior.yaml
 #   # → behavior.yaml 안에 사용자 환경 값 입력. behavior.yaml 은 gitignore.
 #
 # CLI flag (예: --allow-yahoo-fallback) 가 명시되면 본 파일 값보다 우선
