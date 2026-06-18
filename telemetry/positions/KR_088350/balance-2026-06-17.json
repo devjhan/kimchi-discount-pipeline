@@ -1,0 +1,26 @@
+{
+  "schema": "investment-positions-sync-v1-perticker",
+  "generated_at": "2026-06-17T22:52:32+09:00",
+  "date": "2026-06-17",
+  "config_path": "/Users/jhan_acc/projects/kimchi_discount_pipeline/telemetry/positions/088350/balance-2026-06-17.json",
+  "config_version": 1,
+  "payload": {
+    "ticker": "088350",
+    "name": "한화생명",
+    "quantity": 1,
+    "avg_price": 2960.0,
+    "current_price": 5700.0,
+    "eval_amount": 5700.0,
+    "purchase_amount": 2960.0,
+    "eval_pnl": 2740.0,
+    "eval_pnl_pct": 92.56,
+    "sellable_qty": 1,
+    "realized_pnl_period": null,
+    "citations": [
+      "KIS@2026-06-17T22:52:31+09:00#eval_amount@2026-06-17T22:52:31+09:00=5700.0",
+      "KIS@2026-06-17T22:52:31+09:00#eval_pnl@2026-06-17T22:52:31+09:00=2740.0",
+      "KIS@2026-06-17T22:52:31+09:00#avg_price@2026-06-17T22:52:31+09:00=2960.0",
+      "KIS@2026-06-17T22:52:31+09:00#current_price@2026-06-17T22:52:31+09:00=5700.0"
+    ]
+  }
+}

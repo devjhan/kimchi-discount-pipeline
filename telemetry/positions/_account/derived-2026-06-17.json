@@ -1,0 +1,26 @@
+{
+  "schema": "investment-portfolio-derived-v1",
+  "generated_at": "2026-06-17T22:52:32+09:00",
+  "date": "2026-06-17",
+  "config_path": "/Users/jhan_acc/projects/kimchi_discount_pipeline/telemetry/positions",
+  "config_version": 1,
+  "payload": {
+    "schema": "investment-portfolio-derived-v1",
+    "date": "2026-06-17",
+    "peak_total_assets_krw": 5700.0,
+    "peak_observed_at": "2026-06-17",
+    "current_total_assets_krw": 5700.0,
+    "current_cash_krw": 0.0,
+    "current_drawdown_pct": 0.0,
+    "current_cash_pct": 0.0,
+    "source_citations": [
+      "POSITIONS@2026-06-17={\"total_assets_krw\":5700.0}",
+      "POSITIONS@2026-06-17={\"cash_krw\":0.0}",
+      "POSITIONS@2026-06-17={\"peak_total_assets_krw\":5700.0}"
+    ],
+    "skip_reason": null,
+    "lookback_days": 365,
+    "summaries_scanned": 2,
+    "warnings": []
+  }
+}
