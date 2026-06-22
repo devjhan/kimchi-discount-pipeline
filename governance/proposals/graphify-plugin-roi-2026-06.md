@@ -184,7 +184,7 @@ Graphify가 추가할 수 있는 유일한 새 정보: **실제 Python `import` 
                          │                     │
                          ▼                     ▼
                   ┌──────────────────────────────────┐
-                  │        Stage 4 Thesis Gate        │  (skill — invest-stage4-thesis-auditor)
+                  │        Stage 4 Thesis Gate        │  (skill — stage4-thesis-auditor)
                   └──────────────┬───────────────────┘
                                  │
                                  ▼
@@ -197,7 +197,7 @@ Graphify가 추가할 수 있는 유일한 새 정보: **실제 Python `import` 
                                  │
                                  ▼
                   ┌──────────────────────────────┐
-                  │   Stage 6 Brief Author        │  (skill — invest-stage6-brief-author)
+                  │   Stage 6 Brief Author        │  (skill — stage6-brief-author)
                   └──────────────────────────────┘
 
    ┌─────────────────────────────────────────────┐

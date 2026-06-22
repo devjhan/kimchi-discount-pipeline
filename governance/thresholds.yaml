@@ -7,7 +7,7 @@
 # ============================================================
 
 version: 1
-last_updated: "2026-05-04"
+last_updated: "2026-06-22"
 schema: "investment-thresholds-v1"
 
 # ============================================================
@@ -18,8 +18,8 @@ schema: "investment-thresholds-v1"
 # ============================================================
 # Stage 2 — Quality Filter (C ∩ A)
 # ============================================================
-# [MOVED 2026-05-15] quality.* 섹션 39줄 → governance/policy/global/profiles/quality_floor.yaml
-# + governance/policy/global/strategies/default.yaml.constants
+# [MOVED 2026-05-15] quality.* 섹션 39줄 → governance/policy/profiles/global/quality_floor/v2.yaml
+# + governance/policy/strategies/default/v1.yaml
 # DDD modular monolith 재설계 — screener bounded context 가 자체 SSoT 보유.
 # 본 위치는 historical anchor 만 — 신규 키 추가 금지.
 

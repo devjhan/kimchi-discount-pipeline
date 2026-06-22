@@ -106,7 +106,7 @@ if asymmetry_ratio < half_size_below_ratio:
 proposed = min(proposed, per_position.max_pct=0.25)
 ```
 
-`scripts/stage5-sizing.py` 의 `compute_fractional_kelly()` 함수가 single
+`domains/risk_engine/sizing.py` 의 `compute_fractional_kelly()` 함수가 single
 implementation point.
 
 ---
@@ -116,9 +116,9 @@ implementation point.
 | Layer | 내용 |
 |---|---|
 | `thresholds.yaml.thesis.asymmetry` | min_ratio / reject_below_min / half_size_below_ratio |
-| `~/.agents/skills/stage4-thesis-auditor/domain/thesis-fields-format.md` | downside_floor / upside_ceiling 본문 schema |
-| `scripts/stage5-sizing.py` | extract_asymmetry_ratio() + compute_fractional_kelly() + cap chain |
-| `~/.agents/skills/stage6-brief-author/SKILL.md` | brief에 ratio + cap 적용 사유 1줄 표시 |
+| `.agents/skills/stage4-thesis-auditor/domain/thesis-fields-format.md` | downside_floor / upside_ceiling 본문 schema |
+| `domains/risk_engine/sizing.py` | extract_asymmetry_ratio() + compute_fractional_kelly() + cap chain |
+| `.agents/skills/stage6-brief-author/SKILL.md` | brief에 ratio + cap 적용 사유 1줄 표시 |
 
 ---
 

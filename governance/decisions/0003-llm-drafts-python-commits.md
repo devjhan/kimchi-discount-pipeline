@@ -17,7 +17,7 @@ LLM↔결정론 경계는 JSON schema envelope (vendor-neutral seam). 구조적 
 
 - **audit_integrity (F-6)**: 4-tier shadow portfolio NAV/수익률은 `domains.audit_integrity`
   결정론 엔진이 일별 갱신 — 구 LLM 스킬에서 회수.
-- **policy (F-10)**: LLM (`investment-policy-profiler` 스킬) 은 profile *draft* 만; commit /
+- **policy (F-10)**: LLM (`policy-profiler` 스킬) 은 profile *draft* 만; commit /
   drift / version / provenance 산술은 `domain/commit_gate.py` 결정론. **스킬은 commit 안 함.**
 
 본 ADR 은 그 *구조적 근거와 사례* 를 기록한다. 규칙 본문 SSoT 는 hard guard **G6** (복사

@@ -32,7 +32,7 @@ if not key:
 secret_safe_log("loaded KIS_APP_KEY", os.environ)  # 자동 redact
 ```
 
-**Hook**: `block_anti_patterns.sh` (PreToolUse) — secret-like 정규식 (prefix-bound, ≥8 자) 매치 시 exit 2. false positive 시 `INVEST_SEC_GUARD_OFF=1` 로 우회.
+**Hook** (ADR-0010으로 파기: `block_anti_patterns.sh`): → 대체: ruff check + 수동 리뷰.
 
 ---
 
@@ -54,7 +54,7 @@ text = Path(".env").read_text()
 key = os.environ.get("KIS_APP_KEY")  # SessionStart 가 이미 export
 ```
 
-**Hook**: `pre_env_guard.sh` (기존, PreToolUse Read|Bash|Write|Edit) — `$ENV_PATH` 직접 접근 차단.
+**Hook** (ADR-0010으로 파기: `pre_env_guard.sh`): → 대체: chmod 0600 + .gitignore로 OS 레벨 방어.
 
 ---
 
@@ -79,7 +79,7 @@ from infrastructure.kis.client import quote_price   # read-only whitelist
 price = quote_price("005930")  # 시세 read OK
 ```
 
-**Hook**: `$SETTINGS_PATH` 의 `permissions.deny` (1차 방어) + `pre_no_autotrade.py` (M2 예정).
+**Hook** (ADR-0010으로 파기: `.claude/settings.json` permissions.deny): → 대체: `runtime-policy.yaml` G9 + 코드 레벨 타입 안전성.
 
 ---
 
@@ -97,7 +97,7 @@ state = Path("/Users/me/projects/kimchi-discount-pipeline/operations/_audit/stat
 state = Path(os.environ["AUDIT_DIR"]) / "state.json"
 ```
 
-**Hook**: `block_path_literals.sh` (기존, PreToolUse Write/Edit) — 절대경로 + 상대경로 prefix 두 종 차단.
+**Hook** (ADR-0010으로 파기: `block_path_literals.sh`): → 대체: ruff check + 수동 리뷰.
 
 ---
 
@@ -115,13 +115,13 @@ state = Path(os.environ["AUDIT_DIR"]) / "state.json"
 
 ---
 
-## D-SEC-6 — `$AUDIT_DIR/_hook_audit.log` 는 본문에 secret 절대 echo 안 함
+## D-SEC-6 — 로그 내 secret-like literal 금지
 
-**근거**: hook telemetry log 가 git tracked 가능 (사용자 결정). 따라서 log line 의 `{reason}` 필드에 secret 변수 echo 금지. `_audit_log("BLOCK", f"detected KIS_APP_KEY in payload")` 같이 *변수 이름만* 인용, 값 인용 안 함.
+**근거**: telemetry/logs 의 실행 로그에 secret 변수값 직접 등장 금지. 변수 이름만 인용, 값 인용 안 함.
 
 ❌ 금지
 ```python
-_audit_log("BLOCK", f"secret leak in line: {leaked_line}")   # leaked_line 에 secret 통째 포함
+log("BLOCK", f"secret leak in line: {leaked_line}")   # leaked_line 에 secret 통째 포함
 ```
 
 ✅ 올바름
@@ -129,4 +129,4 @@ _audit_log("BLOCK", f"secret leak in line: {leaked_line}")   # leaked_line 에 s
 _audit_log("BLOCK", f"secret-like pattern at line {ln}, type=KIS_APP_KEY")  # 위치 + 타입만
 ```
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `_audit_log(...)` 두 번째 인자에 secret-like literal 직접 인용 검사.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: 수동 리뷰.

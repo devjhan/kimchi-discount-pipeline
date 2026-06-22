@@ -1,7 +1,7 @@
 # Deployment Residency Spec
 
 `schema: investment-deployment-residency-v1`
-`last_updated: 2026-05-13`
+`last_updated: 2026-06-22`
 
 ## 1. 원칙
 

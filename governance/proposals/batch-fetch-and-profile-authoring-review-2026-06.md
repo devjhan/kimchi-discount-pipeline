@@ -63,8 +63,8 @@ Q1·Q3 의 결론·확신도는 재확인과 일치(이견 없음). **Q2 만 위
 ```
 [trigger] ─► phase1 결정론  policy.main --ticker --trigger  → _intake-{date}.json
                               (별도 schedule: policy_producer, 주간, enabled:false)
-          ─► phase2 LLM      /investment-policy-profiler     → _profile-draft.json  (commit 안 함, F-10)
-          ─► phase3 결정론   policy.main --commit-draft       → governance/profiles/{tk}/vN.yaml  (유일 writer)
+          ─► phase2 LLM      /policy-profiler                  → _profile-draft.json  (commit 안 함, F-10)
+          ─► phase3 결정론   policy.main --commit-draft       → governance/policy/profiles/ticker/{tk}/vN.yaml  (유일 writer)
                                                                         │ load_latest (READ ONLY)
    daily cron ──────────────────────────────────────────────────────────┤
      Stage1 universe (--use-profile-registry, 기본 OFF) ◄────────────────┤
@@ -125,7 +125,7 @@ Stage 0a SPX breadth 가 ~500 종목 Yahoo per-ticker 루프(캐시 없음, `bre
 ## 4. Q3 — 배치/점진 LLM 프로파일 작성: 둘 다 불필요, 실체는 cold-start
 
 ### 현 작성 방식 (검증됨)
-`investment-policy-profiler` 스킬 1회 invoke = **1 ticker × 1 trigger × whole-profile one-shot**. 세 축 모두 단건(`SKILL.md:62-97`, `policy/main.py:145,176-185`, `domain/research_result.py:8-22` frozen 4필드). 전종목 DART 일괄 스캔은 **미배선**(`policy/_boundary.py:99-101` 정의는 있으나 `main.py` 호출 0).
+`policy-profiler` 스킬 1회 invoke = **1 ticker × 1 trigger × whole-profile one-shot**. 세 축 모두 단건(`SKILL.md:62-97`, `policy/main.py:145,176-185`, `domain/research_result.py:8-22` frozen 4필드). 전종목 DART 일괄 스캔은 **미배선**(`policy/_boundary.py:99-101` 정의는 있으나 `main.py` 호출 0).
 
 ### 거버넌스 제약 (배치·점진을 봉쇄)
 - **분리 불가 단일 단위** ✅ — `profile_registry/schema.py:8-13`(ISP F-2): "universe-view/screener-view 로 쪼개지 않는다." 필드 patch/merge API 부재 → "일부 필드만" 표현 불가.

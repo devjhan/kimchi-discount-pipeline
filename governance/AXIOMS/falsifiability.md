@@ -30,9 +30,9 @@ Karl Popper의 과학철학: 어떤 진술이 과학적이려면 **그것을 거
 | Layer | 내용 |
 |---|---|
 | `thresholds.yaml.thesis` | required_fields=falsifier 강제, falsifier_categories 정의, falsifier_vague_patterns_reject 자동 reject |
-| `~/.agents/skills/stage4-thesis-auditor/domain/falsifier-validation.md` | vague pattern 사전 검사 + 카테고리별 필수 필드 + anti-pattern (fake specificity 검출) |
-| `scripts/stage5-sizing.py` | (future) falsifier proximity monitoring helper와 join — proximity high 시 사이즈 절반 alert |
-| `~/.agents/skills/audit-process/SKILL.md` | 주간 audit에서 falsifier vague 사례 / proximity tracking 누락 사례 flag |
+| `.agents/skills/stage4-thesis-auditor/domain/falsifier-validation.md` | vague pattern 사전 검사 + 카테고리별 필수 필드 + anti-pattern (fake specificity 검출) |
+| `domains/risk_engine/falsifier_proximity.py` | falsifier proximity monitoring helper — proximity high 시 사이즈 절반 alert |
+| `.agents/skills/audit-process/SKILL.md` | 주간 audit에서 falsifier vague 사례 / proximity tracking 누락 사례 flag |
 
 ---
 
@@ -69,7 +69,7 @@ Karl Popper의 과학철학: 어떤 진술이 과학적이려면 **그것을 거
 proximity = low | medium | high
 ```
 
-산출 위치: `.handoff/positions/{ticker}/drift-{date}.md`. trigger 임박 시
+산출 위치: `telemetry/positions/{ticker}/drift-{date}.md`. trigger 임박 시
 push notification (Telegram / scheduled-tasks MCP).
 
 자동 청산은 절대 금지 (G9). agent는 alert만, 청산 실행은 사용자.

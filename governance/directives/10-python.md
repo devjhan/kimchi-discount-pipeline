@@ -23,7 +23,7 @@ from typing import Any
 def foo(x: dict[str, Any]) -> str: ...
 ```
 
-**Hook**: `block_anti_patterns.sh` (PreToolUse) — 새 `.py` 파일 작성 시 헤더 5 줄(docstring 포함) 내 `from __future__ import annotations` 부재면 exit 2.
+**Hook** (ADR-0010으로 파기: `block_anti_patterns.sh`): → 대체: ruff check + 수동 리뷰.
 
 ---
 
@@ -45,7 +45,7 @@ def fetch_macro(country: str, lookback_days: int) -> dict[str, Any]:
 
 예외: `_underscore_prefix` private helper 는 inline 추론이 명확하면 생략 허용. test fixture 도 예외.
 
-**Hook**: `lint_directives.sh` (PostToolUse, dry-run M1) — `ast.parse` 로 함수 서명 검사. annotation 누락 + public name 이면 violation.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check.
 
 ---
 
@@ -78,7 +78,7 @@ except (HTTPError, JSONDecodeError) as exc:
     ...
 ```
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `ast` walker 로 `ExceptHandler.type.id == "Exception"` + 직전 줄 comment 에 `noqa: BLE001` 부재 시 violation.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check.
 
 ---
 
@@ -102,7 +102,7 @@ from infrastructure._common.utils import secret_safe_log, trail_dir
 from domains.universe.main import main
 ```
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `ast.Import`/`ImportFrom` 순서 검사.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff/isort.
 
 ---
 
@@ -128,7 +128,7 @@ def scan_buyback_catalyst(
 
 예외: 1 줄 lambda / `_underscore_prefix` private + 인라인 trivial → docstring 생략 가능.
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `ast.FunctionDef.body[0]` 이 `Expr(Constant(str))` 가 아니면 violation (public 함수 한정).
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check.
 
 ---
 

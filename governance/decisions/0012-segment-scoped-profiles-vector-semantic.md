@@ -1,5 +1,12 @@
 # ADR-0012 — Segment-scoped profile 계층 + 벡터 semantic 분류
 
+> **Amended by ADR-0013 (2026-06-13) + ADR-0014 (2026-06-14)**: 본 ADR body의
+> 선언 SSoT 경로(`governance/profiles/<ticker>/`, `governance/segments/`,
+> `governance/concepts/`, `governance/segment_profiles/`)는 ADR-0013으로
+> `governance/policy/` 산하로 통합됐고, ADR-0014로 scope-미러 트리
+> (`policy/profiles/{global,segment,ticker}/<key>/v<N>.yaml`)로 재구조화됐다.
+> 현행 경로는 ADR-0014 §Implementation 참조.
+
 `status: Accepted`
 `date: 2026-06-12`
 `refs: D-ARCH-1, D-ARCH-2, D-ARCH-4, 0004, 0006, 0008, domains/_shared/segment_registry/`

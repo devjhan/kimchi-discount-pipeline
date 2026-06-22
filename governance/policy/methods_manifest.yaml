@@ -1,3 +1,5 @@
+version: 1
+schema: methods-manifest-v1
 description: GENERATED from code SSoT (screener rules + segment_registry attributes).
   Do not hand-edit — regenerate via 'python -m applications.gen_methods_manifest'.
   cutoff_rules metric_path/op/type 화이트리스트 (ADR-0014).

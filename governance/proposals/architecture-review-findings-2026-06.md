@@ -82,7 +82,7 @@ per-invocation LLM 판단에서 재현가능한 구조(domain code / 선언적 c
 작업량 범례: **S** ≤ 2h · **M** ~반일 · **L** 1일+ / multi-PR.
 
 > **Gate 조건 (Wave 2 공통)**: `--use-profile-registry` ON default 전환 +
-> `governance/profiles/` 실제 profile 채움 + PolicyEngine wiring(`engine=None` intake-only
+> `governance/policy/profiles/ticker/` 실제 profile 채움 (구 `governance/profiles/`, ADR-0013/0014로 이전) + PolicyEngine wiring(`engine=None` intake-only
 > 탈출). memory `policy-mechanism-migration` 의 cutover 가 선행.
 
 권장 순서: cutover gate 충족 후 **F-2(3) · F-4(2)**. (F-5b 는 cutover-독립 — 처리 완료.)
@@ -138,7 +138,7 @@ Wave 2(§1)와 달리 Wave 3 는 **대부분 cutover 와 독립**이다. screene
 |---|---|---|---|---|---|
 | **F-11** | `policy` 2-layer profile(archetype baseline + event override) | **P3** | **L** | profile_registry cutover (F-10 완료) | — |
 
-> **Wave 3.** F-11 은 cutover gate 뒤. (F-10 — policy LLM 을 `investment-policy-profiler`
+> **Wave 3.** F-11 은 cutover gate 뒤. (F-10 — policy LLM 을 `policy-profiler`
 > 스킬로 3-phase 배선 — 은 처리 완료: f7e4cf7. §4 규율로 행/상세 삭제.)
 
 ---
@@ -211,7 +211,7 @@ no-op) 추가, commit/drift 는 결정론 유지.
 | F-18 | 2 | spx_constituents_refresh 오배치 → macro 이동 (cache 경로 무변경; risk_engine infra_common_dir dead 제거; cloud_routine_run.sh invoke 갱신) | 3 | 구조 이동 | ✅ DONE 2026-06-05 |
 | F-19 | 4,7 | `domains/brief_gate` → `domains/_shared/brief_gate` 강등 (순수 validator, _boundary 없음; test→_shared/tests; hook/skill/pyproject import 갱신) + "audit" 3중 의미 disambiguate (`_shared/__init__.py` doc) | 4 | 구조 강등 | ✅ DONE 2026-06-05 |
 | F-20 | 6 | AGENTS.md 결손 보강(catalyst/policy/audit_integrity AGENTS.md 신설 → 8/8). **OutputWriter/Config 전 BC 블랭킷 롤아웃은 미채택** — 측정 결과 application/domain 의 `_boundary` import 가 이미 0~1 (catalyst/universe/audit_integrity/screener=0, macro/policy=1: macro resolve_path 의도된 IO·policy commit-provenance wall-clock 으로 AsOfClock형 ClockPort 부적합). 이미 decoupled 된 BC 에 미사용 port 추가 = YAGNI (over-abstraction 경계 — macro VotingStrategy 미도입 선례 존중). 필요 seam 은 Citation/Disclosure/KisAccount/Clock port 로 이미 커버 | 5 | hexagonal | ✅ DONE 2026-06-05 |
-| F-21 | 5 | EnrichCutoffProfile 휴면 cutover (= 기존 F-10→F-2(3)→F-4(2), F-11). **6a(F-10) DONE 2026-06-06**: `investment-policy-profiler` 스킬 + `main --commit-draft`(phase 3 결정론) + `_emit_intake`(phase 1) 배선 — 3-phase, 스킬 commit 안 함. **6b~6e open (behavior, 1주 dry-run gated)**: cutover flip(universe `--use-profile-registry` ON + profiles 채움) / F-2(3) legacy 경로 제거 / F-4(2) `DRIFT_BLOCKS_COMMIT` flip — 미실행 (daily 동작 불변) | 6 | behavior(1주 dry-run) | 6a DONE / 6b~e open |
+| F-21 | 5 | EnrichCutoffProfile 휴면 cutover (= 기존 F-10→F-2(3)→F-4(2), F-11). **6a(F-10) DONE 2026-06-06**: `policy-profiler` 스킬 + `main --commit-draft`(phase 3 결정론) + `_emit_intake`(phase 1) 배선 — 3-phase, 스킬 commit 안 함. **6b~6e open (behavior, 1주 dry-run gated)**: cutover flip(universe `--use-profile-registry` ON + profiles 채움) / F-2(3) legacy 경로 제거 / F-4(2) `DRIFT_BLOCKS_COMMIT` flip — 미실행 (daily 동작 불변) | 6 | behavior(1주 dry-run) | 6a DONE / 6b~e open |
 
 **parity 게이트(각 phase 종료조건):** pytest 회귀 0 + 경계 grep(`application/`·`domain/` 의 `_boundary` import 0; touched BC infra import 은 `_boundary.py` 만) + byte-diff(daily_pipeline `--dry-run` trails, Phase 0~5). Phase 6 은 byte-parity 대체 = **1주 dry-run diff** 후 flip(의도된 행동 변경).
 

@@ -2,7 +2,7 @@
 
 | 속성 | 값 |
 |---|---|
-| **ADR** | 0027 (Sub-document) |
+| **ADR** | 0009 (Sub-document) |
 | **일자** | 2026-06-10 |
 | **마이그레이션** | Claude Code → Zed |
 
@@ -67,7 +67,7 @@ Zed Agent 는 이 hook 시스템을 지원하지 않는다.
 |---|---|
 | **역할** | brief 숫자 citation 의무 검사 — `Source@ts=value` 형식 확인, 미준수 시 reject |
 | **파기 사유** | Zed에 PostToolUse/Stop 개념 없음 |
-| **대체 수단** | `applications/daily_pipeline.sh` Stage 6 이후 Python validation step 추가 예정 |
+| **대체 수단** | `applications/run_daily_local.sh` Stage 6 이후 Python validation step 추가 예정 |
 
 ### 7. `quality/lint_directives` (PostToolUse Write/Edit)
 

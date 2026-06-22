@@ -3,6 +3,10 @@ version: 1
 description: "지주사 가치주 부분집합 enrich-cutoff 정책 (예시 — segment profile_ref 대상)"
 scope: segment
 key: holdco_value_floor
+provenance:
+  committed_at: "2026-06-15"
+  committed_by: user
+  rationale_ko: "지주사 가치주 세그먼트의 NAV 할인 하한선. 30% 이상 할인 시 enrich 강제."
 required_enrichments:
   - nav_discount
 cutoff_rules:

@@ -2,7 +2,7 @@
 
 `status: Accepted`
 `date: 2026-06-06`
-`refs: D-CORE-4, D-CORE-7, D-ARCH-3, D-ARCH-4, screener/.guidelines/05-boundaries.md`
+`refs: D-CORE-4, D-CORE-7, D-ARCH-3, D-ARCH-4`
 
 ## Context
 
@@ -21,8 +21,7 @@ Protocol port 를 주입하는 typed adapter factory** 로 진화시킨다:
 - 무관 concern 은 narrow port 로 추출 (CitationPort / ClockPort / DisclosureSourcePort /
   KisAccountPort). 선례: F-13 LLM port → [D-CORE-7] (evergreen 승격); F-16/F-17.
 
-HOW (포트 추출 절차·템플릿) 의 SSoT 는 `domains/screener/.guidelines/05-boundaries.md`
-"Ports & Adapters" 절 — **복사 금지, 참조만.** 본 ADR 은 WHY 만.
+HOW (포트 추출 절차·템플릿) 는 D-ARCH-4 참조 (`.guidelines/05-boundaries.md` 는 ADR-0011로 skills에 흡수·삭제됨). 본 ADR 은 WHY 만.
 
 ## Consequences
 

@@ -27,7 +27,7 @@ paths:
   ...
 ```
 
-**Hook**: `block_anti_patterns.sh` (PreToolUse) — `$GOVERNANCE_DIR/*.yaml` 새 파일 Write 시 헤더 5 줄 내 `version:` / `description:` 둘 다 부재면 exit 2.
+**Hook** (ADR-0010으로 파기: `block_anti_patterns.sh`): → 대체: ruff check + 수동 리뷰.
 
 ---
 
@@ -51,7 +51,7 @@ paths:
 
 ❌ 금지: 위 5 필드 중 1 개라도 누락된 `$TRAIL_TODAY/*.json` write.
 
-**Hook**: `lint_directives.sh` (PostToolUse, M1 dry-run) — `$TRAIL_TODAY/*.json` 경로 Write 시 envelope 필드 검사. 누락 시 audit log + (M2) additionalContext.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: 수동 리뷰.
 
 ---
 
@@ -63,7 +63,7 @@ paths:
 
 ✅ 올바름: 2 칸 space (기존 `$TOPOLOGY_PATH` 직역).
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `.yaml` 새 작성 시 들여쓰기 검사.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff/pre-commit.
 
 ---
 
@@ -81,7 +81,7 @@ paths:
 오늘 macro regime 은 mid-cycle (cash band 30% — STAGE0@2026-05-12T05:30+09:00=mid).
 ```
 
-**Hook**: `brief_citation_gate.sh` (기존, PostToolUse + Stop) — `daily-brief.md` 한정 검사.
+**Hook** (ADR-0010으로 파기: `brief_citation_gate.sh`): → 대체: 수동 리뷰.
 
 ---
 
@@ -100,7 +100,7 @@ from infrastructure._common.utils import secret_safe_log
 secret_safe_log("loaded KIS_APP_KEY", os.environ)  # KIS_APP_KEY 자동 redact
 ```
 
-**Hook**: `pre_env_guard.sh` (기존, PreToolUse) — Read/Bash/Write/Edit 의 `$ENV_PATH` 직접 접근 차단.
+**Hook** (ADR-0010으로 파기: `pre_env_guard.sh`): → 대체: chmod 0600 + .gitignore + `infrastructure/_common/utils.py`만 .env 접근.
 
 ---
 
@@ -110,6 +110,6 @@ secret_safe_log("loaded KIS_APP_KEY", os.environ)  # KIS_APP_KEY 자동 redact
 
 ❌ 금지 phrase (sample): `"should buy"`, `"guaranteed"`, `"no-brainer"`, `"alpha confirmed"`, `"outperformed the market"` (sample size 미충족 시).
 
-전체 목록: `$SPECS_DIR/hard-guards.md` Section 3.
+전체 목록: `AGENTS.md` Hard Guards (G1-G22).
 
-**Hook**: `brief_citation_gate.sh` (기존, PostToolUse + Stop) — `daily-brief.md` 한정.
+**Hook** (ADR-0010으로 파기: `brief_citation_gate.sh`): → 대체: 수동 리뷰.

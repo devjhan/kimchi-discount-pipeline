@@ -6,7 +6,7 @@
 
 ## D-CORE-1 — Single Source of Truth (alias / 정량 임계값 / G-rule)
 
-**근거**: path / 임계값 / 룰 ID 의 중복 선언은 drift 의 원인. `$TOPOLOGY_PATH`, `$THRESHOLDS_PATH`, `$SPECS_DIR/hard-guards.md` 가 각각 단일 source. 본문에 raw 값을 박지 말고 SSoT 참조.
+**근거**: path / 임계값 / 룰 ID 의 중복 선언은 drift 의 원인. `$THRESHOLDS_PATH` 가 단일 source. 본문에 raw 값을 박지 말고 SSoT 참조.
 
 ❌ 금지
 ```python
@@ -22,7 +22,7 @@ cache = audit_dir() / "_nav_cache"     # path literal 대신 path helper
 kelly_cap = load_thresholds()["sizing"]["kelly_cap"]
 ```
 
-**Hook**: 자동 path-literal 차단 hook 은 제거됨 (구 `block_path_literals` / `doctrine_lint`). thresholds 중복 선언·경로 literal 은 PR/리뷰 시 인용. 경로는 `infrastructure/_common/utils.py` 의 path helper (`trail_dir` / `audit_dir` / `positions_dir` 등) 로 얻는다.
+**Hook** (ADR-0010으로 파기: `block_path_literals` / `doctrine_lint`): → 대체: ruff check + 수동 리뷰. 경로는 `infrastructure/_common/utils.py` 의 path helper (`trail_dir` / `audit_dir` / `positions_dir` 등) 로 얻는다.
 
 ---
 
@@ -64,7 +64,7 @@ if not candidates:
     return  # 빈 envelope JSON 산출
 ```
 
-**Hook**: `lint_directives.sh` (M2) — fallback / default 키워드 매핑 audit.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check + 수동 리뷰.
 
 ---
 
@@ -77,13 +77,12 @@ if not candidates:
 governance        ←── (read-only) ── 모든 layer
 infrastructure    ←── domains (read)
 domains           ←── operations 산출만 write
-.claude/hooks     ←── infrastructure._common (utils), 절대 도메인 코드 import 안 함
-.claude/skills    ←── governance 만 read, 직접 도메인 코드 작성 안 함
+skills            ←── governance 만 read, 직접 도메인 코드 작성 안 함
 ```
 
 ❌ 금지: `$INFRA_DART_DIR/client.py` 에서 `domains.universe.main` import. infrastructure → domains 역방향.
 
-**Hook**: `block_anti_patterns.sh` (PreToolUse) — D-CORE-4-A 위반(`from domains` in infra layer) regex 차단.
+**Hook** (ADR-0010으로 파기: `block_anti_patterns.sh`): → 대체: ruff check + 수동 리뷰.
 
 ---
 
@@ -109,7 +108,7 @@ domains           ←── operations 산출만 write
 - config 수정 전: 해당 yaml 파일 전체 Read (들여쓰기 / 주석 density 보존)
 - 작성 직후: 관련 `pytest` 1 회 실행 (또는 최소한 import 확인) — drift 즉시 검출
 
-**Hook**: `lint_directives.sh` (PostToolUse) — Write/Edit 직후 directive 검사 (`_directive_lint.py`, M1 dry-run).
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check + 수동 리뷰.
 
 ## D-CORE-7 — LLM 호출은 단일 port, vendor 종속은 bounded adapter (F-13)
 
@@ -123,4 +122,4 @@ domains           ←── operations 산출만 write
 
 ❌ 안티패턴: 새 스크립트에서 Zed agent 를 직접 호출 / `import anthropic` 도입 / 모델명 하드코딩 / 결정론 산수를 LLM 에 위임 (G6).
 
-**Hook**: inject_only (`inject_directive_context.sh`) — 아키텍처 불변식이라 syntactic 자동 검사 없음. PR/리뷰 시 인용.
+**Hook**: inject_only (ADR-0010으로 파기: `inject_directive_context.sh`) → 대체: AGENTS.md 정적 컨텍스트.

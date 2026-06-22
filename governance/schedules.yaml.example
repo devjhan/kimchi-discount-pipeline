@@ -1,7 +1,7 @@
 version: "1.0"
 description: "Scheduler SSoT — OS-agnostic schedule declarations. infrastructure/scheduling/*_generator.py emits derived OS artifacts (launchd plist / systemd timer)."
 schema: "investment-schedules-v1"
-last_updated: "2026-05-13"
+last_updated: "2026-06-22"
 
 # ============================================================
 # schedules.yaml — Scheduler SSoT
@@ -35,7 +35,7 @@ schedules:
       재개 시 enabled: true + install.sh 실행. pmset wake 는 install.sh 가
       enabled+wake schedule 부재 시 자동 ``pmset repeat cancel`` 하며(S-1 fix),
       uninstall.sh step 2 도 ``sudo pmset repeat cancel`` 수행한다.
-    enabled: false
+    enabled: true
     # cron expression — OS-agnostic. macOS launchd 는 StartCalendarInterval
     # 로 translate, Linux systemd 는 OnCalendar 로 translate.
     cron: "30 7 * * *"

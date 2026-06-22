@@ -1,6 +1,6 @@
 # Pipeline Overview — Investment Advisory Agent Workspace
 
-> **Last reviewed:** 2026-06-06
+> **Last reviewed:** 2026-06-22
 
 본 문서는 인간용 reference / index 입니다. 깊은 정의는 모두 다른 파일(AXIOMS / specs / thresholds)에 있고, 이 문서는 link 만 모읍니다. 새 fact 도입 금지.
 
@@ -12,8 +12,8 @@
 
 본 시스템은 **investment advice 가 아니다**.
 
-> 각 capability 의 사용자 의도(job story)와 end-to-end trace 는 [`capabilities/`](capabilities/README.md),
-> 비자명한 구조 결정의 근거(ADR)는 [`decisions/`](decisions/README.md) 참조.
+> 각 capability 의 사용자 의도(job story)와 end-to-end trace 는 [`capabilities/`](capabilities/) 참조,
+> 비자명한 구조 결정의 근거(ADR)는 [`decisions/`](decisions/) 참조.
 
 ---
 
@@ -46,7 +46,7 @@
             ↓
 [Stage 3]  catalyst_scan  → trigger 발생 종목 (+ 3a index deletion + 3b earnings panic)
             ↓
-[Stage 4]  thesis_gate    → 5필드 thesis 강제 (skill — invest-stage4-thesis-auditor)
+[Stage 4]  thesis_gate    → 5필드 thesis 강제 (skill — stage4-thesis-auditor)
             ↓
 [Stage 5]  sizing         → fractional Kelly + asymmetry budget
             ↓
@@ -56,7 +56,7 @@
 [Stage 5c] event_falsifier_linker  → event_trigger falsifier × Stage 3 catalyst join
 [Stage 5d] thesis_expiry_monitor   → time_horizon_months 추적 (T-90 / T-30 / T-0 / T+30)
             ↓
-[Stage 6]  brief_author   → 사람용 markdown brief (skill — invest-stage6-brief-author)
+[Stage 6]  brief_author   → 사람용 markdown brief (skill — stage6-brief-author)
 ```
 
 ---
@@ -77,7 +77,7 @@
 | 5d | thesis expiry monitor | `$POSITIONS_DIR/{ticker}/thesis.json` | `$TRAIL_TODAY/05d-thesis-expiry.json` + `$POSITIONS_DIR/{ticker}/expiry-{date}.md` | G6 deterministic, multi-tier alert |
 | 6 | brief synth (skill) | `$TRAIL_TODAY/00..05d` | `$TRAIL_TODAY/daily-brief.md` | citation gate, forbidden language |
 
-가드 hook 의 상세 매핑은 [.claude/hooks/AGENTS.md](../.claude/hooks/AGENTS.md) 참조.
+가드 hook 은 ADR-0010에 의해 파기됨 (pre-commit + ruff + 수동 리뷰로 대체). 상세는 governance/decisions/0010-hook-disposition.md 참조.
 
 ### 4b. Completeness Gate (Stage 1 universe → Stage 2 screener)
 
@@ -165,8 +165,8 @@ Forbidden language 표 + G1-G22 hard guard 정의는 [AGENTS.md](../AGENTS.md) H
 
 - [AGENTS.md](../AGENTS.md) — agent 컨텍스트 (canonical)
 - [governance/AXIOMS/](AXIOMS/) — 5 철학 본문
-- [governance/capabilities/](capabilities/README.md) — capability map + job story (의도 layer)
-- [governance/decisions/](decisions/README.md) — ADR register (구조 결정 영구 ledger)
+- [governance/capabilities/](capabilities/) — capability map + job story (의도 layer)
+- [governance/decisions/](decisions/) — ADR register (구조 결정 영구 ledger)
 - [AGENTS.md](../AGENTS.md) — G1-G22 hard guard / forbidden language / output envelope
 - [governance/thresholds.yaml](thresholds.yaml) — 정량 임계값 SSOT
 - 경로 해석 — `infrastructure/_common/utils.py` 의 path helper (중앙 topology alias SSoT 는 제거됨, 위 §6 참조)

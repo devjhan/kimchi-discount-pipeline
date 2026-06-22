@@ -23,7 +23,7 @@
 - ✅ **steady-state 캐시 흡수**: `screener/config/strategies/default.yaml:15-17` `financials_ttl_days:30` / `capital_signals_ttl_days:7` / `staleness_grace_days:14`. cache hit 시 fetch skip(`screen.py:80` 가드, 선행 검증).
 - ✅ **DART pacing**: `dart/client.py:124` `pause_seconds=0.05`(≈20/sec) + transient 503 retry=3 backoff(`:75-90`). KIS GET retry=0(선행 검증).
 - ✅ **IP residency 차단**: `deployment-residency.md:13-17` 클라우드 IP = DART 503(WAF)/KIS timeout/KRX 403, 로컬 KR ISP만 정상 → 파이프라인은 launchd 로컬 실행.
-- ✅ **스킬은 fetch 안 함**: `investment-policy-profiler/SKILL.md` frontmatter `allowed-tools: Read, Write, Bash, Grep, Glob` — **WebFetch 없음**. → profile 병렬화로 인한 DART 동시 호출 0.
+- ✅ **스킬은 fetch 안 함**: `policy-profiler/SKILL.md` frontmatter — **WebFetch 없음**. → profile 병렬화로 인한 DART 동시 호출 0.
 - ✅ **phase3 commit = 인간 gated**: `SKILL.md:194-199` "draft 만족 시 `--commit-draft` **수동** 실행 … 어떤 결정론 단계든 **자동 호출 안 함**".
 - ✅ **cold-start drift no-op**: `policy/domain/drift.py:36-37` `if prev is None: return Drift((),(),{},0.0)`.
 - ✅ **신규 인프라 필요**: `.claude/agents/` **비어 있음**(커스텀 subagent 0) → 병렬 채택 시 subagent/workflow 신규 구축.
@@ -115,4 +115,4 @@ break-even 조건(모두 충족 필요, 추정): N≥300 + cold-start 잦음(주
 
 - T1 원본: `/Users/jhan_acc/Documents/tmp/T1-per-ticker-fetch-parallelization-roi.md` (rate-limit 출처 URL 포함)
 - T2 원본: `/Users/jhan_acc/Documents/tmp/T2-profile-skill-subagent-parallel-init-roi.md`
-- **부수 발견(범위 밖)**: `investment-policy-profiler/SKILL.md:39` 의 reference contract가 `domains/screener/config/methods_manifest.yaml` 을 가리키나 **실존하지 않음**(✅ 부재 확인) — resolver whitelist는 `screener/rules/resolver.py`/`methods.py`에 코드로 존재. stale 경로(본 ROI 판정과 무관, 별도 정리 후보).
+- **부수 발견(범위 밖)**: `policy-profiler/SKILL.md:39` 의 reference contract가 `governance/policy/methods_manifest.yaml` 로 이동 (구 `domains/screener/config/methods_manifest.yaml` → ADR-0013/0014 이전). resolver whitelist는 `screener/rules/resolver.py`/`methods.py`에 코드로 존재.

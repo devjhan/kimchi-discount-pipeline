@@ -22,7 +22,7 @@ r.raise_for_status()
 
 infrastructure clients 가 `_with_retry()` wrapper 를 사용 — 새 client 도 동일 패턴 따를 것.
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `requests.(get|post|put)\(` 의 `timeout=` kwarg 부재 시 violation.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check.
 
 ---
 
@@ -47,7 +47,7 @@ write_output_safely(
 
 `$INFRA_COMMON_DIR/utils.py` 의 `write_output_safely()` 는 동일 path 충돌 시 자동 `.{N}.json` suffix 보존.
 
-**Hook**: `lint_directives.sh` (PostToolUse) — items 만 있고 envelope 부재 시 violation.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: 수동 리뷰.
 
 ---
 
@@ -90,7 +90,7 @@ logger.info("...")   # logging 모듈 사용 — 본 시스템 표준 아님
 
 `secret_safe_log()` 는 stderr / log 가는 모든 메시지에 자동 redact 적용.
 
-**Hook**: `lint_directives.sh` (PostToolUse, M2) — `import logging` 발견 시 warning.
+**Hook** (ADR-0010으로 파기: `lint_directives.sh`): → 대체: ruff check.
 
 ---
 

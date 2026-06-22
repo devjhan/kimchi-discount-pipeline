@@ -32,9 +32,9 @@ catalyst 평가는 기하평균을 최대화하는 방향으로 정렬된다.
 |---|---|
 | `thresholds.yaml.sizing` | per_position.max_pct=0.25, drawdown_brake.threshold_pct=0.15 |
 | `thresholds.yaml.macro.cash_band` | regime별 [min, max] 현금 비중 |
-| `scripts/stage5-sizing.py` | G16/G17/G18 enforce — fractional Kelly + cap + brake + cash band 모든 hard guard 적용 |
-| `~/.agents/skills/stage6-brief-author/SKILL.md` | brief에 "should buy" / "must hold" forbidden 검사 |
-| `~/.agents/skills/audit-process/SKILL.md` | 주간 audit에서 사이즈 위반 / brake 미적용 사례 flag |
+| `domains/risk_engine/sizing.py` | G16/G17/G18 enforce — fractional Kelly + cap + brake + cash band 모든 hard guard 적용 |
+| `.agents/skills/stage6-brief-author/SKILL.md` | brief에 "should buy" / "must hold" forbidden 검사 |
+| `.agents/skills/audit-process/SKILL.md` | 주간 audit에서 사이즈 위반 / brake 미적용 사례 flag |
 
 ---
 

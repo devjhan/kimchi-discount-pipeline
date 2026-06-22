@@ -69,7 +69,7 @@ minimum_quarters_before_check: 4   # 1년 누적 후부터 검사
 ```
 
 본 trigger 발동 시:
-1. `.handoff/audit/disable-trigger.json` 생성
+1. `telemetry/audit/disable-trigger.json` 생성
 2. brief-author가 brief 첫 줄에 trigger 내용 출력
 3. 사용자가 명시적으로 LLM filter를 disable 또는 재조정 결정할 때까지 새 진입 권고 보류
 
@@ -93,8 +93,7 @@ annual:    "full review + self-disable check"
 (4-tier counterfactual). 연간은 self-disable check + 사용자 재참여
 의사결정 reminder.
 
-각 audit은 `~/.agents/skills/audit-{process|outcome|shadow-portfolio}/SKILL.md`
-가 책임.
+각 audit은 `.agents/skills/audit-process/SKILL.md` 와 `.agents/skills/audit-outcome/SKILL.md` 가 책임.
 
 ---
 
@@ -104,9 +103,9 @@ annual:    "full review + self-disable check"
 |---|---|
 | `thresholds.yaml.statistics` | sample_gates / benchmark_tiers / shadow_portfolio / self_disable_trigger single source |
 | `thresholds.yaml.enforcement.forbidden_language.statistical` | wording cutoff 표 |
-| `~/.agents/skills/stage6-brief-author/SKILL.md` | brief 산출 직전 final redact pass — forbidden wording substring 검사 |
-| `~/.agents/skills/audit-process/SKILL.md` | 주간 룰 위반 횟수 집계 |
-| `~/.agents/skills/audit-outcome/SKILL.md` | 분기 4-tier 비교 → tier_2 vs tier_1 outperform check |
+| `.agents/skills/stage6-brief-author/SKILL.md` | brief 산출 직전 final redact pass — forbidden wording substring 검사 |
+| `.agents/skills/audit-process/SKILL.md` | 주간 룰 위반 횟수 집계 |
+| `.agents/skills/audit-outcome/SKILL.md` | 분기 4-tier 비교 → tier_2 vs tier_1 outperform check |
 | `domains/audit_integrity/main.py` | 4-tier paper trade state 일별 결정론 갱신 ($AUDIT_DIR/shadow-portfolio/state.json) — F-6 으로 구 LLM 스킬 회수 |
 | `domains/audit_integrity/init_shadow_state.py` | shadow state 초기화 (`python -m domains.audit_integrity.init_shadow_state`, initial_capital_krw=1억) |
 
