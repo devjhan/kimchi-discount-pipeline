@@ -1,6 +1,6 @@
 ---
 name: context-catalyst
-description: Investment 파이프라인 `domains/catalyst/` BC 작업 시 domain context 주입. common/ 통합 가이드 파일을 선행 읽기로 안내. 작업 전 invoke 권장.
+description: domains/catalyst/ (Stage 3) 코드 읽기/수정 전 반드시 로드. 미로드 시 catalyst trigger·event scan·d_type·G15 불변식 위반 확정. common/ 통합 가이드 선행 읽기 안내 포함.
 ---
 
 # context-catalyst

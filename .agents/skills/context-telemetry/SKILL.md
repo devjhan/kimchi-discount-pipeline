@@ -1,6 +1,6 @@
 ---
 name: context-telemetry
-description: Investment 파이프라인 `telemetry/` (cross-day 감사·관측 증거) 작업 시 context 주입. 산출물 종류·역할·보존(retention) 정책·retention GC·positions/audit 레이아웃을 안내. telemetry 파일을 읽거나/쓰거나/정리하기 전, 또는 새 산출물 종류를 추가하기 전 invoke 권장.
+description: telemetry/ 파일 읽기/쓰기/정리 전 반드시 로드. 미로드 시 retention·보존·G20(덮어쓰기 금지)·산출물 레이아웃 규칙 위반 확정. 새 산출물 종류 추가 전에도 필수.
 ---
 
 # context-telemetry

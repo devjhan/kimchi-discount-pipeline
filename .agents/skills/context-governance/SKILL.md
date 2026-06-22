@@ -1,6 +1,6 @@
 ---
 name: context-governance
-description: Investment 파이프라인 governance/ 규범적 규칙 주입. common/ 인덱스 파일을 통해 directives/capabilities/decisions/proposals/AXIOMS/thresholds 조회 경로 제공. 작업 전 invoke 권장.
+description: governance/ 작업 전 반드시 로드. 미로드 시 Hard Guards(G1~G22)·forbidden language·5대 철학·룰 위반 확정. directives/AXIOMS/thresholds 조회 경로 포함. AGENTS.md 인덱스와 함께 가장 먼저 로드할 것.
 ---
 
 # context-governance

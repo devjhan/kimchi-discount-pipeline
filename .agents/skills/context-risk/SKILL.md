@@ -1,6 +1,6 @@
 ---
 name: context-risk
-description: Investment 파이프라인 `domains/risk_engine/` BC 작업 시 domain context 주입. common/ 통합 가이드 파일을 선행 읽기로 안내. 작업 전 invoke 권장.
+description: domains/risk_engine/ (Stage 5) 코드 읽기/수정 전 반드시 로드. 미로드 시 sizing·Kelly·drawdown·G16~G18 불변식 위반 확정. common/ 통합 가이드 선행 읽기 안내 포함.
 ---
 
 # context-risk

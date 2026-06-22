@@ -1,6 +1,6 @@
 ---
 name: context-audit
-description: Investment 파이프라인 `domains/audit_integrity/` BC 작업 시 domain context 주입. common/ 통합 가이드 파일을 선행 읽기로 안내. 작업 전 invoke 권장.
+description: domains/audit_integrity/ 코드 읽기/수정 전 반드시 로드. 미로드 시 4-tier shadow portfolio·audit 상태·self-disable trigger 불변식 위반 확정. common/ 통합 가이드 선행 읽기 안내 포함.
 ---
 
 # context-audit

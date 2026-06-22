@@ -1,0 +1,41 @@
+{
+  "schema": "investment-scheduler-state-v1",
+  "phase": "start",
+  "captured_at": "2026-06-22T19:49:37.577583+09:00",
+  "uid": 501,
+  "lock_path": "/Users/jhan_acc/projects/kimchi_discount_pipeline/governance/schedules.lock.yaml",
+  "lock_loaded": true,
+  "artifacts": [
+    {
+      "path": "/Users/jhan_acc/Library/LaunchAgents/com.kimchidiscountpipeline.daily_pipeline.plist",
+      "exists": true,
+      "sha256_actual": "57415456a7da606c29498971b87d82c3c71d95bd2f06d3a5e633c9c5ed10af7c",
+      "sha256_locked": "57415456a7da606c29498971b87d82c3c71d95bd2f06d3a5e633c9c5ed10af7c",
+      "source_sha": "6abe892121b8c66e6177071f8549939504ff2818efa3a22c20693f19c2d05964",
+      "emit_time": "2026-06-22T19:49:33+09:00"
+    }
+  ],
+  "launchctl": {
+    "uid": 501,
+    "agents": {
+      "com.kimchidiscountpipeline.daily_pipeline": {
+        "label": "com.kimchidiscountpipeline.daily_pipeline",
+        "loaded": true,
+        "raw_output": "gui/501/com.kimchidiscountpipeline.daily_pipeline = {\n\tactive count = 0\n\tpath = /Users/jhan_acc/Library/LaunchAgents/com.kimchidiscountpipeline.daily_pipeline.plist\n\ttype = LaunchAgent\n\tstate = not running\n\n\tprogram = /bin/bash\n\targuments = {\n\t\t/bin/bash\n\t\t/Users/jhan_acc/projects/kimchi_discount_pipeline/applications/run_daily_local.sh\n\t}\n\n\tworking directory = /Users/jhan_acc/projects/kimchi_discount_pipeline\n\n\tstdout path = /Users/jhan_acc/projects/kimchi_discount_pipeline/telemetry/logs/launchd/daily_pipeline.out.log\n\tstderr path = /Users/jhan_acc/projects/kimchi_discount_pipeline/telemetry/logs/launchd/daily_pipeline.err.log\n\tinherited environment = {\n\t\tSSH_AUTH_SOCK => /var/run/com.apple.launchd.ibFKWktjFj/Listeners\n\t\tPATH => /opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin\n\t}\n\n\tdefault environment = {\n\t\tPATH => /usr/bin:/bin:/usr/sbin:/sbin\n\t}\n\n\tenvironment = {\n\t\tOSLogRateLimit => 64\n\t\tTZ => Asia/Seoul\n\t\tPATH => /Users/jhan_acc/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin\n\t\tXPC_SERVICE_NAME => com.kimchidiscountpipeline.daily_pipeline\n\t}\n\n\tdomain = gui/501 [101652]\n\tasid = 101652\n\tminimum runtime = 10\n\texit timeout = 5\n\truns = 0\n\tlast exit code = (never exited)\n\n\tevent triggers = {\n\t\tcom.kimchidiscountpipeline.daily_pipeline.268435480 => {\n\t\t\tkeepalive = 0\n\t\t\tservice = com.kimchidiscountpipeline.daily_pipeline\n\t\t\tstream = com.apple.launchd.calendarinterval\n\t\t\tmonitor = com.apple.UserEventAgent-Aqua\n\t\t\tdescriptor = {\n\t\t\t\t\"Minute\" => 30\n\t\t\t\t\"Hour\" => 7\n\t\t\t}\n\t\t}\n\t}\n\n\tevent channels = {\n\t\t\"com.apple.launchd.calendarinterval\" = {\n\t\t\tport = 0x0\n\t\t\tactive = 0\n\t\t\tmanaged = 1\n\t\t\treset = 0\n\t\t\thide = 0\n\t\t\twatching = 1\n\t\t}\n\t}\n\n\tspawn type = background (5)\n\tjetsam priority = 40\n\tjetsam memory limit (active) = (unlimited)\n\tjetsam memory limit (inactive) = (unlimited)\n\tjetsamproperties category = daemon\n\tjetsam thread limit = 32\n\tcpumon = default\n\n\tproperties = partial import | low priority i/o | inferred program\n}\n",
+        "state": "not running",
+        "runs": "0",
+        "last_exit_code": "(never exited)",
+        "finding": "scheduler_agent_not_loaded",
+        "detail": "state='not running' — bootstrap 필요"
+      }
+    }
+  },
+  "pmset": {
+    "raw_output": "Repeating power events:\n  wakepoweron at 7:25AM every day\nScheduled power events:\n [0]  wake at 06/23/2026 00:00:00 by 'com.apple.alarm.user-visible-com.apple.donotdisturb.server.ScheduleLifetimeMonitor.timer' User visible: true\n [1]  wake at 06/23/2026 08:54:34 by 'com.apple.alarm.user-invisible-com.apple.osanalytics.hardhighengagementtimer'\n",
+    "wake_registered": true
+  },
+  "findings": [
+    "scheduler_agent_not_loaded:com.kimchidiscountpipeline.daily_pipeline"
+  ],
+  "finding_count": 1
+}
